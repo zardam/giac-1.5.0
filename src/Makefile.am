@@ -87,11 +87,12 @@ EXTRA_DIST = .gdbinit xgiac pgiac prime.table gen_user \
 	f2c.h clapack.h blaswrap.h mklocal64 pnt_gen \
 	giac.i runme.java archive_java archive_java_linux32 archive_java_linux64  javascript.cxx giacjs.i README.javascript \
 	Makefile.jni README.jni README.nacl mkdylib mkdylib10 mkgiacpy mkgiacpy10 giac_wrap.cxx aspen_translate.h translate.cc \
-	itex2MML.* y_tab.h
+	itex2MML.* y_tab.h static_lexer_numworks.h static_lexer__numworks.h
 
 bin_SCRIPTS = pgiac
 
 install-exec-hook:
+	cp input_lexer.h input_parser.h $(DESTDIR)$(includedir)/giac
 	rm -f $(DESTDIR)$(bindir)/cas_help
 	mv $(DESTDIR)$(bindir)/aide$(EXEEXT) $(DESTDIR)$(bindir)/cas_help
 	ln -sf cas_help $(DESTDIR)$(bindir)/en_cas_help

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-15 09:03+0200\n"
+"POT-Creation-Date: 2019-08-24 10:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2378,12 +2378,12 @@ msgstr "Precisión incorrecta, al usar 1e-12 en vez de "
 msgid "Square is flat!"
 msgstr "¡El cuadrado es plano!"
 
-#: src/global.cc:3399 src/hist.menus:1 src/hist.menus:4 src/History.cc:227
+#: src/global.cc:3400 src/hist.menus:1 src/hist.menus:4 src/History.cc:227
 #: src/History.cc:3727 src/Editeur.cc:2445
 msgid "File"
 msgstr "Archivo"
 
-#: src/global.cc:3772
+#: src/global.cc:3773
 msgid ""
 "\n"
 "Evaluation time: "
@@ -2391,23 +2391,23 @@ msgstr ""
 "\n"
 "Hora de evaluación: "
 
-#: src/global.cc:3788
+#: src/global.cc:3789
 msgid "Thread "
 msgstr "Thread "
 
-#: src/global.cc:3858
+#: src/global.cc:3859
 msgid "Cancel thread "
 msgstr "Cancelar thread "
 
-#: src/global.cc:3880
+#: src/global.cc:3881
 msgid "Evaluation time: "
 msgstr "Hora de evaluación: "
 
-#: src/global.cc:5966
+#: src/global.cc:5967
 msgid "Assigning phase, j, J and rect."
 msgstr ""
 
-#: src/global.cc:5976
+#: src/global.cc:5977
 msgid ""
 "Assigning log2, gamma, fabs, modf, radians and degrees. Not supported: "
 "copysign."
@@ -3829,7 +3829,7 @@ msgstr ""
 "Con la potencia de Giac 1.1.3, B. Parisse y R. De Graeve, Institut Fourier, "
 "Universite Grenoble I, Francia"
 
-#: src/usual.cc:10211
+#: src/usual.cc:10213
 msgid "Warning, Ei(x,1) is defined as -Ei(-x), not as Ei(x)"
 msgstr "Advertencia, Ei(x,1) está definido como -Ei(-x), no como Ei(x)"
 
@@ -4237,27 +4237,27 @@ msgstr ""
 "Advertencia, i suele ser sqrt(-1), en vez de ello, estoy usando una variable "
 "simbólica pero debe verificar su entrada"
 
-#: src/gen.cc:12088
+#: src/gen.cc:12197
 msgid "Empty array"
 msgstr "Matriz vacía"
 
-#: src/gen.cc:12093
+#: src/gen.cc:12202
 msgid "Bad array indexes"
 msgstr "Índices de matriz incorrectos"
 
-#: src/gen.cc:13713 src/Editeur.cc:2492
+#: src/gen.cc:13822 src/Editeur.cc:2492
 msgid "print"
 msgstr "imprimir"
 
-#: src/gen.cc:14449 src/gen.cc:14508
+#: src/gen.cc:14558 src/gen.cc:14617
 msgid "Unable to convert to real "
 msgstr "No es posible convertir en real "
 
-#: src/gen.cc:14594 src/gen.cc:14615 src/gen.cc:14721 src/gen.cc:14740
+#: src/gen.cc:14703 src/gen.cc:14724 src/gen.cc:14830 src/gen.cc:14849
 msgid "real_object + gen"
 msgstr "real_object + gen"
 
-#: src/gen.cc:14877
+#: src/gen.cc:14986
 msgid ""
 "Compile with MPFR or USE_GMP_REPLACEMENTS if you want transcendental long "
 "float support"
@@ -4265,34 +4265,34 @@ msgstr ""
 "Compile con MPFR o USE_GMP_REPLACEMENTS si desea compatibilidad con flotante "
 "largo trascendental"
 
-#: src/gen.cc:15165
+#: src/gen.cc:15274
 msgid "real_interval inv"
 msgstr "real_interval inv"
 
-#: src/gen.cc:15181 src/gen.cc:15203 src/gen.cc:15214 src/gen.cc:15225
-#: src/gen.cc:15236 src/gen.cc:15247 src/gen.cc:15258 src/gen.cc:15269
-#: src/gen.cc:15280 src/gen.cc:15291 src/gen.cc:15302 src/gen.cc:15313
-#: src/gen.cc:15324 src/gen.cc:15335 src/gen.cc:15346
+#: src/gen.cc:15290 src/gen.cc:15312 src/gen.cc:15323 src/gen.cc:15334
+#: src/gen.cc:15345 src/gen.cc:15356 src/gen.cc:15367 src/gen.cc:15378
+#: src/gen.cc:15389 src/gen.cc:15400 src/gen.cc:15411 src/gen.cc:15422
+#: src/gen.cc:15433 src/gen.cc:15444 src/gen.cc:15455
 msgid "real_interval sqrt"
 msgstr "real_interval sqrt"
 
-#: src/gen.cc:15192
+#: src/gen.cc:15301
 msgid "real_interval abs"
 msgstr "real_interval abs"
 
-#: src/gen.cc:15422
+#: src/gen.cc:15531
 msgid "real_interval mul"
 msgstr "real_interval mul"
 
-#: src/gen.cc:15452
+#: src/gen.cc:15561
 msgid "real_interval mul 2"
 msgstr "real_interval mul 2"
 
-#: src/gen.cc:15554
+#: src/gen.cc:15663
 msgid "MPFR error reading binary "
 msgstr "Error de MPFR al leer en binario "
 
-#: src/gen.cc:15556
+#: src/gen.cc:15665
 msgid "Error no MPFR reading "
 msgstr "Error de lectura de no MPFR "
 

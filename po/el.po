@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-15 09:03+0200\n"
+"POT-Creation-Date: 2019-08-24 10:58+0200\n"
 "PO-Revision-Date: 2013-09-09 17:43+0200\n"
 "Last-Translator: Alkis Akritas <akritas@uth.gr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2233,35 +2233,35 @@ msgstr ""
 msgid "Square is flat!"
 msgstr ""
 
-#: src/global.cc:3399 src/hist.menus:1 src/hist.menus:4 src/History.cc:227
+#: src/global.cc:3400 src/hist.menus:1 src/hist.menus:4 src/History.cc:227
 #: src/History.cc:3727 src/Editeur.cc:2445
 msgid "File"
 msgstr "Αρχείο"
 
-#: src/global.cc:3772
+#: src/global.cc:3773
 #, fuzzy
 msgid ""
 "\n"
 "Evaluation time: "
 msgstr "Χρόνος Υπολογισμού: "
 
-#: src/global.cc:3788
+#: src/global.cc:3789
 msgid "Thread "
 msgstr "Νήμα"
 
-#: src/global.cc:3858
+#: src/global.cc:3859
 msgid "Cancel thread "
 msgstr "Ακύρωση νήματος"
 
-#: src/global.cc:3880
+#: src/global.cc:3881
 msgid "Evaluation time: "
 msgstr "Χρόνος Υπολογισμού: "
 
-#: src/global.cc:5966
+#: src/global.cc:5967
 msgid "Assigning phase, j, J and rect."
 msgstr ""
 
-#: src/global.cc:5976
+#: src/global.cc:5977
 msgid ""
 "Assigning log2, gamma, fabs, modf, radians and degrees. Not supported: "
 "copysign."
@@ -3664,7 +3664,7 @@ msgid ""
 "Universite Grenoble I, France"
 msgstr ""
 
-#: src/usual.cc:10211
+#: src/usual.cc:10213
 msgid "Warning, Ei(x,1) is defined as -Ei(-x), not as Ei(x)"
 msgstr ""
 
@@ -4059,60 +4059,60 @@ msgid ""
 "you should check your input"
 msgstr ""
 
-#: src/gen.cc:12088
+#: src/gen.cc:12197
 msgid "Empty array"
 msgstr ""
 
-#: src/gen.cc:12093
+#: src/gen.cc:12202
 msgid "Bad array indexes"
 msgstr ""
 
-#: src/gen.cc:13713 src/Editeur.cc:2492
+#: src/gen.cc:13822 src/Editeur.cc:2492
 msgid "print"
 msgstr "εκτύπωση"
 
-#: src/gen.cc:14449 src/gen.cc:14508
+#: src/gen.cc:14558 src/gen.cc:14617
 msgid "Unable to convert to real "
 msgstr ""
 
-#: src/gen.cc:14594 src/gen.cc:14615 src/gen.cc:14721 src/gen.cc:14740
+#: src/gen.cc:14703 src/gen.cc:14724 src/gen.cc:14830 src/gen.cc:14849
 msgid "real_object + gen"
 msgstr ""
 
-#: src/gen.cc:14877
+#: src/gen.cc:14986
 msgid ""
 "Compile with MPFR or USE_GMP_REPLACEMENTS if you want transcendental long "
 "float support"
 msgstr ""
 
-#: src/gen.cc:15165
+#: src/gen.cc:15274
 msgid "real_interval inv"
 msgstr ""
 
-#: src/gen.cc:15181 src/gen.cc:15203 src/gen.cc:15214 src/gen.cc:15225
-#: src/gen.cc:15236 src/gen.cc:15247 src/gen.cc:15258 src/gen.cc:15269
-#: src/gen.cc:15280 src/gen.cc:15291 src/gen.cc:15302 src/gen.cc:15313
-#: src/gen.cc:15324 src/gen.cc:15335 src/gen.cc:15346
+#: src/gen.cc:15290 src/gen.cc:15312 src/gen.cc:15323 src/gen.cc:15334
+#: src/gen.cc:15345 src/gen.cc:15356 src/gen.cc:15367 src/gen.cc:15378
+#: src/gen.cc:15389 src/gen.cc:15400 src/gen.cc:15411 src/gen.cc:15422
+#: src/gen.cc:15433 src/gen.cc:15444 src/gen.cc:15455
 msgid "real_interval sqrt"
 msgstr ""
 
-#: src/gen.cc:15192
+#: src/gen.cc:15301
 msgid "real_interval abs"
 msgstr ""
 
-#: src/gen.cc:15422
+#: src/gen.cc:15531
 msgid "real_interval mul"
 msgstr ""
 
-#: src/gen.cc:15452
+#: src/gen.cc:15561
 msgid "real_interval mul 2"
 msgstr ""
 
-#: src/gen.cc:15554
+#: src/gen.cc:15663
 msgid "MPFR error reading binary "
 msgstr ""
 
-#: src/gen.cc:15556
+#: src/gen.cc:15665
 msgid "Error no MPFR reading "
 msgstr ""
 

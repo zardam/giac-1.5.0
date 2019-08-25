@@ -211,7 +211,7 @@ namespace giac {
   
   gen _rm_a_z(const gen & args,GIAC_CONTEXT){
     if ( args.type==_STRNG && args.subtype==-1) return  args;
-#if !defined RTOS_THREADX && !defined BESTA_OS && !defined FREERTOS && !defined FXCG
+#if 0 // !defined RTOS_THREADX && !defined BESTA_OS && !defined FREERTOS && !defined FXCG 
     if (variables_are_files(contextptr)){
       char a_effacer[]="a.cas";
       for (;a_effacer[0]<='z';++a_effacer[0]){
@@ -3349,7 +3349,7 @@ namespace giac {
 	  return ret;
 	}
 #ifndef RTOS_THREADX
-#if !defined BESTA_OS && !defined NSPIRE && !defined FXCG
+#if !defined BESTA_OS && !defined NSPIRE && !defined FXCG && !defined NUMWORKS
 #ifdef HAVE_LIBPTHREAD
 	pthread_mutex_lock(&context_list_mutex);
 #endif
@@ -7841,8 +7841,10 @@ namespace giac {
       return x;
     if (is_inf(x))
       return undef;
+#ifndef NUMWORKS
     if (x.type==_FLOAT_)
       return fgamma(x._FLOAT_val);
+#endif
     // return Gamma(get_double(x._FLOAT_val),contextptr);
     if (x.type==_INT_){
       if (x.val<=0)

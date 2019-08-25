@@ -78,7 +78,7 @@ using namespace std;
 #endif // win32
 #endif // ndef bestaos
 
-#if defined VISUALC && !defined BESTA_OS && !defined RTOS_THREADX && !defined FREERTOS
+#if defined VISUALC && !defined BESTA_OS && !defined RTOS_THREADX && !defined FREERTOS 
 #include <Windows.h>
 #endif 
 
@@ -1780,7 +1780,7 @@ extern "C" void Sleep(unsigned int miliSecond);
   int gbasis_logz_age_sort=0,gbasis_stop=0;
   unsigned short int GIAC_PADIC=50;
   const char cas_suffixe[]=".cas";
-#if defined RTOS_THREADX || defined BESTA_OS
+#if defined RTOS_THREADX || defined BESTA_OS || defined(NUMWORKS)
 #ifdef BESTA_OS
   int LIST_SIZE_LIMIT = 100000 ;
   int FACTORIAL_SIZE_LIMIT = 1000 ;
@@ -1788,6 +1788,7 @@ extern "C" void Sleep(unsigned int miliSecond);
 #else
   int LIST_SIZE_LIMIT = 1000 ;
   int FACTORIAL_SIZE_LIMIT = 254 ;
+  int CALL_LAPACK = 1111;
 #endif
   int GAMMA_LIMIT = 100 ;
   int NEWTON_DEFAULT_ITERATION=40;
@@ -3480,7 +3481,7 @@ extern "C" void Sleep(unsigned int miliSecond);
   }
 
 #ifndef RTOS_THREADX
-#if !defined BESTA_OS && !defined NSPIRE && !defined FXCG
+#if !defined BESTA_OS && !defined NSPIRE && !defined FXCG && !defined(NUMWORKS)
   std::map<std::string,context *> * context_names = new std::map<std::string,context *> ;
 
   context::context(const string & name) { 
@@ -3631,7 +3632,7 @@ extern "C" void Sleep(unsigned int miliSecond);
 	}
       }
 #ifndef RTOS_THREADX
-#if !defined BESTA_OS && !defined NSPIRE && !defined FXCG
+#if !defined BESTA_OS && !defined NSPIRE && !defined FXCG && !defined(NUMWORKS)
       if (context_names){
 	map<string,context *>::iterator it=context_names->begin(),itend=context_names->end();
 	for (;it!=itend;++it){
