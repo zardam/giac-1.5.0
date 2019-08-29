@@ -1,7 +1,7 @@
 // -*- mode:C++ ; compile-command: "g++-3.4 -I.. -g -c ifactor.cc -DHAVE_CONFIG_H -DIN_GIAC" -*-
 #include "giacPCH.h"
-#ifndef __MINGW_H
-#define GIAC_MPQS // define if you want to use giac for sieving 
+#if !defined __MINGW_H && !defined NUMWORKS
+#define GIAC_MPQS // define if you want to use giac for sieving
 #endif
 
 #ifdef HAVE_LIBECM
