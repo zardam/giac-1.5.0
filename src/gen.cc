@@ -12552,7 +12552,7 @@ void sprint_double(char * s,double d){
       if (tex)
 	s="\\{";
       else
-	s=abs_calc_mode(contextptr)==38?"{":"list[";
+	s=abs_calc_mode(contextptr)==38?"{":"[";
       break;
     case _GGB__VECT:
       if (calc_mode(contextptr)==1)
