@@ -1204,6 +1204,7 @@
 *((size_t *) at_reduced_quadric),
 *((size_t *) at_ref),
 *((size_t *) at_reflection),
+*((size_t *) at_regroup),
 *((size_t *) at_rem),
 *((size_t *) at_remain),
 *((size_t *) at_remove),
