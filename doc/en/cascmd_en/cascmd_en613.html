@@ -4,47 +4,57 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>The conjugate gradient algorithm:
-conjugate_gradient</title>
+<title>Singular values (HP compatible): SVL, svl</title>
 </head>
 <body >
 <a href="cascmd_en612.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en614.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec735" class="subsection">5.58.4  The conjugate gradient algorithm:
-<span style="font-family:monospace">conjugate_gradient</span></h3>
-<p><a id="hevea_default958"></a></p><p>The <span style="font-family:monospace">conjugate_gradient</span> command takes two mandatory arguments
-and two optional arguments. The mandatory arguments are an <span style="font-style:italic">n</span>× <span style="font-style:italic">n</span> positive
-definite symmetric matrix <span style="font-style:italic">A</span> and a vector <span style="font-style:italic">y</span> of length <span style="font-style:italic">n</span>. The
-optional arguments are a vector <span style="font-style:italic">x</span>0 of length <span style="font-style:italic">n</span> and a positive
-number є.<br>
-<span style="font-family:monospace">conjugate_gradient</span> uses the conjugate gradient algorithm to
-return the solution to <span style="font-style:italic">Ax</span> = <span style="font-style:italic">y</span> to within є or
-<span style="font-family:monospace">epsilon</span>. The vector <span style="font-style:italic">x</span>0 is an optional initial approximation.<br>
-Input:
+<h3 id="sec734" class="subsection">5.57.7  Singular values (HP compatible): <span style="font-family:monospace">SVL, svl</span></h3>
+<p><a id="hevea_default959"></a><a id="hevea_default960"></a></p><p>The <span style="font-family:monospace">SVL</span> (or <span style="font-family:monospace">svl</span>) command takes a square matrix as
+argument.<br>
+<span style="font-family:monospace">SVL</span> returns the singular values of the matrix.</p><p>The singular values of a matrix <span style="font-style:italic">A</span> are the positive square roots of
+the eigenvalues of <span style="font-style:italic">A</span>· <span style="font-style:italic">A</span><sup><span style="font-style:italic">T</span></sup>. So, if <span style="font-style:italic">A</span> is symmetric, the
+singular values are the absolute values of the eigenvalues of <span style="font-style:italic">A</span>.</p><p>Input:
 </p><div class="center">
-<span style="font-family:monospace">conjugate_gradient([[2,1],[1,5]],[1,0])
+<span style="font-family:monospace">SVL([[1,2],[3,4]])
+</span></div><p>
+or:
+</p><div class="center">
+<span style="font-family:monospace">svl([[1,2],[3,4]])
 </span></div><p>
 Output:
 </p><div class="center">
-<span style="font-family:monospace">[5/9,-1/9] 
+<span style="font-family:monospace">[0.365966190626,5.46498570422] 
 </span></div><p>
 Input:
 </p><div class="center">
-<span style="font-family:monospace">conjugate_gradient([[2,1],[1,5]],[1,0],[0.55,-0.11],1e-2)
+<span style="font-family:monospace">evalf(sqrt(eigenvals([[1,2],[3,4]]*[[1,3],[2,4]])))
 </span></div><p>
 Output:
 </p><div class="center">
-<span style="font-family:monospace">[0.555,-0.11] 
+<span style="font-family:monospace">5.46498570422,0.365966190626 
 </span></div><p>
 Input:
 </p><div class="center">
-<span style="font-family:monospace">conjugate_gradient([[2,1],[1,5]],[1,0],[0.55,-0.11],1e-10)
+<span style="font-family:monospace">SVL([[1,4],[4,1]])
+</span></div><p>
+or:
+</p><div class="center">
+<span style="font-family:monospace">svl([[1,4],[4,1]])
+</span></div><p>
+or:
+</p><div class="center">
+<span style="font-family:monospace">[5.0,3.0]
+</span></div><p>
+or:
+</p><div class="center">
+<span style="font-family:monospace">abs(eigenvals([[1,4],[4,1]]))
 </span></div><p>
 Output:
 </p><div class="center">
-<span style="font-family:monospace">[0.555555555556,-0.111111111111] 
+<span style="font-family:monospace">5,3 
 </span></div>
 <hr>
 <a href="cascmd_en612.html"><img src="previous_motif.gif" alt="Previous"></a>

@@ -4,73 +4,70 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>The least squares solution of a linear system:
-LSQ, lsq</title>
+<title>Gauss-Jordan reduction: rref gaussjord</title>
 </head>
 <body >
 <a href="cascmd_en640.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en642.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec766" class="subsection">5.61.9  The least squares solution of a linear system:
-<span style="font-family:monospace">LSQ, lsq</span></h3>
+<h3 id="sec766" class="subsection">5.61.3  Gauss-Jordan reduction: <span style="font-family:monospace">rref gaussjord</span></h3>
 <p>
-<a id="hevea_default995"></a>
-<a id="hevea_default996"></a></p><p>The <span style="font-family:monospace">lsq</span> (or <span style="font-family:monospace">LSQ</span>) command takes two arguments; a
-matrix <span style="font-family:monospace">A</span> and a vector or matrix <span style="font-family:monospace">B</span>.<br>
-<span style="font-family:monospace">lsq</span> returns the least squares solution to the equation
-<span style="font-family:monospace">A*X = B</span>.</p><p>Input:
-</p><div class="center">
-<span style="font-family:monospace">LSQ([[1,2],[3,4]], [5,11])
-</span></div><p>
-Output:
-</p><div class="center">
-<span style="font-family:monospace">[[1],[2]] 
-</span></div><p>
-Input:
-</p><div class="center">
-<span style="font-family:monospace">LSQ([[1,2], [3,4]], [[5,7], [11,9]])
-</span></div><p>
-Output:
-</p><div class="center">
-<span style="font-family:monospace">[[1,-5],[2,6]]
-</span></div><p>Note that<br>
-Input:
-</p><div class="center">
-<span style="font-family:monospace">linsolve([[1,2],[3,4],[3,6]]*[x, y] - [5,11,13],[x, y])
-</span></div><p>
-Output:
-</p><div class="center">
-<span style="font-family:monospace">[] 
-</span></div><p>
-since the linear system has no solution. We can still find the least
-squares solution<br>
-Input:
-</p><div class="center">
-<span style="font-family:monospace">LSQ([[1,2],[3,4],[3,6]],[5,11,13])
-</span></div><p>
-Output:
-</p><div class="center">
-<span style="font-family:monospace">[[11/5],[11/10]]
-</span></div><p>
-The least squares solution<br>
-Input:
-</p><div class="center">
-<span style="font-family:monospace">LSQ ([[3,4]], [12])
-</span></div><p>
-Output:
-</p><div class="center">
-<span style="font-family:monospace">[[36/25],[48/25]] 
-</span></div><p>
-represents the point on the line 3<span style="font-style:italic">x</span> + 4<span style="font-style:italic">y</span> = 12 closest to the origin; <br>
-Input:
-</p><div class="center">
-<span style="font-family:monospace">coordinates(projection(line(3*x+4*y=12),point(0)))
-</span></div><p>
-Output:
-</p><div class="center">
-<span style="font-family:monospace">[36/25,48/25] 
-</span></div>
+<a id="hevea_default997"></a>
+<a id="hevea_default998"></a>
+<a id="sec:rref"></a></p><p><span style="font-family:monospace">rref</span> solves a linear system of equations written in
+matrix form (see also <a href="cascmd_en417.html#sec%3Arrefm">5.36.17</a>) :
+</p><div class="center"><span style="font-family:monospace">A*X=B</span></div><p>
+<span style="font-family:monospace">rref</span> takes one or two arguments.
+</p><ul class="itemize"><li class="li-itemize">
+If <span style="font-family:monospace">rref</span> has only one argument, this argument is the augmented matrix 
+of the system (the matrix obtained by augmenting matrix <span style="font-family:monospace">A</span> to the 
+right with the column vector <span style="font-family:monospace">B</span>).<br>
+The result is a matrix <span style="font-family:monospace">[A1,B1]</span> : <span style="font-family:monospace">A1</span> has zeros both above and under 
+its principal diagonal and has 1 on its principal diagonal, and the solutions 
+of:
+<div class="center"><span style="font-family:monospace">A1*X=B1</span></div> 
+are the same as :
+<div class="center"><span style="font-family:monospace">A*X=B</span></div>
+For example, to solve the system:
+<table class="display dcenter"><tr style="vertical-align:middle"><td class="dcell">⎧<br>
+⎨<br>
+⎩</td><td class="dcell"><table style="border-spacing:6px;border-collapse:separate;" class="cellpading0"><tr><td style="text-align:left;white-space:nowrap" >3<span style="font-style:italic">x</span> + <span style="font-style:italic">y</span></td><td style="text-align:center;white-space:nowrap" >=</td><td style="text-align:right;white-space:nowrap" >−2 </td></tr>
+<tr><td style="text-align:left;white-space:nowrap" >3<span style="font-style:italic">x</span> +2<span style="font-style:italic">y</span></td><td style="text-align:center;white-space:nowrap" >=</td><td style="text-align:right;white-space:nowrap" >2 </td></tr>
+</table></td></tr>
+</table> 
+Input :
+<div class="center"><span style="font-family:monospace">rref([[3,1,-2],[3,2,2]])</span></div>
+Output :
+<div class="center"><span style="font-family:monospace">[[1,0,-2],[0,1,4]]</span></div>
+Hence <span style="font-style:italic">x</span>=−2 and <span style="font-style:italic">y</span>=4 is the solution of this system.<p><span style="font-family:monospace">rref</span> can also solve several linear systems
+of equations having the same first member.
+We write the second members as a column matrix.<br>
+Input :
+</p><div class="center"><span style="font-family:monospace">rref([[3,1,-2,1],[3,2,2,2]])</span></div><p>
+Output :
+</p><div class="center"><span style="font-family:monospace">[[1,0,-2,0],[0,1,4,1]]</span></div><p>
+Which means that (<span style="font-style:italic">x</span>=−2 and <span style="font-style:italic">y</span>=4) is the solution of the system
+</p><table class="display dcenter"><tr style="vertical-align:middle"><td class="dcell">⎧<br>
+⎨<br>
+⎩</td><td class="dcell"><table style="border-spacing:6px;border-collapse:separate;" class="cellpading0"><tr><td style="text-align:left;white-space:nowrap" >3<span style="font-style:italic">x</span> + <span style="font-style:italic">y</span></td><td style="text-align:center;white-space:nowrap" >=</td><td style="text-align:right;white-space:nowrap" >−2 </td></tr>
+<tr><td style="text-align:left;white-space:nowrap" >3<span style="font-style:italic">x</span> +2<span style="font-style:italic">y</span></td><td style="text-align:center;white-space:nowrap" >=</td><td style="text-align:right;white-space:nowrap" >2 </td></tr>
+</table></td></tr>
+</table><p>
+and (<span style="font-style:italic">x</span>=0 and <span style="font-style:italic">y</span>=1) is the solution of the system
+</p><table class="display dcenter"><tr style="vertical-align:middle"><td class="dcell">⎧<br>
+⎨<br>
+⎩</td><td class="dcell"><table style="border-spacing:6px;border-collapse:separate;" class="cellpading0"><tr><td style="text-align:left;white-space:nowrap" >3<span style="font-style:italic">x</span> + <span style="font-style:italic">y</span></td><td style="text-align:center;white-space:nowrap" >=</td><td style="text-align:right;white-space:nowrap" >1 </td></tr>
+<tr><td style="text-align:left;white-space:nowrap" >3<span style="font-style:italic">x</span> +2<span style="font-style:italic">y</span></td><td style="text-align:center;white-space:nowrap" >=</td><td style="text-align:right;white-space:nowrap" >2 </td></tr>
+</table></td></tr>
+</table></li><li class="li-itemize">If <span style="font-family:monospace">rref</span> has two parameters, the second parameter must be an integer 
+<span style="font-style:italic">k</span>, and the Gauss-Jordan reduction will be performed on (at most)
+the first <span style="font-style:italic">k</span> columns.<br>
+Input :
+<div class="center"><span style="font-family:monospace">rref([[3,1,-2,1],[3,2,2,2]],1)</span></div>
+Output :
+<div class="center"><span style="font-family:monospace">[[3,1,-2,1],[0,1,4,1]]</span></div>
+</li></ul>
 <hr>
 <a href="cascmd_en640.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>

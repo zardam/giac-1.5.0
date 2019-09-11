@@ -4,45 +4,38 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>Writing variable values to a file: write</title>
+<title>The while loop: while</title>
 </head>
 <body >
 <a href="cascmd_en798.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en800.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec1031" class="subsection">11.4.3  Writing variable values to a file: <span style="font-family:monospace">write</span></h3>
+<h3 id="sec1030" class="subsection">11.3.5  The while loop: <span style="font-family:monospace">while</span></h3>
 <p>
-<a id="hevea_default1421"></a></p><p>You can save variable values to a file, to be read later, with the
-<span style="font-family:monospace">write</span> command. This command takes a string for a file name
-and a list of variables to save. For example, if <span style="font-family:monospace">a</span> has the
-value <span style="font-family:monospace">3.14</span> and <span style="font-family:monospace">b</span> has the value <span style="font-family:monospace">7</span>, then
+<a id="hevea_default1423"></a></p><p>The <span style="font-family:monospace">while</span> loop is used to repeat a code block as long as a
+given condition holds. To use it, enter <span style="font-family:monospace">while</span>, the
+condition, and then a code block. For example, to add the terms of
+the harmonic series 1 + 1/2 + 1/3 + 1/4 + … until a term is less
+than 0.05, you could initialize the sum <span style="font-family:monospace">S</span> to 0 and let
+<span style="font-family:monospace">j</span> be the first term 1. Then
 </p><div class="center">
-<span style="font-family:monospace">write("foo",a,b)</span>
+<span style="font-family:monospace">while (1/j &gt;= 0.05) {S := S + 1/j; j := j+1;}</span>
 </div><p>
-will create a file named “foo” with the contents
-</p><pre class="verbatim">  a:=(3.14);
-  b:=7;
-</pre><p>
-If you wanted to store the first million digits of π to a file,
-you could set it equal to a variable
+will find the sum. This line is the same as
 </p><div class="center">
-<span style="font-family:monospace">pidec := evalf(pi,10^6):;</span>
+<span style="font-family:monospace">tantque (1/j &gt;= 0.05) faire S := S + 1/j; j := j+1; ftantque</span>
+</div><p>Note that a <span style="font-family:monospace">while</span> loop can also be written as a <span style="font-family:monospace">for</span>
+loop. For example, as long as <span style="font-family:monospace">S</span> is set to 0 and <span style="font-family:monospace">j</span>
+is set to 1 , the above loop
+can be written as 
+</p><div class="center">
+<span style="font-family:monospace">for (;1/j &gt;= 0.05;) {S := S + 1/j; j := j+1;}</span>
 </div><p>
-and then store it in a file
+or, with only <span style="font-family:monospace">S</span> set to 0,
 </p><div class="center">
-<span style="font-family:monospace">write("pi1million",pidec)</span>
-</div><p>If you want to restore the values of variables saved this way, for
-example in a different session or if you have purged the
-variables, then you can use the <span style="font-family:monospace">read</span> command, which simply
-takes a file name as a string. If, in a different session, you want
-to use the values of <span style="font-family:monospace">a</span> and <span style="font-family:monospace">b</span> above, the command
-</p><div class="center">
-<span style="font-family:monospace">read("foo")</span>
-</div><p>
-will give them the values <span style="font-family:monospace">3.14</span> and <span style="font-family:monospace">7</span> again. Note
-that this will silently overwrite any values that <span style="font-family:monospace">a</span> and
-<span style="font-family:monospace">b</span> might have had.</p>
+<span style="font-family:monospace">for (j := 1; 1/j &gt;= 0.05; j++) {S := S + 1/j;}</span>
+</div>
 <hr>
 <a href="cascmd_en798.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>

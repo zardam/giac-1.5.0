@@ -4,92 +4,89 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>The Wilconon test polynomial: wilcoxonp</title>
+<title>The Cauchy distribution</title>
 </head>
 <body >
 <a href="cascmd_en724.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en726.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec933" class="subsection">8.4.18  The Wilconon test polynomial: <span style="font-family:monospace">wilcoxonp</span><a id="hevea_default1280"></a></h3>
-<p>The <span style="font-family:monospace">wilcoxonp</span> command will compute the polynomial for the
-Wilcoxon or Mann-Whitney test; it can take one or two parameters. If
+<h3 id="sec921" class="subsection">8.4.12  The Cauchy distribution</h3>
+<h4 id="sec922" class="subsubsection">The probability density function for the Cauchy
+distribution: <span style="font-family:monospace">cauchy</span><a id="hevea_default1263"></a> <span style="font-family:monospace">cauchyd</span><a id="hevea_default1264"></a></h4>
+<p>The probability density function of the Cauchy distribution (sometimes
+called the Lorentz distribution) is given by the
+<span style="font-family:monospace">cauchy</span> (or <span style="font-family:monospace">cauchyd</span>) command. The Cauchy
+distribution depends on two parameters <span style="font-style:italic">a</span> and <span style="font-style:italic">b</span>, and the value of
+the density function at <span style="font-style:italic">x</span> is 
+<span style="font-family:monospace">cauchy</span>(<span style="font-style:italic">a</span>,<span style="font-style:italic">b</span>,<span style="font-style:italic">x</span>) = <span style="font-style:italic">b</span>/(π ((<span style="font-style:italic">x</span>−<span style="font-style:italic">a</span>)<sup>2</sup> + <span style="font-style:italic">b</span><sup>2</sup>)).
+If you enter 
+</p><div class="center">
+<span style="font-family:monospace">cauchy(2.2,1.5,0.8)
+</span></div><p>
+you will get
+</p><div class="center">
+<span style="font-family:monospace">0.113412073462
+</span></div><p>If you leave out the parameters <span style="font-style:italic">a</span> and <span style="font-style:italic">b</span>, they will default to 0
+and 1, respectively; <span style="font-family:monospace">cauchy</span>(<span style="font-style:italic">x</span>) = 1/(π (<span style="font-style:italic">x</span><sup>2</sup> + 1)). If
 you enter
 </p><div class="center">
-<span style="font-family:monospace">wilcoxonp(4)
+<span style="font-family:monospace">cauchy(0.3)
 </span></div><p>
 you will get
 </p><div class="center">
-<span style="font-family:monospace">poly1[1/16,1/16,1/16,1/8,1/8,1/8,1/8,1/8,1/16,1/16,1/16]
-</span></div><p>
-and if you enter
-</p><div class="center">
-<span style="font-family:monospace">wilcoxonp(4,3)
-</span></div><p>
-you will get
-</p><div class="center">
-<span style="font-family:monospace">poly1[1/35,1/35,2/35,3/35,4/35,4/35,1/7,4/35,4/35,3/35,2/35,1/35,1/35]
+<span style="font-family:monospace">0.292027418517
 </span></div>
-<h4 id="sec934" class="subsubsection">The Wilcoxon/Mann-Whitney statistic: <span style="font-family:monospace">wilcoxons</span><a id="hevea_default1281"></a></h4>
-<p>Given two lists, or one list and a real number (a median), the
-<span style="font-family:monospace">wilcoxons</span> command will return the Wilcoxon or Mann-Whitney statistic. 
+<h4 id="sec923" class="subsubsection">The cumulative distribution function for the Cauchy
+distribution: <span style="font-family:monospace">cauchy_cdf</span><a id="hevea_default1265"></a> <span style="font-family:monospace">cauchyd_cdf</span><a id="hevea_default1266"></a></h4>
+<p>The command <span style="font-family:monospace">cauchy_cdf</span> (or <span style="font-family:monospace">cauchyd_cdf</span>) computes
+the cumulative distribution function for the Cauchy distribution.
+Like <span style="font-family:monospace">cauchy</span>, you can give it the parameters <span style="font-style:italic">a</span> and <span style="font-style:italic">b</span>, or
+let them default to 0 and 1. The Cauchy cumulative distribution
+function is given by the formula
+<span style="font-family:monospace">cauchy_cdf</span>(<span style="font-style:italic">a</span>,<span style="font-style:italic">b</span>,<span style="font-style:italic">x</span>) = 1/2 + arctan((<span style="font-style:italic">x</span>−<span style="font-style:italic">a</span>)/<span style="font-style:italic">b</span>)/π.
 If you enter
 </p><div class="center">
-<span style="font-family:monospace">wilcoxons([1,3,4,5,7,8,8,12,15,17],10)
+<span style="font-family:monospace">cauchy_cdf(2,3,1.4)
 </span></div><p>
 you will get
 </p><div class="center">
-<span style="font-family:monospace">18
+<span style="font-family:monospace">0.437167041811
 </span></div><p>
 and if you enter
 </p><div class="center">
-<span style="font-family:monospace">wilcoxons([1,3,4,5,7,8,8,12,15,17],[2,6,10,11,13,14,15,18,19,20])
+<span style="font-family:monospace">cauchy_cdf(1.4)
 </span></div><p>
 you will get
 </p><div class="center">
-<span style="font-family:monospace">128.5
+<span style="font-family:monospace">0.802568456711
+</span></div><p>If you give <span style="font-family:monospace">cauchy_cdf</span> an extra argument (with or without
+the parameters), you will get the probability that
+the random variable lies between two values;
+<span style="font-family:monospace">cauchy_cdf(</span><span style="font-style:italic">a</span><span style="font-family:monospace">,</span><span style="font-style:italic">b</span><span style="font-family:monospace">,</span><span style="font-style:italic">x</span><span style="font-family:monospace">,</span><span style="font-style:italic">y</span><span style="font-family:monospace">)</span> = Prob(<span style="font-style:italic">x</span> ≤ <span style="font-style:italic">X</span> ≤ <span style="font-style:italic">y</span>). If you
+enter
+</p><div class="center">
+<span style="font-family:monospace">cauchy_cdf(2,3,-1.9,1.4)
+</span></div><p>
+you will get
+</p><div class="center">
+<span style="font-family:monospace">0.228452641651
 </span></div>
-<h4 id="sec935" class="subsubsection">The Wilcoxon or Mann-Whitney test: <span style="font-family:monospace">wilcoxont</span></h4>
-<p>
-<a id="hevea_default1282"></a></p><p>The <span style="font-family:monospace">wilcoxont</span> command will perform the Wilcoxon or
-Mann-Whitney test, given two samples or one sample and a number (a
-median). It can additionally take an optional third argument of a
-function and an optional fourth argument of a real number.
+<h4 id="sec924" class="subsubsection">The inverse distribution function for the
+Cauchy distribution: <span style="font-family:monospace">cauchy_icdf</span><a id="hevea_default1267"></a> <span style="font-family:monospace">cauchyd_icdf</span><a id="hevea_default1268"></a></h4>
+<p>Given a value <span style="font-style:italic">h</span>, the inverse distribution function gives
+the value of <span style="font-style:italic">x</span> with <span style="font-family:monospace">Prob</span>(<span style="font-style:italic">X</span> ≤ <span style="font-style:italic">x</span>) = <span style="font-style:italic">h</span>.
+The <span style="font-family:monospace">cauchy_icdf</span> will compute the
+inverse distribution for the Cauchy distribution. (If no
+parameters are given, they will be assumed to be 0 and 1.)
 If you enter
 </p><div class="center">
-<span style="font-family:monospace">wilcoxont([1,2,3,4,5,7,8,8,12,15,17],[2,6,10,11,13,14,15,18,19,20])
+<span style="font-family:monospace">cauchy_icdf(2,3,0.23)
 </span></div><p>
 you will get
-</p><pre class="verbatim">   Mann-Whitney 2-sample test, H0 same Median, H1 &lt;&gt;
-   ranksum 93.0, shifted ranksum 27.0
-   u1=83 ,u2=27, u=min(u1,u2)=27
-   Limit value to reject H0 26
-   P-value 9055/176358 (0.0513444244094), alpha=0.05 H0 not rejected 
-   1
-\end{center}
-If you enter
-\begin{center}
-  \tt
-  wilcoxont([1,3,4,5,7,8,8,12,15,17],[2,6,10,11,13,14,15,18,19,20],0.3)
-\end{center}
-you will get
-\begin{verbatim}
-   Mann-Whitney 2-sample test, H0 same Median, H1 &lt;&gt;
-   ranksum 81.5, shifted ranksum 26.5
-   u1=73.5 ,u2=26.5, u=min(u1,u2)=26.5
-   Limit value to reject H0 35
-   P-value 316/4199 (0.0752560133365), alpha=0.3 H0 rejected
-   0
-</pre><p>
-and if you enter
 </p><div class="center">
-<span style="font-family:monospace">wilcoxont([1,3,4,5,7,8,8,12,15,17] ,10,‘&gt;‘,0.05)
-</span></div><p>
-you will get
-</p><pre class="verbatim">   Wilcoxon 1-sample test, H0 Median=10, H1 M&lt;&gt;10
-   Wilcoxon statistic: 18, p-value: 0.375, confidence level: 0.05
-   1
-</pre>
+<span style="font-family:monospace">-1.40283204777
+</span></div>
 <hr>
 <a href="cascmd_en724.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>

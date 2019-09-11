@@ -1352,6 +1352,7 @@ int main(int ARGC, char *ARGV[]){
      ********************************************************* */
   if ( intexmacs){
     giac::html_help_init(ARGV[0],false);
+    giac::enable_texmacs_compatible_latex_export(true);
     int out_handle;
 #ifdef WITH_GNUPLOT
     giac::run_gnuplot(out_handle);

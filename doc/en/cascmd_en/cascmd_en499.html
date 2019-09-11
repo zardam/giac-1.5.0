@@ -4,45 +4,89 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>Norms of a vector : maxnorm l1norm l2norm
-norm</title>
+<title>Make a list of integers: range</title>
 </head>
 <body >
 <a href="cascmd_en498.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en500.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec594" class="subsection">5.44.1  Norms of a vector : <span style="font-family:monospace">maxnorm l1norm l2norm
-norm</span></h3>
-<p><a id="hevea_default767"></a><a id="ssec:vectornorms"></a>
-The instructions to compute the different norm of a vector are :
+<h3 id="sec593" class="subsection">5.43.40  Make a list of integers: <span style="font-family:monospace">range</span></h3>
+<p><a id="hevea_default769"></a></p><p>The <span style="font-family:monospace">range</span> command takes one, two or three arguments.
 </p><ul class="itemize"><li class="li-itemize">
-<span style="font-family:monospace">maxnorm</span> returns the <span style="font-style:italic">l</span><sup>∞</sup> norm of a
-vector, 
-defined as the maximum of the absolute values of its 
-coordinates<a id="hevea_default768"></a><a id="sec:maxnormv"></a>.<br>
-Input :
-<div class="center"><span style="font-family:monospace">maxnorm([3,-4,2])</span></div>
-Output :
-<div class="center"><span style="font-family:monospace">4</span></div>
-Indeed : <span style="font-family:monospace">x=3, y=-4, z=2</span> and <span style="font-family:monospace">4=max(|x|,|y|,|z|)</span>.
-</li><li class="li-itemize"><span style="font-family:monospace">l1norm</span> returns the <span style="font-family:monospace"><span style="font-style:italic">l</span></span><sup><span style="font-family:monospace">1</span></sup> norm of a 
-vector defined as the sum of the absolute values of its 
-coordinates<a id="hevea_default769"></a><a id="sec:l1normv"></a>.<br>
-Input :
-<div class="center"><span style="font-family:monospace">l1norm([3,-4,2])</span></div>
-Output :
-<div class="center"><span style="font-family:monospace">9</span></div>
-Indeed : <span style="font-family:monospace">x=3, y=-4, z=2</span> and <span style="font-family:monospace">9=|x|+|y|+|z|</span>.
-</li><li class="li-itemize"><span style="font-family:monospace">norm</span> or <span style="font-family:monospace">l2norm</span> returns the 
-<span style="font-style:italic">l</span><sup>2</sup> norm of a vector defined as the square root 
-of the sum of the squares of its 
-coordinates<a id="hevea_default770"></a><a id="sec:l2normv"></a>.<br>
-Input :
-<div class="center"><span style="font-family:monospace">norm([3,-4,2])</span></div>
-Output :
-<div class="center"><span style="font-family:monospace">sqrt(29)</span></div>
-Indeed : <span style="font-family:monospace">x=3, y=-4, z=2</span> and  29=|<span style="font-style:italic">x</span>|<sup>2</sup>+|<span style="font-style:italic">y</span>|<sup>2</sup>+|<span style="font-style:italic">z</span>|<sup>2</sup>.
+For one argument, the argument must be a non-negative integer <span style="font-style:italic">n</span>.
+<span style="font-family:monospace">range</span> will then return the list <span style="font-family:monospace">[0,1,…,</span><span style="font-style:italic">n</span>−1<span style="font-family:monospace">]</span><br>
+ Input:
+<div class="center">
+<span style="font-family:monospace">range(5)
+</span></div>
+Output:
+<div class="center">
+<span style="font-family:monospace">[0,1,2,3,4] 
+</span></div>
+</li><li class="li-itemize">For two arguments, the arguments must be two numbers <span style="font-style:italic">a</span> and <span style="font-style:italic">b</span>,
+with <span style="font-style:italic">a</span> ≤ <span style="font-style:italic">b</span>. <span style="font-family:monospace">range</span> will then return the list
+<span style="font-family:monospace">[</span><span style="font-style:italic">a</span><span style="font-family:monospace">, </span><span style="font-style:italic">a</span>+1<span style="font-family:monospace">,…]</span> up to, but not including, <span style="font-style:italic">b</span>.<br>
+ Input:
+<div class="center">
+<span style="font-family:monospace">range(4,10)
+</span></div>
+Output:
+<div class="center">
+<span style="font-family:monospace">[4,5,6,7,8,9] 
+</span></div>
+</li><li class="li-itemize">For three arguments, the arguments must be three numbers <span style="font-style:italic">a</span>, <span style="font-style:italic">b</span>
+and a non-zero <span style="font-style:italic">p</span>. <span style="font-family:monospace">range</span> will then return the list 
+<span style="font-family:monospace">[</span><span style="font-style:italic">a</span><span style="font-family:monospace">, </span><span style="font-style:italic">a</span>+<span style="font-style:italic">p</span><span style="font-family:monospace">,</span><span style="font-style:italic">a</span>+2<span style="font-style:italic">p</span><span style="font-family:monospace">,…]</span> up to, but not including, <span style="font-style:italic">b</span>.
+If <span style="font-style:italic">p</span> &gt; 0, then <span style="font-style:italic">a</span> ≤ <span style="font-style:italic">b</span>; if <span style="font-style:italic">p</span> &lt; 0, then <span style="font-style:italic">a</span> ≥ <span style="font-style:italic">b</span>.<br>
+ Input:
+<div class="center">
+<span style="font-family:monospace">range(4,13,2)
+</span></div>
+Output:
+<div class="center">
+<span style="font-family:monospace">[4,6,8,10,12] 
+</span></div>
+Input:
+<div class="center">
+<span style="font-family:monospace">range(10,4,-1)
+</span></div>
+Output:
+<div class="center">
+<span style="font-family:monospace">[10,9,8,7,6,5] 
+</span></div>
+</li></ul><p>The <span style="font-family:monospace">range</span> command can be used to create a list of values
+<span style="font-style:italic">f</span>(<span style="font-style:italic">k</span>), where <span style="font-style:italic">k</span> is an integer satisfying a certain condition.
+</p><ul class="itemize"><li class="li-itemize">
+You can list the values of an expression in a variable which
+goes over a range defined by <span style="font-family:monospace">range</span>.<br>
+ Input:
+<div class="center">
+<span style="font-family:monospace">[k^2 + k for k in range(10)]
+</span></div>
+Output:
+<div class="center">
+<span style="font-family:monospace">[0,2,6,12,20,30,42,56,72,90] 
+</span></div>
+</li><li class="li-itemize">YOu can list the values of an expression in a variable which
+goes over a range defined by <span style="font-family:monospace">range</span> and which satisfies a
+given condition.<br>
+ Input:
+<div class="center">
+<span style="font-family:monospace">[k for k in range (4,10) if isprime(k)] 
+</span></div> 
+Output:
+<div class="center">
+<span style="font-family:monospace">[5,7] 
+</span></div>
+Input:
+<div class="center">
+<span style="font-family:monospace">[k^2 + k for k in range (1,10,2) if isprime(k)] 
+</span></div> 
+Output:
+<div class="center">
+<span style="font-family:monospace">[12,30,56] 
+</span></div>
 </li></ul>
 <hr>
 <a href="cascmd_en498.html"><img src="previous_motif.gif" alt="Previous"></a>

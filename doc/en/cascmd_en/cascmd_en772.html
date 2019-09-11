@@ -4,22 +4,48 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>The program editor</title>
+<title>Convert between Celsius and Fahrenheit:
+Celsius2Fahrenheit,
+Fahrenheit2Celsius</title>
 </head>
 <body >
 <a href="cascmd_en771.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en773.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec998" class="subsection">11.1.1  The program editor</h3>
-<p><span style="font-family:monospace">Xcas</span> provides a program editor, which you can open with
-<span style="font-family:monospace">Alt+P</span>. This can be useful for writing small programs, but
-for writing larger programs you may want to use your usual editor.
-(Note that this requires an editor, such as <span style="font-family:monospace">emacs</span>, and not a
-word processor.) If you use your own editor, then you will need to
-save the program to a file, such as <span style="font-family:monospace">myprog.cxx</span>, and then load
-it into <span style="font-family:monospace">Xcas</span> with the command line command <span style="font-family:monospace">load</span>, as
-in <span style="font-family:monospace">load("myprog.cxx")</span>.</p>
+<h3 id="sec995" class="subsection">10.1.5  Convert between Celsius and Fahrenheit:
+<span style="font-family:monospace">Celsius2Fahrenheit,
+Fahrenheit2Celsius</span></h3>
+<p><a id="hevea_default1338"></a>
+<a id="hevea_default1339"></a></p><p>The <span style="font-family:monospace">Celsius2Fahrenheit</span> command takes a number as an argument,
+representing a temperature in degrees Celsius.<br>
+<span style="font-family:monospace">Celsius2Fahrenheit</span> returns the number representing the
+temperature in Fahrenheit.<br>
+Input:
+</p><div class="center">
+<span style="font-family:monospace">Celsius2Fahrenheit(a)
+</span></div><p>
+Output:
+</p><div class="center">
+<span style="font-family:monospace">a*9/5+32 
+</span></div><p>
+Input:
+</p><div class="center">
+<span style="font-family:monospace">Celsius2Fahrenheit(0)
+</span></div><p>
+Output:
+</p><div class="center">
+<span style="font-family:monospace">32 
+</span></div><p>The <span style="font-family:monospace">Fahrenheit2Celsius</span> command converts Fahrenheit
+temperatures to Celsius.<br>
+Input:
+</p><div class="center">
+<span style="font-family:monospace">Fahrenheit2Celsius(212)
+</span></div><p>
+Output:
+</p><div class="center">
+<span style="font-family:monospace">100 
+</span></div>
 <hr>
 <a href="cascmd_en771.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>

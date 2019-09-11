@@ -4,50 +4,34 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>Gram-Schmidt orthonormalization : gramschmidt</title>
+<title>Singular value decomposition : svd</title>
 </head>
 <body >
 <a href="cascmd_en613.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en615.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec736" class="subsection">5.58.5  Gram-Schmidt orthonormalization : <span style="font-family:monospace">gramschmidt</span></h3>
-<p><a id="hevea_default959"></a>
-<span style="font-family:monospace">gramschmidt</span> takes one or two arguments : 
-</p><ul class="itemize"><li class="li-itemize">
-a matrix viewed as a list of row vectors, 
-the scalar product being the canonical
-scalar product, or
-</li><li class="li-itemize">a list of elements 
-that is a basis of a vector subspace, and a function that defines a scalar 
-product on this vector space.
-</li></ul><p>
-<span style="font-family:monospace">gramschmidt</span> returns an orthonormal basis for this scalar product.<br>
-Input :
-</p><div class="center"><span style="font-family:monospace">normal(gramschmidt([[1,1,1],[0,0,1],[0,1,0]]))</span></div><p>
-Or input :
-</p><div class="center"><span style="font-family:monospace">normal(gramschmidt([[1,1,1],[0,0,1],[0,1,0]],dot))</span></div><p>
-Output :
-</p><div class="center"><span style="font-family:monospace">[[(sqrt(3))/3,(sqrt(3))/3,(sqrt(3))/3],[(-(sqrt(6)))/6,</span><br>
- <span style="font-family:monospace">(-(sqrt(6)))/6,(sqrt(6))/3],[(-(sqrt(2)))/2,(sqrt(2))/2,0]]</span></div><p>
-<span style="font-weight:bold">Example</span><br>
-We define a scalar product on the vector space of 
-polynomials by: 
-</p><table class="display dcenter"><tr style="vertical-align:middle"><td class="dcell"><span style="font-style:italic">P</span>· <span style="font-style:italic">Q</span>=</td><td class="dcell"><span style="font-size:xx-large">∫</span></td><td class="dcell"><table class="display"><tr><td class="dcell" style="text-align:left">1</td></tr>
-<tr><td class="dcell" style="text-align:left"><br>
-<br>
-</td></tr>
-<tr><td class="dcell" style="text-align:left">−1</td></tr>
-</table></td><td class="dcell"><span style="font-style:italic">P</span>(<span style="font-style:italic">x</span>) <span style="font-style:italic">Q</span>(<span style="font-style:italic">x</span>)<span style="font-style:italic">dx</span> </td></tr>
+<h3 id="sec735" class="subsection">5.57.8  Singular value decomposition : <span style="font-family:monospace">svd</span></h3>
+<p>
+<a id="hevea_default961"></a></p><p><span style="font-family:monospace">svd</span> (singular value decomposition) takes as argument a numeric
+square matrix of size <span style="font-style:italic">n</span>.<br>
+<span style="font-family:monospace">svd(A)</span> returns an orthogonal matrix <span style="font-style:italic">U</span>, the diagonal <span style="font-style:italic">s</span> of a diagonal
+matrix <span style="font-style:italic">S</span> and an orthogonal matrix <span style="font-style:italic">Q</span> (<sup><span style="font-style:italic">t</span></sup><span style="font-style:italic">Q</span>*<span style="font-style:italic">Q</span>=<span style="font-style:italic">I</span>) such that :
+</p><table class="display dcenter"><tr style="vertical-align:middle"><td class="dcell"><span style="font-style:italic">A</span>=<span style="font-style:italic">U</span> <span style="font-style:italic">S</span><sup><span style="font-style:italic">t</span></sup> <span style="font-style:italic">Q</span> </td></tr>
 </table><p>
 Input :
-</p><div class="center"><span style="font-family:monospace">gramschmidt([1,1+x],(p,q)-&gt;integrate(p*q,x,-1,1))</span></div><p>
-Or define the function <span style="font-family:monospace">p_scal</span>, input :<br>
-<span style="font-family:monospace">p_scal(p,q):=integrate(p*q,x,-1,1)</span><br>
-then input :
-</p><div class="center"><span style="font-family:monospace">gramschmidt([1,1+x],p_scal)</span></div><p>
+</p><div class="center"><span style="font-family:monospace">svd([[1,2],[3,4]])</span></div><p>
 Output :
-</p><div class="center"><span style="font-family:monospace">[1/(sqrt(2)),(1+x-1)/sqrt(2/3)]</span></div>
+</p><div class="center"><span style="font-family:monospace">[[-0.404553584834,-0.914514295677],[-0.914514295677, 0.404553584834]], [5.46498570422,0.365966190626], [[-0.576048436766,0.81741556047],[-0.81741556047, -0.576048436766]]</span></div><p>
+Input :
+</p><div class="center"><span style="font-family:monospace">(U,s,Q):=svd([[3,5],[4,5]])</span></div><p>
+Output :
+</p><div class="center"><span style="font-family:monospace">[[-0.672988041811,-0.739653361771],[-0.739653361771, 0.672988041811]],[8.6409011028,0.578643354497], [[-0.576048436766,0.81741556047],[-0.81741556047, -0.576048436766]]</span></div><p>
+Verification :<br>
+Input :
+</p><div class="center"><span style="font-family:monospace">U*diag(s)*tran(Q)</span></div><p>
+Output :
+</p><div class="center"><span style="font-family:monospace">[[3.0,5.0],[4.0,5.0]]</span></div>
 <hr>
 <a href="cascmd_en613.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>

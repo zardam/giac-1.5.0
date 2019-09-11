@@ -4,42 +4,30 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>Quartiles: quartiles quartile1 quartile3</title>
+<title>Animation of a 3D graph : animate3d</title>
 </head>
 <body >
 <a href="cascmd_en679.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en681.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec836" class="subsection">8.1.5  Quartiles: <span style="font-family:monospace">quartiles</span><a id="hevea_default1154"></a> <span style="font-family:monospace">quartile1</span><a id="hevea_default1155"></a> <span style="font-family:monospace">quartile3</span><a id="hevea_default1156"></a></h3>
-<p>Recall that the quartiles of a list of numbers divide it into four
-equal parts; the first quartile is the number <span style="font-style:italic">q</span><sub>1</sub> such that
-one-fourth of the list numbers fall below <span style="font-style:italic">q</span><sub>1</sub>; i.e., the median of
-that part of the list which fall at or below the list median. The
-second quartiles is the number <span style="font-style:italic">q</span><sub>2</sub> such that half of the list
-numbers fall at or below <span style="font-style:italic">q</span><sub>2</sub>; more specifically, the median of the
-list. And of course the third quartile is the number <span style="font-style:italic">q</span><sub>3</sub> such that
-three-fourths of the list numbers fall at or below <span style="font-style:italic">q</span><sub>3</sub>.</p><p>The function <span style="font-family:monospace">quartiles</span> takes a list and returns a column
-vector consisting of the minimum of the list, the first quartile, the second
-quartile, the third quartile and the maximum. If you enter
+<h3 id="sec834" class="subsection">7.21.2  Animation of a 3D graph : <span style="font-family:monospace">animate3d</span></h3>
+<p><a id="hevea_default1153"></a>
+<span style="font-family:monospace">animate3d</span> can create a 3-d animation with 
+function graphs depending on a parameter. The parameter is specified as
+the third argument of <span style="font-family:monospace">animate3d</span>, the number of pictures
+as fourth argument with 
+<span style="font-family:monospace">frames=</span><a id="hevea_default1154"></a>number, the remaining arguments
+are the same as those of the <span style="font-family:monospace">plotfunc</span> command, see
+section <a href="cascmd_en665.html#sec%3Aplotfunc3">7.4.2</a>, p. <a href="cascmd_en665.html#sec%3Aplotfunc3">??</a>.<br>
+Input :
 </p><div class="center">
-<span style="font-family:monospace">A := [0,1,2,3,4,5,6,7,8,9,10,11];<br>
- quartiles(A)
-</span></div><p>
-you will get
-</p><div class="center">
-<span style="font-family:monospace">[[0.0],[2.0],[5.0],[8.0],[11.0]]
-</span></div><p>You can get the individual entries of this vector with the commands
-<span style="font-family:monospace">min</span>, <span style="font-family:monospace">quartile1</span>, <span style="font-family:monospace">median</span>, <span style="font-family:monospace">quartile2</span>
-and <span style="font-family:monospace">max</span>.</p><p>Just as with median, the <span style="font-family:monospace">quartiles</span> function can take a second
-argument consisting of weights for the first argument; for example,
-</p><div class="center">
-<span style="font-family:monospace">quartiles(A,A)
-</span></div><p>
-would return
-</p><div class="center">
-<span style="font-family:monospace">[0,6,8,10,11]
-</span></div>
+<span style="font-family:monospace">animate3d(x</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2+a*y</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2,[x=-2..2,y=-2..2],a=-2..2, frames=10,display=red+filled)</span>
+</div><p>
+Output :
+</p><div class="center"><span style="font-family:monospace">a sequence of graphic representations
+of z=x</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2+</span><span style="font-style:italic">a</span><span style="font-family:monospace">*y</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2 for 11 values of </span><span style="font-style:italic">a</span><span style="font-family:monospace"> between -2 and 2</span>
+</div>
 <hr>
 <a href="cascmd_en679.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>

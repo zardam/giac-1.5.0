@@ -4,53 +4,32 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>Testing a distribution with the Kolmogorov-Smirnov
-distribution: kolmogorovt</title>
+<title>Markov chains: markov</title>
 </head>
 <body >
 <a href="cascmd_en736.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
-<a href="cascmd_en739.html"><img src="next_motif.gif" alt="Next"></a>
+<a href="cascmd_en738.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec949" class="subsection">8.5.5  Testing a distribution with the Kolmogorov-Smirnov
-distribution: <span style="font-family:monospace">kolmogorovt</span><a id="hevea_default1294"></a></h3>
-<p>The <span style="font-family:monospace">kolmogorovt</span> command will use the Kolmogorov test to compare
-sample data to a specified continuous distribution.
-You need to provide <span style="font-family:monospace">kolmogorovt</span> with either two lists of data
-or a list of data followed by the name of a distribution with the
-parameters.
-The <span style="font-family:monospace">kolmogorovt</span> command will return three values:
-</p><ul class="itemize"><li class="li-itemize">
-The <span style="font-style:italic">D</span> statistic, which is the maximum distance between the
-cumulative distribution functions of the samples or the sample and
-the given distribution.
-</li><li class="li-itemize">The <span style="font-style:italic">K</span> value, where <span style="font-style:italic">K</span> = <span style="font-style:italic">D</span>√<span style="text-decoration:overline"><span style="font-style:italic">n</span></span> (for a single data set,
-where <span style="font-style:italic">n</span> is the size of the data set) or <span style="font-style:italic">K</span>=<span style="font-style:italic">D</span>√<span style="text-decoration:overline"><span style="font-style:italic">n</span></span><sub><span style="text-decoration:overline">1</span></sub><span style="text-decoration:overline"> </span><span style="text-decoration:overline"><span style="font-style:italic">n</span></span><sub><span style="text-decoration:overline">2</span></sub><span style="text-decoration:overline"> /(</span><span style="text-decoration:overline"><span style="font-style:italic">n</span></span><sub><span style="text-decoration:overline">1</span></sub><span style="text-decoration:overline"> +
-</span><span style="text-decoration:overline"><span style="font-style:italic">n</span></span><sub><span style="text-decoration:overline">2</span></sub><span style="text-decoration:overline">)</span> (when there are two data sets, with sizes <span style="font-style:italic">n</span><sub>1</sub> and <span style="font-style:italic">n</span><sub>2</sub>).
-The <span style="font-style:italic">K</span> value will tend towards the Kolmogorov-Smirnov distribution
-as the size of the data set goes to infinity.
-</li><li class="li-itemize"><span style="font-family:monospace">1 - kolmogorovd(K)</span>, which will be close to 1 when the
-distributions look like they match.
-</li></ul><p>
+<h3 id="sec948" class="subsection">8.4.24  Markov chains: <span style="font-family:monospace">markov</span><a id="hevea_default1297"></a></h3>
+<p>Given the transition matrix of a Markov chain, the <span style="font-family:monospace">markov</span>
+command will compute characteristic features of the chain. If <span style="font-style:italic">M</span> is
+a transition matrix, then <span style="font-family:monospace">markov(</span><span style="font-style:italic">M</span><span style="font-family:monospace">)</span> will return the list of
+the positive recurrent states, the list of corresponding
+invariant probabilities, the list of other strong connected
+components, the list of probabilities of ending up in the sequence of
+recurrent states. 
 For example, if you enter
 </p><div class="center">
-<span style="font-family:monospace">kolmogorovt(randvector(100,normald,0,1),normald(0,1))
+<span style="font-family:monospace">markov([[0,0,1/2,0,1/2],[0,0,1,0,0],[1/4,1/4,0,1/4,1/4],[0,0,1/2,0,1/2],[0,0,0,0,1]])
 </span></div><p>
-you might get
+you will get
 </p><div class="center">
-<span style="font-family:monospace">["D=",0.112592987625,"K=",1.12592987625,"1-kolmogorovd(K)=",0.158375510292]
-</span></div><p>
-and if you enter
-</p><div class="center">
-<span style="font-family:monospace">kolmogorovt(randvector(100,normald,0,1),student(2))
-</span></div><p>
-you might get
-</p><div class="center">
-<span style="font-family:monospace">["D=",0.0996114067923,"K=",0.996114067923,"1-kolmogorovd(K)=",0.27418851907]
+<span style="font-family:monospace">[[4]],[[0,0,0,0,1]],[[3,1,2,0]],[[1],[1],[1],[1],[1]]
 </span></div>
 <hr>
 <a href="cascmd_en736.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
-<a href="cascmd_en739.html"><img src="next_motif.gif" alt="Next"></a>
+<a href="cascmd_en738.html"><img src="next_motif.gif" alt="Next"></a>
 </body>
 </html>

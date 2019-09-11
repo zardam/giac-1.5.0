@@ -4,34 +4,37 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>Default values of the parameters</title>
+<title>Unit prefixes</title>
 </head>
 <body >
 <a href="cascmd_en774.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en776.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec1001" class="subsection">11.1.4  Default values of the parameters</h3>
-<p>You can give the parameters of a function default values by putting 
-<span style="font-style:italic">parameter</span><span style="font-family:monospace">=</span><span style="font-style:italic">value</span> in the parameter list of
-the function. For example, if you define a function
-</p><pre class="verbatim">f(x,y=5,z) := {
-return x*y*z;
-}
-</pre><p>
-then
+<h3 id="sec998" class="subsection">10.1.8  Unit prefixes</h3>
+<p>
+You can insert a unit prefix in front of a unit to indicate a power of ten.<br>
+The following table gives the available prefixes:
 </p><div class="center">
-<span style="font-family:monospace">f(1,2,3)</span>
+<table border=1  style="border-spacing:0;" class="cellpadding1"><tr><td style="text-align:left;border:solid 1px;white-space:nowrap" >Prefix</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >Name</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >(*10<code>^</code>) n</td><td style="text-align:left;border:solid 1px;white-space:nowrap" >Prefix</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >Name</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >(*10<code>^</code>) n </td></tr>
+<tr><td style="text-align:left;border:solid 1px;white-space:nowrap" >Y</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >yota</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >24</td><td style="text-align:left;border:solid 1px;white-space:nowrap" >d</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >deci</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >-1</td></tr>
+<tr><td style="text-align:left;border:solid 1px;white-space:nowrap" >Z</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >zeta</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >21</td><td style="text-align:left;border:solid 1px;white-space:nowrap" >c</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >cent</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >-2</td></tr>
+<tr><td style="text-align:left;border:solid 1px;white-space:nowrap" >E</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >exa</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >18</td><td style="text-align:left;border:solid 1px;white-space:nowrap" >m</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >mili</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >-3</td></tr>
+<tr><td style="text-align:left;border:solid 1px;white-space:nowrap" >P</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >peta</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >15</td><td style="text-align:left;border:solid 1px;white-space:nowrap" >mu</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >micro</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >-6</td></tr>
+<tr><td style="text-align:left;border:solid 1px;white-space:nowrap" >T</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >tera</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >12</td><td style="text-align:left;border:solid 1px;white-space:nowrap" >n</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >nano</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >-9</td></tr>
+<tr><td style="text-align:left;border:solid 1px;white-space:nowrap" >G</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >giga</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >9</td><td style="text-align:left;border:solid 1px;white-space:nowrap" >p</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >pico</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >-12</td></tr>
+<tr><td style="text-align:left;border:solid 1px;white-space:nowrap" >M</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >mega</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >6</td><td style="text-align:left;border:solid 1px;white-space:nowrap" >f</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >femto</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >-15</td></tr>
+<tr><td style="text-align:left;border:solid 1px;white-space:nowrap" >k or K</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >kilo</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >3</td><td style="text-align:left;border:solid 1px;white-space:nowrap" >a</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >atto</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >-18</td></tr>
+<tr><td style="text-align:left;border:solid 1px;white-space:nowrap" >h or H</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >hecto</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >2</td><td style="text-align:left;border:solid 1px;white-space:nowrap" >z</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >zepto</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >-21</td></tr>
+<tr><td style="text-align:left;border:solid 1px;white-space:nowrap" >D</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >deca</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >1</td><td style="text-align:left;border:solid 1px;white-space:nowrap" >y</td><td style="text-align:center;border:solid 1px;white-space:nowrap" >yocto</td><td style="text-align:right;border:solid 1px;white-space:nowrap" >-24</td></tr>
+</table>
 </div><p>
-will return the product 1*2*3=6. If you give <span style="font-family:monospace">f</span> only two
-values as input,
-</p><div class="center">
-<span style="font-family:monospace">f(3,4)</span>
-</div><p>
-then these values will be given to the parameters which don’t have default
-values; in this case, <span style="font-family:monospace">y</span> will get its default value <span style="font-family:monospace">5</span> while
-<span style="font-family:monospace">3</span> and <span style="font-family:monospace">4</span> will be assigned to <span style="font-family:monospace">x</span> and
-<span style="font-family:monospace">z</span>, respectively. The result will be <span style="font-style:italic">x</span>*<span style="font-style:italic">y</span>*<span style="font-style:italic">z</span>=3*5*4=60.</p>
+<span style="font-weight:bold">Remark</span><br>
+You cannot use a prefix with a built-in unit if the result gives another 
+built-in unit.<br>
+For example, 
+<span style="font-family:monospace">1_a</span> is one are, but <span style="font-family:monospace">1_Pa</span> is one pascal and not 
+<span style="font-family:monospace">10</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">15_a</span>.</p>
 <hr>
 <a href="cascmd_en774.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>

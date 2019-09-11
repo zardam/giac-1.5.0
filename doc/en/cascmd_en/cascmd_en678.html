@@ -4,72 +4,39 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>The population standard deviation: stddevp stdDev</title>
+<title>3D parametric surface : plotparam paramplot DrawParm</title>
 </head>
 <body >
 <a href="cascmd_en677.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en679.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec834" class="subsection">8.1.3  The population standard deviation: <span style="font-family:monospace">stddevp</span><a id="hevea_default1151"></a> <span style="font-family:monospace">stdDev</span><a id="hevea_default1152"></a></h3>
-<p>Given a large population, rather than collecting all of the numbers it
-might be more feasible to get a smaller collection of numbers and try
-to extrapolate from that. For example, to get information about the
-ages of a large population, you might get the ages of a sample of 100
-of the people and work with that.</p><p>If a list of numbers is a sample of data from a larger population,
-then the <span style="font-family:monospace">mean</span> function will find the mean of the sample,
-which can be used to estimate the mean of the population. The
-standard deviation uses the mean to find the standard
-deviation of the sample, but since the mean of the sample is only an
-approximation to the mean of the entire population, the standard
-deviation of the sample doesn’t provide an optimal estimate of
-the standard deviation of the population. An unbiased estimate of the
-standard deviation of the entire population is given by the population
-standard deviation <span style="font-family:monospace">stddevp</span> function; 
-given a list <span style="font-style:italic">L</span> = [<span style="font-style:italic">x</span><sub>1</sub>,…,<span style="font-style:italic">x</span><sub><span style="font-style:italic">n</span></sub>] with mean µ, the population
-standard deviation is 
-</p><table class="display dcenter"><tr style="vertical-align:middle"><td class="dcell">σ = </td><td class="dcell"><table style="border-spacing:0" class="cellpadding0"><tr><td ALIGN="right"><div CLASS="vbar" STYLE="height:2em;"></div></td></tr>
-<tr><td><span style="font-size:xx-large"><span style="font-size:150%">√</span></span></td></tr>
-</table></td><td class="dcell"><table style="border:0;border-spacing:1;border-collapse:separate;" class="cellpadding0"><tr><td class="hbar"></td></tr>
-<tr><td style="text-align:center;white-space:nowrap" ><table class="display"><tr><td class="dcell" style="text-align:center">(<span style="font-style:italic">x</span><sub>1</sub> − µ)<sup>2</sup> + … + (<span style="font-style:italic">x</span><sub><span style="font-style:italic">n</span></sub> − µ)<sup>2</sup></td></tr>
-<tr><td class="hbar"></td></tr>
-<tr><td class="dcell" style="text-align:center"><span style="font-style:italic">n</span>−1</td></tr>
-</table></td></tr>
-</table></td><td class="dcell">.
-</td></tr>
-</table><p>
-Note that
-</p><table class="display dcenter"><tr style="vertical-align:middle"><td class="dcell">stddevp(<span style="font-style:italic">L</span>)<sup>2</sup> = </td><td class="dcell"><table class="display"><tr><td class="dcell" style="text-align:center"><span style="font-style:italic">n</span></td></tr>
-<tr><td class="hbar"></td></tr>
-<tr><td class="dcell" style="text-align:center"><span style="font-style:italic">n</span>−1</td></tr>
-</table></td><td class="dcell"> stddev(<span style="font-style:italic">L</span>)<sup>2</sup>.</td></tr>
-</table><p>For example,
-</p><div class="center">
-<span style="font-family:monospace">stddev([1,2,3,4])
-</span></div><p>
-will return
-</p><div class="center">
-<span style="font-family:monospace">sqrt(5)/2
-</span></div><p>
-while 
-</p><div class="center">
-<span style="font-family:monospace">stddevp([1,2,3,4])
-</span></div><p>
-will return
-</p><div class="center">
-<span style="font-family:monospace">sqrt(15)/3
-</span></div><p>Like <span style="font-family:monospace">stddev</span>, the <span style="font-family:monospace">stddevp</span> command can take a second
-argument for weights. If you enter
-</p><div class="center">
-<span style="font-family:monospace">A := [0,1,2,3,4,5,6,7,8,9,10,11]<br>
- stddevp(A,A)
-</span></div><p>
-then you will get
-</p><div class="center">
-<span style="font-family:monospace">sqrt(66)/3
-</span></div><p>The <span style="font-family:monospace">stdDev</span> function is equivalent to <span style="font-family:monospace">stddevp</span>, for TI
-compatibility. There is no population variance function; if needed,
-it can be computed by squaring the <span style="font-family:monospace">stddevp</span> function.</p>
+<h3 id="sec825" class="subsection">7.14.2  3D parametric surface : <span style="font-family:monospace">plotparam paramplot DrawParm</span></h3>
+<p><a id="hevea_default1134"></a><a id="hevea_default1135"></a><a id="hevea_default1136"></a>
+<span style="font-family:monospace">plotparam</span> takes two main arguments,
+a list of three 
+expressions of two variables and the list of these variable names
+where each variable name may be replaced by variable=interval
+to specify the range of the parameters.
+It accepts an optional argument to specify
+the discretization steps of the parameters <span style="font-style:italic">u</span> and <span style="font-style:italic">v</span> with 
+<span style="font-family:monospace">ustep=...</span> and <span style="font-family:monospace">vstep=...</span>.<br>
+<span style="font-family:monospace">plotparam([f(u,v),g(u,v),h(u,v)],[u,v])</span> draws the surface defined by the 
+first argument : <span style="font-style:italic">x</span>=<span style="font-style:italic">f</span>(<span style="font-style:italic">u</span>,<span style="font-style:italic">v</span>),<span style="font-style:italic">y</span>=<span style="font-style:italic">g</span>(<span style="font-style:italic">u</span>,<span style="font-style:italic">v</span>),<span style="font-style:italic">z</span>=<span style="font-style:italic">h</span>(<span style="font-style:italic">u</span>,<span style="font-style:italic">v</span>), where <span style="font-style:italic">u</span> and <span style="font-style:italic">v</span>
+ranges default to the graphic configuration.<br>
+Input :
+</p><div class="center"><span style="font-family:monospace">plotparam([v*cos(u),v*sin(u),v],[u,v])</span></div><p>
+Output :
+</p><div class="center"><span style="font-family:monospace">The cone </span><span style="font-style:italic">x</span>=<span style="font-style:italic">v</span>*cos(<span style="font-style:italic">u</span>),<span style="font-style:italic">y</span>=<span style="font-style:italic">v</span>*sin(<span style="font-style:italic">u</span>),<span style="font-style:italic">z</span>=<span style="font-style:italic">v</span></div><p>
+To specify the range of each parameters, replace each variable
+by an equation variable=range, like this:
+</p><div class="center"><span style="font-family:monospace">plotparam([v*cos(u),v*sin(u),v],[u=0..pi,v=0..3]) </span></div><p>
+Output :
+</p><div class="center"><span style="font-family:monospace">A portion of the cone </span><span style="font-style:italic">x</span>=<span style="font-style:italic">v</span>*cos(<span style="font-style:italic">u</span>),<span style="font-style:italic">y</span>=<span style="font-style:italic">v</span>*sin(<span style="font-style:italic">u</span>),<span style="font-style:italic">z</span>=<span style="font-style:italic">v</span></div><p>
+Input :
+</p><div class="center"><span style="font-family:monospace">plotparam([v*cos(u),v*sin(u),v],[u=0..pi,v=0..3],ustep=0.5,vstep=0.5)</span></div><p>
+Output :
+</p><div class="center"><span style="font-family:monospace">A portion of the cone </span><span style="font-style:italic">x</span>=<span style="font-style:italic">v</span>*cos(<span style="font-style:italic">u</span>),<span style="font-style:italic">y</span>=<span style="font-style:italic">v</span>*sin(<span style="font-style:italic">u</span>),<span style="font-style:italic">z</span>=<span style="font-style:italic">v</span></div>
 <hr>
 <a href="cascmd_en677.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>

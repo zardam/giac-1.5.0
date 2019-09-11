@@ -4,25 +4,31 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>Visualizing power spectra : plotspectrum</title>
+<title>Changing the sampling rate : resample</title>
 </head>
 <body >
 <a href="cascmd_en281.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en283.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec351" class="subsection">5.26.10  Visualizing power spectra : <span style="font-family:monospace">plotspectrum</span><a id="hevea_default498"></a></h3>
+<h3 id="sec351" class="subsection">5.26.8  Changing the sampling rate : <span style="font-family:monospace">resample</span><a id="hevea_default500"></a></h3>
 <p>
-<span style="font-family:monospace">plotspectrum</span> takes an audio clip as its first argument and optionally a range in form <span style="font-family:monospace">range=[lf,uf]</span> or <span style="font-family:monospace">range=lf..uf</span>, where <span style="font-family:monospace">lf</span> is the lower bound and <span style="font-family:monospace">uf</span> the upper bound of the desired frequency band, as its second argument. The command displays the power spectrum of the audio data on the specified frequency range (by default [0,<span style="font-style:italic">s</span>/2], where <span style="font-style:italic">s</span> is the sampling rate). If the audio clip has more than one channel, the channels are mixed down to a single channel before computing the spectrum.</p><p>For example, assume that a male voice is recorded in the file <span style="font-family:monospace">example1.wav</span>. Input :
+<span style="font-family:monospace">resample</span> takes an audio clip as its first argument. The target sample rate can be passed as the second argument (by default 44100 Hz), optionally followed by a quality level specification (an integer). The return value is the input audio clip resampled to the desired rate. The quality level can range from 0 (poor) to 4 (best). By default, it is set to 2.</p><p>Giac does resampling by using <a href="http://www.mega-nerd.com/libsamplerate/"><span style="font-family:monospace">libsamplerate</span></a> library written by Erik de Castro Lopo. For more information see the library documentation.</p><p>For example, assume that the directory <span style="font-family:monospace">sounds</span> contains a WAV file <span style="font-family:monospace">example.wav</span>. Input :
 </p><div class="center">
-<span style="font-family:monospace">clip:=readwav("/path/to/sounds/example1.wav"):;<br>
- plotspectrum(clip,range=[0,1500])
+<span style="font-family:monospace">clip:=readwav("/path/to/sounds/example.wav"):; samplerate(clip)
 </span></div><p>
 Output :
 </p><div class="center">
-<img src="cascmd_en016.png">
-</div><p>
-One can observe that the dominant frequency is around 220 Hz, which is the middle of tenor range. This is consistent with the fact that a man is speaking in the clip.</p>
+<span style="font-family:monospace">44100
+</span></div><p>
+Input :
+</p><div class="center">
+<span style="font-family:monospace">res:=resample(clip,48000):; samplerate(res)
+</span></div><p>
+Output :
+</p><div class="center">
+<span style="font-family:monospace">48000
+</span></div>
 <hr>
 <a href="cascmd_en281.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
