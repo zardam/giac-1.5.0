@@ -16,7 +16,7 @@ all: libgiac.a
 	$(CXX) $(CXXFLAGS) -c $<
 
 clean:
-	rm -f *.o
+	rm -f *.o libgiac.a
 
 libgiac.a: $(OBJS) 
 	$(PREFIX)ar rcs libgiac.a $(OBJS) 
