@@ -2137,7 +2137,7 @@ namespace giac {
 	      res += printasinnerbloc(it->_SYMBptr->feuille,contextptr);
 	    else
 	      res += it->print(contextptr) +";";
-	    return res+indent(contextptr)+"'\N'oop";
+	    return res+indent(contextptr)+"'EndLoop";
 	  }
 	  if (maplemode==3)
 	    res = "While "+ sametoequal(*it).print(contextptr) +indent(contextptr);
@@ -10734,7 +10734,11 @@ namespace giac {
     if (g.type!=_VECT || g._VECTptr->size()!=2)
       return symbolic(at_maple_root,g);
     vecteur & v=*g._VECTptr;
+#ifdef NUMWORKS
+    return pow(v[0],inv(v[1],contextptr),contextptr);
+#else
     return pow(v[1],inv(v[0],contextptr),contextptr);
+#endif
   }
   static const char _maple_root_s []="root";
 #if defined RTOS_THREADX || defined NSPIRE

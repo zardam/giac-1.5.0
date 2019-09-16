@@ -12154,8 +12154,19 @@ void sprint_double(char * s,double d){
     }
   }
   if (i!=0){
+#ifdef NUMWORKS
+    *buf='*';
+    ++buf;
+    *buf='1';
+    ++buf;
+    *buf='0';
+    ++buf;
+    *buf='^';
+    ++buf;
+#else
     *buf='e';
     ++buf;
+#endif
     sprint_int(buf,i);
   }
 }
@@ -13789,6 +13800,9 @@ void sprint_double(char * s,double d){
       }
       if (is_inf(_SYMBptr->feuille)){
 	if (_SYMBptr->sommet==at_plus){
+#ifdef NUMWORKS
+	  return "oo";
+#else
 	  if (
 	      // calc_mode(contextptr)!=1
 	      abs_calc_mode(contextptr)==38
@@ -13796,8 +13810,12 @@ void sprint_double(char * s,double d){
 	    return "∞";
 	  else
 	    return "+infinity";
+#endif
 	}
 	if (_SYMBptr->sommet==at_neg){
+#ifdef NUMWORKS
+	  return "-oo"; 
+#else
 	  if (
 	      // calc_mode(contextptr)!=1
 	      abs_calc_mode(contextptr)==38
@@ -13805,6 +13823,7 @@ void sprint_double(char * s,double d){
 	    return "-∞"; 
 	  else
 	    return "-infinity";
+#endif
 	}
       }
       if (subtype==_SPREAD__SYMB){
