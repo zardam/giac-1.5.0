@@ -6801,7 +6801,7 @@ unsigned int ConvertUTF8toUTF16 (
     charptr_gen * builtin_lexer_functions(){
       static charptr_gen * ans=0;
       if (!ans){
-	ans = new charptr_gen[1800];
+	ans = new charptr_gen[1999];
 	builtin_lexer_functions_number=0;
       }
       return ans;
