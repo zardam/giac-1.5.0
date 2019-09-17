@@ -1235,6 +1235,7 @@
 *((size_t *) at_reverse),
 *((size_t *) at_revert),
 *((size_t *) at_revlist),
+*((size_t *) at_rgb),
 *((size_t *) at_rhombus),
 *((size_t *) at_rhs),
 *((size_t *) at_right),

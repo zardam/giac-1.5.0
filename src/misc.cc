@@ -8846,10 +8846,14 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
     if (x<0){ width+=x; x=0;}
     if (y<0){ height+=y; y=0;}
     if (width<0 || height<0) return;
+#ifdef NUMWORKS
+    numworks_giac_fill_rect(x,y,width,height,color);
+#else
     for (int j=0;j<=height;++j){
       for (int i=0;i<width;++i)
 	set_pixel(x+i,y+j,color,contextptr);
     }
+#endif
   }
 
   void draw_circle(int xc,int yc,int r,int color,bool q1,bool q2,bool q3,bool q4,GIAC_CONTEXT){
@@ -9152,8 +9156,6 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
   define_unary_function_ptr5( at_fill_rect ,alias_at_fill_rect,&__fill_rect,0,true);
 
   gen _draw_string(const gen & a_,GIAC_CONTEXT){
-#ifdef NUMWORKS
-#else
 #ifdef GIAC_HAS_STO_38
     static gen PIXEL(identificateur("TEXTOUT_P"));
     return _of(makesequence(PIXEL,a_),contextptr);
@@ -9163,17 +9165,21 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
     if (a.type!=_VECT)
       return gensizeerr(contextptr);
     vecteur v(*a._VECTptr);
-    if (v.size()!=3 && v.size()!=4)
+    if (v.size()<3 || v.size()>4)
       return gendimerr(contextptr);
     if (v[0].type!=_STRNG || !is_integral(v[1]) || !is_integral(v[2]))
       return gensizeerr(contextptr);
     gen s=v[0];
+#ifdef NUMWORKS
+    numworks_giac_draw_string(v[1].val,v[2].val,v.size()>3?v[3].val:_BLACK,v.size()>4?v[4].val:_WHITE,s._STRNGptr->c_str());
+    return 1;
+#else
     v.erase(v.begin());
     v.push_back(s);
     pixel_v()._VECTptr->push_back(_pixon(gen(v,_SEQ__VECT),contextptr));
     return pixel_v();
-#endif // HP
 #endif // NUMWORKS
+#endif // HP
   }
   static const char _draw_string_s []="draw_string";
   static define_unary_function_eval (__draw_string,&_draw_string,_draw_string_s);
