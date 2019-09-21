@@ -4,47 +4,51 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>Cyclotomic polynomial : cyclotomic</title>
+<title>Chinese remainders : chinrem</title>
 </head>
 <body >
 <a href="cascmd_en365.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en367.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec443" class="subsection">5.30.14  Cyclotomic polynomial : <span style="font-family:monospace">cyclotomic</span></h3>
+<h3 id="sec443" class="subsection">5.30.13  Chinese remainders : <span style="font-family:monospace">chinrem</span></h3>
 <p><a id="hevea_default599"></a>
-<span style="font-family:monospace">cyclotomic</span> takes an integer <span style="font-style:italic">n</span> as argument and
-returns the list of the coefficients of the cyclotomic 
-polynomial of index <span style="font-style:italic">n</span>. This
-is the polynomial having the <span style="font-style:italic">n</span>-th primitive roots of unity
-as zeros (an <span style="font-style:italic">n</span>-th root of unity is primitive if the set of its 
-powers is the set of all the <span style="font-style:italic">n</span>-th roots of unity).</p><p>For example, let <span style="font-style:italic">n</span>=4, the fourth roots of unity are:
-{ 1,<span style="font-style:italic">i</span>,−1,−<span style="font-style:italic">i</span>} and the primitive roots are: {<span style="font-style:italic">i</span>,−<span style="font-style:italic">i</span>}.
-Hence, the cyclotomic polynomial of index 4 is (<span style="font-style:italic">x</span>−<span style="font-style:italic">i</span>).(<span style="font-style:italic">x</span>+<span style="font-style:italic">i</span>)=<span style="font-style:italic">x</span><sup>2</sup>+1.
-Verification:
-</p><div class="center"><span style="font-family:monospace">cyclotomic(4)</span></div><p>
-Output :
-</p><div class="center"><span style="font-family:monospace">[1,0,1]</span></div><p>
-Another example, input :
-</p><div class="center"><span style="font-family:monospace">cyclotomic(5)</span></div><p>
-Output :
-</p><div class="center"><span style="font-family:monospace">[1,1,1,1,1]</span></div><p>
-Hence, the cyclotomic polynomial of index 5 is <span style="font-style:italic">x</span><sup>4</sup>+<span style="font-style:italic">x</span><sup>3</sup>+<span style="font-style:italic">x</span><sup>2</sup>+<span style="font-style:italic">x</span>+1
-which divides <span style="font-style:italic">x</span><sup>5</sup>−1 since (<span style="font-style:italic">x</span>−1)*(<span style="font-style:italic">x</span><sup>4</sup>+<span style="font-style:italic">x</span><sup>3</sup>+<span style="font-style:italic">x</span><sup>2</sup>+<span style="font-style:italic">x</span>+1)=<span style="font-style:italic">x</span><sup>5</sup>−1.<br>
-Input :
-</p><div class="center"><span style="font-family:monospace">cyclotomic(10)</span></div><p>
-Output :
-</p><div class="center"><span style="font-family:monospace">[1,-1,1,-1,1]</span></div><p>
-Hence, the cyclotomic polynomial of index 10 is <span style="font-style:italic">x</span><sup>4</sup>−<span style="font-style:italic">x</span><sup>3</sup>+<span style="font-style:italic">x</span><sup>2</sup>−<span style="font-style:italic">x</span>+1 and
-</p><table class="display dcenter"><tr style="vertical-align:middle"><td class="dcell">(<span style="font-style:italic">x</span><sup>5</sup>−1)*(<span style="font-style:italic">x</span>+1)*(<span style="font-style:italic">x</span><sup>4</sup>−<span style="font-style:italic">x</span><sup>3</sup>+<span style="font-style:italic">x</span><sup>2</sup>−<span style="font-style:italic">x</span>+1)=<span style="font-style:italic">x</span><sup>10</sup>−1 </td></tr>
+<span style="font-family:monospace">chinrem</span> takes two lists as argument, each list being made of 2 
+polynomials (either expressions or as a list of coefficients in decreasing 
+order). If the polynomials are expressions, an optional third
+argument may be provided to specify the main variable, by default
+<span style="font-family:monospace">x</span> is used.
+<span style="font-family:monospace">chinrem([A,R],[B,Q])</span> returns the list of two polynomials
+<span style="font-family:monospace">P</span> and <span style="font-family:monospace">S</span> such that :
+</p><table class="display dcenter"><tr style="vertical-align:middle"><td class="dcell"><span style="font-style:italic">S</span>=<span style="font-style:italic">R</span> <span style="font-style:italic">Q</span>,     <span style="font-style:italic">P</span>=<span style="font-style:italic">A</span> (mod <span style="font-style:italic">R</span> ),    <span style="font-style:italic">P</span>=<span style="font-style:italic">B</span> (mod <span style="font-style:italic">Q</span> ) </td></tr>
+</table><p>
+If <span style="font-family:monospace">R</span> and <span style="font-family:monospace">Q</span> are coprime, a solution <span style="font-family:monospace">P</span> always exists 
+and all the solutions are congruent modulo <span style="font-family:monospace">S=R*Q</span>.
+For example, assume we want to solve :
+</p><table class="display dcenter"><tr style="vertical-align:middle"><td class="dcell"><table class="display"><tr style="vertical-align:middle"><td class="dcell"><span style="font-family:monospace">⎧<br>
+⎨<br>
+⎩</span></td><td class="dcell"><table style="border-spacing:6px;border-collapse:separate;" class="cellpading0"><tr><td style="text-align:right;white-space:nowrap" ><span style="font-style:italic">P</span>(<span style="font-style:italic">x</span>)=</td><td style="text-align:left;white-space:nowrap" ><span style="font-style:italic">x</span> </td><td style="text-align:right;white-space:nowrap" >mod (<span style="font-style:italic">x</span><sup>2</sup>+1)</td></tr>
+<tr><td style="text-align:right;white-space:nowrap" >      <span style="font-style:italic">P</span>(<span style="font-style:italic">x</span>)=</td><td style="text-align:left;white-space:nowrap" ><span style="font-style:italic">x</span>−1 </td><td style="text-align:right;white-space:nowrap" >mod (<span style="font-style:italic">x</span><sup>2</sup>−1) </td></tr>
+</table></td></tr>
+</table></td><td class="dcell"> </td></tr>
 </table><p>
 Input :
-</p><div class="center"><span style="font-family:monospace">cyclotomic(20)</span></div><p>
+</p><div class="center"><span style="font-family:monospace">chinrem([[1,0],[1,0,1]],[[1,-1],[1,0,-1]])</span></div><p>
 Output :
-</p><div class="center"><span style="font-family:monospace">[1,0,-1,0,1,0,-1,0,1]</span></div><p>
-Hence, the cyclotomic polynomial of index 20 is <span style="font-style:italic">x</span><sup>8</sup>−<span style="font-style:italic">x</span><sup>6</sup>+<span style="font-style:italic">x</span><sup>4</sup>−<span style="font-style:italic">x</span><sup>2</sup>+1 and
-</p><table class="display dcenter"><tr style="vertical-align:middle"><td class="dcell">(<span style="font-style:italic">x</span><sup>10</sup>−1)*(<span style="font-style:italic">x</span><sup>2</sup>+1)*(<span style="font-style:italic">x</span><sup>8</sup>−<span style="font-style:italic">x</span><sup>6</sup>+<span style="font-style:italic">x</span><sup>4</sup>−<span style="font-style:italic">x</span><sup>2</sup>+1)=<span style="font-style:italic">x</span><sup>20</sup>−1 </td></tr>
-</table>
+</p><div class="center"><span style="font-family:monospace">[[1/-2,1,1/-2],[1,0,0,0,-1]]</span></div><p>
+or :
+</p><div class="center"><span style="font-family:monospace">chinrem([x,x</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2+1],[x-1,x</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2-1])</span></div><p>
+Output :
+</p><div class="center"><span style="font-family:monospace">[1/-2*x</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2+x+1/-2,x</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">4-1]</span></div><p>
+hence  <span style="font-style:italic">P</span>(<span style="font-style:italic">x</span>)=−<span style="font-style:italic">x</span><sup>2</sup>−2.<span style="font-style:italic">x</span>+1/2  (mod  <span style="font-style:italic">x</span><sup>4</sup>−1)<br>
+Another example, input :
+</p><div class="center"><span style="font-family:monospace">chinrem([[1,2],[1,0,1]],[[1,1],[1,1,1]])</span></div><p>
+Output :
+</p><div class="center"><span style="font-family:monospace">[[-1,-1,0,1],[1,1,2,1,1]]</span></div><p>
+or :
+</p><div class="center"><span style="font-family:monospace">chinrem([y+2,y</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2+1],[y+1,y</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2+y+1],y)</span></div><p>
+Output :
+</p><div class="center"><span style="font-family:monospace">[-y</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">3-y</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2+1,y</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">4+y</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">3+2*y</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2+y+1]</span></div>
 <hr>
 <a href="cascmd_en365.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>

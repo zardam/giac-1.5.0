@@ -493,6 +493,21 @@ throw(std::runtime_error("Stopped by user interruption.")); \
     int _i_sqrt_minus1_;
   };
   std::string gen2string(const gen & g);
+#if 0 // def NUMWORKS
+  struct logo_turtle {
+    double x,y;
+    double theta; // theta is given in degrees or radians dep. on angle_mode
+    bool visible; // true if turtle visible
+    bool mark; // true if moving marks
+    bool direct; // true if rond/disque is done in the trigonometric direction
+    int color;
+    int turtle_length;
+    int radius; // 0 nothing, >0 -> draw a plain disk 
+    // bit 0-8=radius, bit9-17 angle1, bit 18-26 angle2, bit 27=1 filled  or 0 
+    // <0 fill a polygon from previous turtle positions
+    int s;//std::string s;
+    logo_turtle(): x(100),y(100),theta(0),visible(true),mark(true),direct(true),color(0),turtle_length(10),radius(0) {}
+#else // NUMWORKS
   struct logo_turtle {
     double x,y;
     double theta; // theta is given in degrees or radians dep. on angle_mode
@@ -512,7 +527,8 @@ throw(std::runtime_error("Stopped by user interruption.")); \
     logo_turtle(): x(100),y(100),theta(0),visible(true),mark(true),direct(true),color(0),turtle_length(10),radius(0),widget(0) {}
 #endif
   };
-
+#endif // NUMWORKS
+    
   // a structure that should contain all global variables
   class global {
   public:

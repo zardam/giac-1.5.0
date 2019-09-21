@@ -1728,10 +1728,9 @@ menu command \texttt{Table$\blacktriangleright$Save as mathml}.
 \subsection{Export to presentation or content MathML : {\tt export\_mathml}\index{export\_mathml}}
 The command {\tt export\_mathml} accepts one or two arguments: an expression and optionally the symbol {\tt content} or {\tt display}. If {\tt content} is specified, it converts the expression to content MathML, while for {\tt display} it converts it to presentation MathML. If the second argument is omitted, the return value contains both presentation and content MathML within a {\tt semantics} block. The return value in each case is a string containing a single {\tt math} block.
 
-In each of the following examples the return string is indented for better readability.\\
-Input :
+For example, input :
 \begin{center}
-  \tt export\_mathml(a+2*b)
+	\tt xml\_print(export\_mathml(a+2*b))
 \end{center}
 Output :
 \begin{verbatim}
@@ -1763,7 +1762,7 @@ Output :
 \end{verbatim}
 Input :
 \begin{center}
-  \tt export\_mathml(a+2*b,content)
+	\tt xml\_print(export\_mathml(a+2*b,content))
 \end{center}
 Output :
 \begin{verbatim}
@@ -1781,7 +1780,7 @@ Output :
 \end{verbatim}
 Input :
 \begin{center}
-  \tt export\_mathml(a+2*b,display)
+	\tt xml\_print(export\_mathml(a+2*b,display))
 \end{center}
 Output :
 \begin{verbatim}
@@ -1795,6 +1794,44 @@ Output :
       <mi>b</mi>
     </mrow>
   </mrow>
+</math>
+\end{verbatim}
+
+\subsection{Indent a XML string : {\tt xml\_print}\index{xml\_print}}
+{\tt xml\_print} takes a string as its only argument, assumes that it contains XML code and indents it for better readability. The indented code is returned as string. The default indent is two spaces.
+
+For example, input :
+\begin{center}
+  \tt xml\_print("<?xml version='1.0'?><root><child1>some content</child1><child2></child2><child3/></root>")
+\end{center}
+Output :
+\begin{verbatim}
+<?xml version='1.0'?>
+<root>
+  <child1>some content</child1>
+  <child2></child2>
+  <child3/>
+</root>
+\end{verbatim}
+Input :
+\begin{center}
+	\tt s:=export\_mathml(1/(x\^{}2+1),display):;\\
+	    xml\_print(s)
+\end{center}
+Output :
+\begin{verbatim}
+<math mode='display' xmlns='http://www.w3.org/1998/Math/MathML'>
+  <mfrac>
+    <mn>1</mn>
+    <mrow>
+      <msup>
+        <mi>x</mi>
+        <mn>2</mn>
+      </msup>
+      <mo>+</mo>
+      <mn>1</mn>
+    </mrow>
+  </mfrac>
 </math>
 \end{verbatim}
 
@@ -7518,7 +7555,7 @@ The right way to define a derivative is either with {\tt
 \begin{enumerate}
 \item {\tt expr}, {\tt constr}, {\tt depvars}, {\tt diffvars}
 \item {\tt constr}, {\tt [depvars]}, {\tt y}, {\tt diffvars}
-\item {\tt expr}, {\tt constr}, {\tt vars}, {\tt order\_size=k}, {\tt [pt]}
+\item {\tt expr}, {\tt constr}, {\tt vars}, {\tt order=k}, {\tt [pt]}
 \end{enumerate}
 Details on parameters :
 \begin{itemize}
@@ -7570,11 +7607,11 @@ Output :
 {\tt (2*x*y-y*z*exp(x*z)-z)/(x*y*exp(x*z)+x)]}
 \end{center}
 
-For the third case of input syntax, all partial derivatives of order equal to {\tt order\_size}, i.e.~$ k $, are computed. If $ k=1 $ they are returned in a single list, which represents the gradient of {\tt expr} with respect to independent variables. For $ k=2 $ the corresponding hessian matrix is returned. When $ k>2 $, a table with keys in form {\tt [k1,k2,..,kn]}, where $ \sum_{i=1}^nk_i=k $, is returned. Such key corresponds to \[ \frac{\partial^k f}{\partial x_1^{k_1}\,\partial x_2^{k_2}\,\cdots\,\partial x_n^{k_n}}. \]
+For the third case of input syntax, all partial derivatives of order equal to {\tt order}, i.e.~$ k $, are computed. If $ k=1 $ they are returned in a single list, which represents the gradient of {\tt expr} with respect to independent variables. For $ k=2 $ the corresponding hessian matrix is returned. When $ k>2 $, a table with keys in form {\tt [k1,k2,..,kn]}, where $ \sum_{i=1}^nk_i=k $, is returned. Such key corresponds to \[ \frac{\partial^k f}{\partial x_1^{k_1}\,\partial x_2^{k_2}\,\cdots\,\partial x_n^{k_n}}. \]
 Input :
 \begin{center}
 {\tt f:=x*y*z; g:=-2x\verb|^|3+15x\verb|^|2*y+11y\verb|^|3-24y=0;}\\
-{\tt implicitdiff(f,g,[x,z,y],order\_size=1)}
+{\tt implicitdiff(f,g,[x,z,y],order=1)}
 \end{center}
 Output :
 \begin{center}
@@ -7583,7 +7620,7 @@ Output :
 \end{center}
 Input :
 \begin{center}
-{\tt implicitdiff(f,g,order\_size=2,[1,-1,0])}
+{\tt implicitdiff(f,g,order=2,[1,-1,0])}
 \end{center}
 Output :
 \begin{center}
@@ -7592,7 +7629,7 @@ Output :
 In the next example, the value of $ \frac{\partial^4 f}{\partial x^4} $ is computed at point $ (x=0,y=0,z) $.\\
 Input :
 \begin{center}
-{\tt pd:=implicitdiff(f,g,[x,z,y],order\_size=4,[0,z,0]);}\\
+{\tt pd:=implicitdiff(f,g,[x,z,y],order=4,[0,z,0]);}\\
 {\tt pd[4,0]}
 \end{center}
 Output :
@@ -18318,7 +18355,7 @@ Local extrema of a univariate or multivariate differentiable expression under eq
 \item {\tt expr} : differentiable expression
 \item {\tt constr} (optional) : list of equality constraints
 \item {\tt vars} : list of variables
-\item {\tt order\_size=<positive integer>} or {\tt lagrange} (optional) : upper bound for the order of derivatives examined in the process (defaults to 5) or the specifier for the method of Lagrange multipliers
+\item {\tt order=<positive integer>} or {\tt lagrange} (optional) : upper bound for the order of derivatives examined in the process (defaults to 5) or the specifier for the method of Lagrange multipliers
 \end{itemize}
 Function returns a list containing two lists of points: local minima and local maxima of {\tt expr}, respectively. Saddle and unclassified points are reported in the message area. Also, information about possible (non)strict extrema is printed out. If {\tt lagrange} is passed as an optional last argument, the method of Lagrange multipliers is used. Else, the problem is reduced to an unconstrained one by applying implicit differentiation.
 
@@ -18328,7 +18365,7 @@ Number of constraints must be strictly less than number of variables. Additional
 
 Variables may be specified with bounds, e.g.~{\tt x=a..b}, which is interpreted as $ x\in(a,b) $. For semi-bounded variables one can use {\tt -infinity} for $ a $ or {\tt +infinity} for $ b $. Also, parameter {\tt vars} may be entered as e.g.~{\tt [x1=a1,x2=a2,...,xn=an]}, in which case the critical point close to $ \mathbf{a}=(a_1,a_2,\dots,a_n) $ is computed numerically, applying an iterative method with initial point $ \mathbf{a} $.
 
-If {\tt order\_size=<n>} is specified as the fourth argument, derivatives up to order $ n $ are inspected to find critical points and classify them. For {\tt order\_size=1} the function returns a single list containing all critical points found. The default is $ n=5 $. If some critical points are left unclassified one might consider repeating the process with larger value of $ n $, although the success is not guaranteed.
+If {\tt order=<n>} is specified as the fourth argument, derivatives up to order $ n $ are inspected to find critical points and classify them. For {\tt order=1} the function returns a single list containing all critical points found. The default is $ n=5 $. If some critical points are left unclassified one might consider repeating the process with larger value of $ n $, although the success is not guaranteed.
 
 
 \subsubsection{Examples}
@@ -18390,7 +18427,7 @@ Output :
 \end{center}
 Input :
 \begin{center}
-{\tt extrema(x*y*z,x+y+z=1,[x,y,z],order\_size=1)}
+{\tt extrema(x*y*z,x+y+z=1,[x,y,z],order=1)}
 \end{center}
 Output :
 \begin{center}

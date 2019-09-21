@@ -4,30 +4,34 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>Fold operators : foldl, foldr</title>
+<title>Apply a bivariate function to the elements of two lists : zip</title>
 </head>
 <body >
 <a href="cascmd_en496.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en498.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec591" class="subsection">5.43.38  Fold operators : <span style="font-family:monospace">foldl</span><a id="hevea_default766"></a>, <span style="font-family:monospace">foldr</span><a id="hevea_default767"></a></h3>
-<p>
-The fold operators <span style="font-family:monospace">foldl</span> and <span style="font-family:monospace">foldr</span> both take a binary operator, identifier or function <span style="font-style:italic">R</span> as the first argument followed by an argument <span style="font-style:italic">I</span> and an arbitrary number of arguments <span style="font-style:italic">a</span>, <span style="font-style:italic">b</span>, <span style="font-style:italic">c</span>, …, like for example <span style="font-family:monospace">foldl(R,I,a,b,c,...)</span>.</p><p>The left-fold operator <span style="font-family:monospace">foldl</span> composes a binary operator <span style="font-style:italic">R</span> with initial value <span style="font-style:italic">I</span> onto the arguments <span style="font-style:italic">a</span>, <span style="font-style:italic">b</span>, …(which may be zero in number), associating from the left. For example, input :
-</p><div class="center">
-<span style="font-family:monospace">foldl(R,I,a,b,c)
-</span></div><p>
+<h3 id="sec591" class="subsection">5.43.37  Apply a bivariate function to the elements of two lists : <span style="font-family:monospace">zip</span></h3>
+<p><a id="hevea_default766"></a>
+<span style="font-family:monospace">zip</span> applies a bivariate function to the elements of 2 lists.<br>
+Input :
+</p><div class="center"><span style="font-family:monospace">zip(’sum’,[a,b,c,d],[1,2,3,4])</span></div><p>
 Output :
-</p><div class="center">
-<span style="font-family:monospace">R(R(R(I,a),b),c)
-</span></div><p>The right-fold operator <span style="font-family:monospace">foldr</span> is similar but associates operands from the right. For example, input :
-</p><div class="center">
-<span style="font-family:monospace">foldr(R,I,a,b,c)
-</span></div><p>
+</p><div class="center"><span style="font-family:monospace">[a+1,b+2,c+3,d+4]</span></div><p>
+Input :
+</p><div class="center"><span style="font-family:monospace">zip((x,y)-&gt;x</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2+y</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2,[4,2,1],[3,5,1])</span></div><p>
+or :
+</p><div class="center"><span style="font-family:monospace">f:=(x,y)-&gt;x</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2+y</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2</span></div><p>
+then,
+</p><div class="center"><span style="font-family:monospace">zip(f,[4,2,1],[3,5,1])</span></div><p>
 Output :
-</p><div class="center">
-<span style="font-family:monospace">R(a,R(b,R(c,I)))
-</span></div>
+</p><div class="center"><span style="font-family:monospace">[25,29,2]</span></div><p>
+Input :
+</p><div class="center"><span style="font-family:monospace">f:=(x,y)-&gt;[x</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2+y</span><code><span style="font-family:monospace">^</span></code><span style="font-family:monospace">2,x+y]</span></div><p>
+then :
+</p><div class="center"><span style="font-family:monospace">zip(f,[4,2,1],[3,5,1])</span></div><p>
+Output :
+</p><div class="center"><span style="font-family:monospace">[[25,7],[29,7],[2,2]]</span></div>
 <hr>
 <a href="cascmd_en496.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>

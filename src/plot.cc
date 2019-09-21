@@ -161,7 +161,7 @@ namespace giac {
   double global_window_xmin(gnuplot_xmin),global_window_xmax(gnuplot_xmax),global_window_ymin(gnuplot_ymin),global_window_ymax(gnuplot_ymax);
   double x_tick(1.0),y_tick(1.0);
   double class_minimum(0.0),class_size(1.0);
-#if defined RTOS_THREADX || defined EMCC
+#if defined RTOS_THREADX || defined EMCC || defined NUMWORKS
   int gnuplot_pixels_per_eval=128;
 #else
   int gnuplot_pixels_per_eval=401;

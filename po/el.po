@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-11 15:07+0200\n"
+"POT-Creation-Date: 2019-09-20 08:50+0200\n"
 "PO-Revision-Date: 2013-09-09 17:43+0200\n"
 "Last-Translator: Alkis Akritas <akritas@uth.gr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -101,15 +101,15 @@ msgstr ""
 #: src/sym2poly.cc:3049 src/gausspol.cc:266 src/gausspol.cc:346
 #: src/gausspol.cc:381 src/gausspol.cc:1026 src/gausspol.cc:1698
 #: src/gausspol.cc:3784 src/gausspol.cc:5111 src/threaded.cc:3833
-#: src/maple.cc:1211 src/ti89.cc:2673 src/ti89.cc:2685 src/modpoly.cc:489
+#: src/maple.cc:1264 src/ti89.cc:2673 src/ti89.cc:2685 src/modpoly.cc:489
 #: src/modpoly.cc:507 src/modpoly.cc:651 src/modpoly.cc:669 src/modpoly.cc:765
 #: src/modpoly.cc:781 src/modpoly.cc:803 src/modpoly.cc:819
 #: src/modpoly.cc:1606 src/solve.cc:4462 src/solve.cc:4544 src/intg.cc:3518
-#: src/intgab.cc:277 src/prog.cc:2662 src/gen.cc:2095 src/gen.cc:2302
-#: src/gen.cc:4393 src/gen.cc:4413 src/gen.cc:4698 src/gen.cc:5193
-#: src/gen.cc:5205 src/gen.cc:5372 src/gen.cc:5954 src/gen.cc:6484
-#: src/gen.cc:6860 src/gen.cc:7231 src/gen.cc:7366 src/gen.cc:7628
-#: src/gen.cc:7773
+#: src/intgab.cc:277 src/prog.cc:2667 src/gen.cc:2098 src/gen.cc:2305
+#: src/gen.cc:4396 src/gen.cc:4416 src/gen.cc:4701 src/gen.cc:5196
+#: src/gen.cc:5208 src/gen.cc:5375 src/gen.cc:5957 src/gen.cc:6487
+#: src/gen.cc:6863 src/gen.cc:7234 src/gen.cc:7369 src/gen.cc:7631
+#: src/gen.cc:7776
 msgid "Stopped by user interruption."
 msgstr ""
 
@@ -408,101 +408,101 @@ msgstr ""
 msgid "Bessel"
 msgstr ""
 
-#: src/maple.cc:212 src/vecteur.cc:11491
+#: src/maple.cc:227 src/vecteur.cc:11491
 msgid "Option keep_pivot not applicable"
 msgstr ""
 
-#: src/maple.cc:990 src/plot.cc:7986 src/plot.cc:8036
+#: src/maple.cc:1043 src/plot.cc:7986 src/plot.cc:8036
 msgid "not implemented"
 msgstr ""
 
-#: src/maple.cc:1000
+#: src/maple.cc:1053
 msgid "Could not open file"
 msgstr ""
 
-#: src/maple.cc:1036
+#: src/maple.cc:1089
 msgid "1st arg=open result, then other args"
 msgstr ""
 
-#: src/maple.cc:1319
+#: src/maple.cc:1372
 msgid "Solution may be wrong since a and b are not prime together: "
 msgstr ""
 
-#: src/maple.cc:1771 src/maple.cc:1826
+#: src/maple.cc:1824 src/maple.cc:1879
 #, fuzzy
 msgid "Invalid sound data"
 msgstr "Μη έγκυρη συνθήκη"
 
-#: src/maple.cc:1774 src/maple.cc:1829
+#: src/maple.cc:1827 src/maple.cc:1882
 msgid "Using sound parameters: channels, rate, bits, records "
 msgstr ""
 
-#: src/maple.cc:1777
+#: src/maple.cc:1830
 msgid "Error opening audio device."
 msgstr ""
 
-#: src/maple.cc:1903
+#: src/maple.cc:1956
 #, fuzzy
 msgid "Invalid sound parameters"
 msgstr "Μη έγκυρος μετρητής"
 
-#: src/maple.cc:2023
+#: src/maple.cc:2076
 msgid "File not found or unrecognized wav file format"
 msgstr ""
 
-#: src/maple.cc:2102
+#: src/maple.cc:2155
 msgid "Unable to open file or unable to code data"
 msgstr ""
 
-#: src/maple.cc:2294 src/maple.cc:2322
+#: src/maple.cc:2347 src/maple.cc:2375
 msgid "File not found or unrecognized image file format"
 msgstr ""
 
-#: src/maple.cc:2333 src/intg.cc:268
+#: src/maple.cc:2386 src/intg.cc:268
 msgid "in linear_apply"
 msgstr ""
 
-#: src/maple.cc:2359 src/intg.cc:294
+#: src/maple.cc:2412 src/intg.cc:294
 msgid "in linear_apply 2"
 msgstr ""
 
-#: src/maple.cc:2440 src/maple.cc:2626
+#: src/maple.cc:2493 src/maple.cc:2679
 msgid "Cst part must be hypergeometric"
 msgstr ""
 
-#: src/maple.cc:2445
+#: src/maple.cc:2498
 msgid "Cst part must be of type a^n*P(n)"
 msgstr ""
 
-#: src/maple.cc:2635
+#: src/maple.cc:2688
 msgid "Unable to handle coeff of homogeneous part"
 msgstr ""
 
-#: src/maple.cc:2675
+#: src/maple.cc:2728
 msgid "Unable to find a particular solution for inhomogeneous part"
 msgstr ""
 
-#: src/maple.cc:2680 src/maple.cc:2716
+#: src/maple.cc:2733 src/maple.cc:2769
 msgid "Unable to solve recurrence"
 msgstr ""
 
-#: src/maple.cc:2793
+#: src/maple.cc:2846
 msgid "Unable to handle this kind of recurrence"
 msgstr ""
 
-#: src/maple.cc:2811
+#: src/maple.cc:2864
 msgid "Bad indexes in recurrence"
 msgstr ""
 
-#: src/maple.cc:2815
+#: src/maple.cc:2868
 msgid "Multi-recurrences implemented only for 1 step"
 msgstr ""
 
-#: src/maple.cc:2926
+#: src/maple.cc:2979
 msgid "Not yet implemented"
 msgstr ""
 
-#: src/maple.cc:3076
+#: src/maple.cc:3129
 msgid "Array too large"
 msgstr ""
 
@@ -611,283 +611,283 @@ msgstr ""
 msgid "Not a TI89/92 program/function/group file"
 msgstr ""
 
-#: src/mathml.cc:44 src/mathml.cc:47 src/mathml.cc:50 src/mathml.cc:53
+#: src/mathml.cc:44 src/mathml.cc:47 src/mathml.cc:50
 msgid "No mathml support"
 msgstr ""
 
-#: src/mathml.cc:1917
+#: src/mathml.cc:1914
 msgid "MathMl convert "
 msgstr ""
 
-#: src/misc.cc:680 src/rpn.cc:914 src/gen.cc:9391
+#: src/misc.cc:703 src/rpn.cc:914 src/gen.cc:9394
 msgid "Bad index"
 msgstr ""
 
-#: src/misc.cc:1162
+#: src/misc.cc:1185
 msgid "2nd arg"
 msgstr "2ο όρισμα"
 
-#: src/misc.cc:1775 src/misc.cc:1815 src/misc.cc:1821 src/vecteur.cc:11356
-#: src/cocoa.cc:3349 src/gen.cc:4301 src/gen.cc:10135
+#: src/misc.cc:1798 src/misc.cc:1838 src/misc.cc:1844 src/vecteur.cc:11356
+#: src/cocoa.cc:3349 src/gen.cc:4304 src/gen.cc:10138
 msgid "Not invertible"
 msgstr ""
 
-#: src/misc.cc:1857
+#: src/misc.cc:1880
 msgid "Not a potential"
 msgstr ""
 
-#: src/misc.cc:1887
+#: src/misc.cc:1910
 msgid "Not a vector potential"
 msgstr ""
 
-#: src/misc.cc:2044 src/vecteur.cc:14645 src/vecteur.cc:14666
+#: src/misc.cc:2067 src/vecteur.cc:14645 src/vecteur.cc:14666
 msgid "Low accuracy"
 msgstr ""
 
-#: src/misc.cc:3837
+#: src/misc.cc:3865
 msgid "Guessing initial production requires more than 20 samples"
 msgstr ""
 
-#: src/misc.cc:3845
+#: src/misc.cc:3873
 msgid "Initial cumulative estimated to "
 msgstr ""
 
-#: src/misc.cc:3845
+#: src/misc.cc:3873
 msgid "Correlation for 5 first years to estimate initial cumulative : "
 msgstr ""
 
-#: src/misc.cc:3884
+#: src/misc.cc:3912
 msgid "Pinstant="
 msgstr ""
 
-#: src/misc.cc:3884
+#: src/misc.cc:3912
 msgid "*Pcumul+"
 msgstr ""
 
-#: src/misc.cc:3884
+#: src/misc.cc:3912
 msgid "Correlation "
 msgstr "Συσχέτιση"
 
-#: src/misc.cc:3884
+#: src/misc.cc:3912
 msgid ", Estimated total P="
 msgstr ""
 
-#: src/misc.cc:3884
+#: src/misc.cc:3912
 msgid "Returning estimated Pcumul, Pinstant, Ptotal, Pinstantmax, tmax, R"
 msgstr ""
 
-#: src/misc.cc:3962
+#: src/misc.cc:3990
 msgid "Values out of range"
 msgstr ""
 
-#: src/misc.cc:4064
+#: src/misc.cc:4092
 msgid "Invalid class size (replaced by 1) "
 msgstr ""
 
-#: src/misc.cc:4930
+#: src/misc.cc:4958
 msgid "Negative value encoutered"
 msgstr ""
 
-#: src/misc.cc:4959
+#: src/misc.cc:4987
 msgid "graham_sort_function"
 msgstr ""
 
-#: src/misc.cc:5421
+#: src/misc.cc:5449
 msgid "binop"
 msgstr ""
 
-#: src/misc.cc:5521
+#: src/misc.cc:5549
 msgid "plotarea(f(x),x=a..b[,n,method])"
 msgstr ""
 
-#: src/misc.cc:5607
+#: src/misc.cc:5635
 msgid "not supported"
 msgstr ""
 
-#: src/misc.cc:5742
+#: src/misc.cc:5770
 msgid "Warning: not a graph matrix!"
 msgstr ""
 
-#: src/misc.cc:6023
+#: src/misc.cc:6051
 msgid ""
 "Warning! Leaving conjugate gradient algorithm after dimension of matrix "
 "iterations. Check that your matrix is hermitian/symmetric definite."
 msgstr ""
 
-#: src/misc.cc:6053
+#: src/misc.cc:6081
 msgid ""
 "Warning! Leaving Jacobi iterative algorithm after maximal number of "
 "iterations. Check that your matrix is diagonal dominant."
 msgstr ""
 
-#: src/misc.cc:6085
+#: src/misc.cc:6113
 msgid ""
 "Warning! Leaving Gauss-Seidel iterative algorithm after maximal number of "
 "iterations. Check that your matrix is diagonal dominant."
 msgstr ""
 
-#: src/misc.cc:7055
+#: src/misc.cc:7083
 #, c-format
 msgid ""
 "====================\n"
 "Parametric plot (%gen,%gen), variable %gen"
 msgstr ""
 
-#: src/misc.cc:7068
+#: src/misc.cc:7096
 #, fuzzy
 msgid "Even functions."
 msgstr "Νέα συνάρτηση"
 
-#: src/misc.cc:7070
+#: src/misc.cc:7098
 #, c-format
 msgid "Even function %gen, odd function %gen. Reflection Ox"
 msgstr ""
 
-#: src/misc.cc:7074
+#: src/misc.cc:7102
 #, c-format
 msgid "Odd function %gen, even function %gen. Reflection Oy"
 msgstr ""
 
-#: src/misc.cc:7076
+#: src/misc.cc:7104
 msgid "Odd functions. Center O"
 msgstr ""
 
-#: src/misc.cc:7088 src/misc.cc:7640
+#: src/misc.cc:7116 src/misc.cc:7668
 #, c-format
 msgid "Domain %gen"
 msgstr ""
 
-#: src/misc.cc:7091 src/misc.cc:7643
+#: src/misc.cc:7119 src/misc.cc:7671
 #, fuzzy
 msgid "Unable to find singular points"
 msgstr "Αδύνατη η μετατροπή σε ακέραιο"
 
-#: src/misc.cc:7121 src/misc.cc:7670 src/misc.cc:7684
+#: src/misc.cc:7149 src/misc.cc:7698 src/misc.cc:7712
 #, fuzzy
 msgid "Unable to find critical points"
 msgstr "Αδύνατη η μετατροπή σε ακέραιο"
 
-#: src/misc.cc:7131
+#: src/misc.cc:7159
 #, fuzzy
 msgid "Unable to find inflection points"
 msgstr "συνιστώσα x της κατεύθυνσης του προβολέα"
 
-#: src/misc.cc:7138 src/misc.cc:7690
+#: src/misc.cc:7166 src/misc.cc:7718
 msgid "Infinite number of critical points. Try with optional argument "
 msgstr ""
 
-#: src/misc.cc:7197
+#: src/misc.cc:7225
 #, c-format
 msgid ""
 "Singular point %gen, point %gen direction %gen kind (%gen,%gen)\n"
 "Taylor expansions %gen"
 msgstr ""
 
-#: src/misc.cc:7270
+#: src/misc.cc:7298
 #, c-format
 msgid "Horizontal asymptote at %gen : %gen"
 msgstr ""
 
-#: src/misc.cc:7280 src/misc.cc:7783
+#: src/misc.cc:7308 src/misc.cc:7811
 #, c-format
 msgid "Vertical parabolic asymptote at %gen"
 msgstr ""
 
-#: src/misc.cc:7286 src/misc.cc:7790
+#: src/misc.cc:7314 src/misc.cc:7818
 #, c-format
 msgid "Horizontal parabolic asymptote at %gen"
 msgstr ""
 
-#: src/misc.cc:7293
+#: src/misc.cc:7321
 #, c-format
 msgid "Parabolic asymptote direction at %gen: %gen"
 msgstr ""
 
-#: src/misc.cc:7299
+#: src/misc.cc:7327
 #, c-format
 msgid "Asymptote at %gen: %gen"
 msgstr ""
 
-#: src/misc.cc:7311
+#: src/misc.cc:7339
 #, c-format
 msgid "Vertical asymptote at %gen: %gen"
 msgstr ""
 
-#: src/misc.cc:7555
+#: src/misc.cc:7583
 #, c-format
 msgid ""
 "Variations (%gen,%gen)\n"
 "%gen"
 msgstr ""
 
-#: src/misc.cc:7568
+#: src/misc.cc:7596
 msgid ""
 "Warning, using x or y as variable in parametric plot may lead to confusion!"
 msgstr ""
 
-#: src/misc.cc:7611
+#: src/misc.cc:7639
 #, c-format
 msgid ""
 "====================\n"
 "Function plot %gen, variable %gen"
 msgstr ""
 
-#: src/misc.cc:7613
+#: src/misc.cc:7641
 #, c-format
 msgid "Periodic function T=%gen"
 msgstr ""
 
-#: src/misc.cc:7622
+#: src/misc.cc:7650
 #, c-format
 msgid "Even function %gen. Reflection Oy"
 msgstr ""
 
-#: src/misc.cc:7624
+#: src/misc.cc:7652
 #, c-format
 msgid "Odd function %gen. Center O"
 msgstr ""
 
-#: src/misc.cc:7678
+#: src/misc.cc:7706
 #, fuzzy
 msgid "Unable to find convexity"
 msgstr "Αδύνατη η μετατροπή σε ακέραιο"
 
-#: src/misc.cc:7746
+#: src/misc.cc:7774
 #, fuzzy, c-format
 msgid "Vertical asymptote %gen"
 msgstr "Κάθετος διαχωρισμός"
 
-#: src/misc.cc:7751
+#: src/misc.cc:7779
 #, c-format
 msgid "Symmetric vertical asymptote %gen"
 msgstr ""
 
-#: src/misc.cc:7764
+#: src/misc.cc:7792
 #, fuzzy, c-format
 msgid "Horizontal asymptote %gen"
 msgstr "Οριζόντιος διαχωρισμός"
 
-#: src/misc.cc:7771
+#: src/misc.cc:7799
 #, c-format
 msgid "Symmetric horizontal asymptote %gen"
 msgstr ""
 
-#: src/misc.cc:7799
+#: src/misc.cc:7827
 #, c-format
 msgid "Parabolic asymptote direction %gen at infinity"
 msgstr ""
 
-#: src/misc.cc:7806
+#: src/misc.cc:7834
 #, c-format
 msgid "Asymptote %gen"
 msgstr ""
 
-#: src/misc.cc:7816
+#: src/misc.cc:7844
 #, fuzzy, c-format
 msgid "Symmetric asymptote %gen"
 msgstr "Συμμετρικός Πίνακας"
 
-#: src/misc.cc:8034
+#: src/misc.cc:8062
 #, c-format
 msgid ""
 "Sign %gen\n"
@@ -1068,7 +1068,7 @@ msgstr ""
 msgid "For: Unable to check test"
 msgstr ""
 
-#: src/symbolic.cc:1257 src/prog.cc:1906 src/prog.cc:1921
+#: src/symbolic.cc:1257 src/prog.cc:1911 src/prog.cc:1926
 msgid "Ifte: Unable to check test"
 msgstr ""
 
@@ -1410,7 +1410,7 @@ msgid ""
 "otherwise solutions may be missed. The solutions of the equation are "
 msgstr ""
 
-#: src/solve.cc:1421 src/prog.cc:6806 src/prog.cc:6808
+#: src/solve.cc:1421 src/prog.cc:7012 src/prog.cc:7014
 msgid "Unable to sort "
 msgstr ""
 
@@ -1765,11 +1765,11 @@ msgstr ""
 msgid "Floor definite integration: unable to handle infinite boundaries"
 msgstr ""
 
-#: src/intg.cc:3557 src/plot.cc:1310 src/prog.cc:11048
+#: src/intg.cc:3557 src/plot.cc:1310 src/prog.cc:11266
 msgid "Assuming false condition "
 msgstr ""
 
-#: src/intg.cc:3561 src/plot.cc:1314 src/prog.cc:11052
+#: src/intg.cc:3561 src/plot.cc:1314 src/prog.cc:11270
 msgid "Assuming true condition "
 msgstr ""
 
@@ -2233,35 +2233,35 @@ msgstr ""
 msgid "Square is flat!"
 msgstr ""
 
-#: src/global.cc:3411 src/hist.menus:1 src/hist.menus:4 src/History.cc:227
+#: src/global.cc:3431 src/hist.menus:1 src/hist.menus:4 src/History.cc:227
 #: src/History.cc:3727 src/Editeur.cc:2445
 msgid "File"
 msgstr "Αρχείο"
 
-#: src/global.cc:3784
+#: src/global.cc:3804
 #, fuzzy
 msgid ""
 "\n"
 "Evaluation time: "
 msgstr "Χρόνος Υπολογισμού: "
 
-#: src/global.cc:3800
+#: src/global.cc:3820
 msgid "Thread "
 msgstr "Νήμα"
 
-#: src/global.cc:3870
+#: src/global.cc:3890
 msgid "Cancel thread "
 msgstr "Ακύρωση νήματος"
 
-#: src/global.cc:3892
+#: src/global.cc:3912
 msgid "Evaluation time: "
 msgstr "Χρόνος Υπολογισμού: "
 
-#: src/global.cc:5982
+#: src/global.cc:6014
 msgid "Assigning phase, j, J and rect."
 msgstr ""
 
-#: src/global.cc:5992
+#: src/global.cc:6024
 msgid ""
 "Assigning log2, gamma, fabs, modf, radians and degrees. Not supported: "
 "copysign."
@@ -2399,7 +2399,7 @@ msgstr ""
 msgid "error, odd exponent for prime "
 msgstr ""
 
-#: src/ifactor.cc:2901 src/prog.cc:4775
+#: src/ifactor.cc:2901 src/prog.cc:4784
 msgid "error"
 msgstr ""
 
@@ -2530,7 +2530,7 @@ msgstr ""
 msgid "q is not quadratic"
 msgstr ""
 
-#: src/gauss.cc:358 src/gen.cc:399
+#: src/gauss.cc:358 src/gen.cc:402
 msgid "Invalid dimension"
 msgstr ""
 
@@ -3026,401 +3026,401 @@ msgstr ""
 msgid "SVD is implemented for numeric matrices, running evalf first"
 msgstr ""
 
-#: src/prog.cc:185
+#: src/prog.cc:190
 msgid "Running in secure mode"
 msgstr ""
 
-#: src/prog.cc:326
+#: src/prog.cc:331
 msgid "from_increment"
 msgstr ""
 
-#: src/prog.cc:503
+#: src/prog.cc:508
 msgid "Warning, =< is in-place assign, check "
 msgstr ""
 
-#: src/prog.cc:554
+#: src/prog.cc:559
 msgid "Warning disabled"
 msgstr ""
 
-#: src/prog.cc:558
+#: src/prog.cc:563
 #, fuzzy
 msgid "Warning enabled"
 msgstr "Μεταβλητή"
 
-#: src/prog.cc:583
+#: src/prog.cc:588
 msgid " compiling "
 msgstr ""
 
-#: src/prog.cc:589
+#: src/prog.cc:594
 #, fuzzy
 msgid "// Invalid program"
 msgstr "Φόρτωση προγράμματος"
 
-#: src/prog.cc:594
+#: src/prog.cc:599
 msgid "// Warning, duplicate argument name: "
 msgstr ""
 
-#: src/prog.cc:606
+#: src/prog.cc:611
 msgid "// Warning, assignation is :=, check the lines below:\n"
 msgstr ""
 
-#: src/prog.cc:615
+#: src/prog.cc:620
 msgid "// Warning: "
 msgstr ""
 
-#: src/prog.cc:621
+#: src/prog.cc:626
 msgid ""
 " declared as global variable(s). If symbolic variables are required, declare "
 "them as local and run purge\n"
 msgstr ""
 
-#: src/prog.cc:624
+#: src/prog.cc:629
 msgid "// Error(s)\n"
 msgstr ""
 
-#: src/prog.cc:624
+#: src/prog.cc:629
 msgid "// Success\n"
 msgstr ""
 
-#: src/prog.cc:643
+#: src/prog.cc:648
 msgid "check_type must have 2 args"
 msgstr ""
 
-#: src/prog.cc:677
+#: src/prog.cc:682
 msgid "Argument should be of type "
 msgstr ""
 
-#: src/prog.cc:780
+#: src/prog.cc:785
 msgid "Proc Parameters"
 msgstr ""
 
-#: src/prog.cc:1015
+#: src/prog.cc:1020
 #, fuzzy
 msgid "Unitialized parameter "
 msgstr "Προσθήκη παραμέτρου"
 
-#: src/prog.cc:1036
+#: src/prog.cc:1041
 #, fuzzy
 msgid "Invalid argument name "
 msgstr "Μη έγκυρο όνομα συνάρτησης"
 
-#: src/prog.cc:1036
+#: src/prog.cc:1041
 msgid ". You should use "
 msgstr ""
 
-#: src/prog.cc:1036
+#: src/prog.cc:1041
 msgid " instead, even if the argument should be of type function"
 msgstr ""
 
-#: src/prog.cc:1147
+#: src/prog.cc:1152
 msgid ""
 "Invalid or typed variable(s) name(s) were replaced by creating special "
 "identifiers, check "
 msgstr ""
 
-#: src/prog.cc:1178
+#: src/prog.cc:1183
 msgid "// Parsing "
 msgstr ""
 
-#: src/prog.cc:1181
+#: src/prog.cc:1186
 msgid ""
 "Warning, defining a derivative function should be done with function_diff or "
 "unapply: "
 msgstr ""
 
-#: src/prog.cc:1191
+#: src/prog.cc:1196
 msgid ""
 "Warning: algebraic function defined in term of others functions may lead to "
 "evaluation errors"
 msgstr ""
 
-#: src/prog.cc:1193
+#: src/prog.cc:1198
 msgid "Perhaps you meant "
 msgstr ""
 
-#: src/prog.cc:1288
+#: src/prog.cc:1293
 msgid "Auto-declared local variables : "
 msgstr ""
 
-#: src/prog.cc:1307
+#: src/prog.cc:1312
 msgid "Warning: Local variables shadow function arguments "
 msgstr ""
 
-#: src/prog.cc:1470 src/prog.cc:1484 src/prog.cc:1490
+#: src/prog.cc:1475 src/prog.cc:1489 src/prog.cc:1495
 msgid "Too many recursions"
 msgstr ""
 
-#: src/prog.cc:1478 src/gen.cc:2122 src/gen.cc:2135 src/gen.cc:11724
+#: src/prog.cc:1483 src/gen.cc:2125 src/gen.cc:2138 src/gen.cc:11727
 msgid "Too many recursion levels"
 msgstr ""
 
-#: src/prog.cc:1880
+#: src/prog.cc:1885
 msgid "Ifte must have 3 args"
 msgstr ""
 
-#: src/prog.cc:2042
+#: src/prog.cc:2047
 msgid "3 or 4 arguments expected"
 msgstr ""
 
-#: src/prog.cc:2167
+#: src/prog.cc:2172
 msgid "Maple/Mupad/TI For: unable to convert"
 msgstr ""
 
-#: src/prog.cc:2330
+#: src/prog.cc:2335
 msgid "Unable to eval test in loop : "
 msgstr ""
 
-#: src/prog.cc:2417
+#: src/prog.cc:2422
 msgid "For must have 4 args"
 msgstr ""
 
-#: src/prog.cc:2436 src/prog.cc:2438
+#: src/prog.cc:2441 src/prog.cc:2443
 msgid "Invalid loop index (hint: i=sqrt(-1)!)"
 msgstr ""
 
-#: src/prog.cc:2661
+#: src/prog.cc:2666
 msgid "Stopped in loop"
 msgstr ""
 
-#: src/prog.cc:2796
+#: src/prog.cc:2805
 msgid "Invalid variable "
 msgstr ""
 
-#: src/prog.cc:2796
+#: src/prog.cc:2805
 msgid " using "
 msgstr ""
 
-#: src/prog.cc:2796
+#: src/prog.cc:2805
 msgid " instead."
 msgstr ""
 
-#: src/prog.cc:2813
+#: src/prog.cc:2822
 #, fuzzy
 msgid "Unable to convert to float "
 msgstr "Αδύνατη η μετατροπή σε ακέραιο"
 
-#: src/prog.cc:2824 src/usual.cc:3426
+#: src/prog.cc:2833 src/usual.cc:3426
 #, fuzzy
 msgid "Converting "
 msgstr "Απόδοση τιμής / Μετατροπή σε"
 
-#: src/prog.cc:2824 src/usual.cc:3426
+#: src/prog.cc:2833 src/usual.cc:3426
 #, fuzzy
 msgid " to integer "
 msgstr "για εκτύπωση"
 
-#: src/prog.cc:2830
+#: src/prog.cc:2839
 #, fuzzy
 msgid "Unable to convert to integer "
 msgstr "Αδύνατη η μετατροπή σε ακέραιο"
 
-#: src/prog.cc:2838
+#: src/prog.cc:2847
 #, fuzzy
 msgid "Unable to convert to vector "
 msgstr "Αδύνατη η μετατροπή σε ακέραιο"
 
-#: src/prog.cc:2855 src/prog.cc:2857
+#: src/prog.cc:2864 src/prog.cc:2866
 msgid "Reserved word:"
 msgstr ""
 
-#: src/prog.cc:2863 src/prog.cc:2865
+#: src/prog.cc:2872 src/prog.cc:2874
 msgid "Not bindable"
 msgstr ""
 
-#: src/prog.cc:2903
+#: src/prog.cc:2912
 msgid "prog.cc/leave"
 msgstr ""
 
-#: src/prog.cc:3060
+#: src/prog.cc:3069
 msgid "Local must have 2 args"
 msgstr ""
 
-#: src/prog.cc:3075
+#: src/prog.cc:3084
 msgid "Unitialized local variable "
 msgstr ""
 
-#: src/prog.cc:3237
+#: src/prog.cc:3246
 msgid "Try_catch must have 3 or 4 args"
 msgstr ""
 
-#: src/prog.cc:3422
+#: src/prog.cc:3431
 msgid "Unknown subsop rule "
 msgstr ""
 
-#: src/prog.cc:4294
+#: src/prog.cc:4303
 msgid "asc"
 msgstr "Cas"
 
-#: src/prog.cc:4452
+#: src/prog.cc:4461
 msgid "apply"
 msgstr ""
 
-#: src/prog.cc:4541
+#: src/prog.cc:4550
 msgid "Invalid null step"
 msgstr ""
 
-#: src/prog.cc:4667
+#: src/prog.cc:4676
 msgid "Union"
 msgstr ""
 
-#: src/prog.cc:4751
+#: src/prog.cc:4760
 msgid "Minus"
 msgstr ""
 
-#: src/prog.cc:4928
+#: src/prog.cc:4937
 msgid "makemat"
 msgstr ""
 
-#: src/prog.cc:4932
+#: src/prog.cc:4941
 msgid "interval"
 msgstr ""
 
-#: src/prog.cc:4936
+#: src/prog.cc:4945
 msgid "Boundaries not integer"
 msgstr ""
 
-#: src/prog.cc:5174
+#: src/prog.cc:5183
 msgid "Program killed"
 msgstr ""
 
-#: src/prog.cc:5645
+#: src/prog.cc:5851
 msgid "Sorry! Debugging requires a true operating system"
 msgstr ""
 
-#: src/prog.cc:5646
+#: src/prog.cc:5852
 msgid "Please try xcas on Linux or an Unix"
 msgstr ""
 
-#: src/prog.cc:5690 src/prog.cc:8806
+#: src/prog.cc:5896 src/prog.cc:9020
 msgid "Archiving "
 msgstr ""
 
-#: src/prog.cc:5699
+#: src/prog.cc:5905
 msgid "Click reads "
 msgstr ""
 
-#: src/prog.cc:5879
+#: src/prog.cc:6085
 msgid "check_binary"
 msgstr ""
 
-#: src/prog.cc:6084
+#: src/prog.cc:6290
 msgid "No such user "
 msgstr ""
 
-#: src/prog.cc:6166
+#: src/prog.cc:6372
 msgid "Warning: some commands like subs might change arguments order"
 msgstr ""
 
-#: src/prog.cc:6449
+#: src/prog.cc:6655
 msgid "Cas_setup "
 msgstr ""
 
-#: src/prog.cc:6733
+#: src/prog.cc:6939
 msgid "Parent insmod"
 msgstr ""
 
-#: src/prog.cc:7106
+#: src/prog.cc:7312
 msgid "Float too large"
 msgstr ""
 
-#: src/prog.cc:7142
+#: src/prog.cc:7348
 msgid "Incompatible units"
 msgstr ""
 
-#: src/prog.cc:7410
+#: src/prog.cc:7616
 msgid "Some units could not be converted to MKSA"
 msgstr ""
 
-#: src/prog.cc:7459
+#: src/prog.cc:7665
 msgid "Bad conversion basis"
 msgstr ""
 
-#: src/prog.cc:7543
+#: src/prog.cc:7749
 msgid "Run convert(matrix,array) for dense conversion"
 msgstr ""
 
-#: src/prog.cc:7550
+#: src/prog.cc:7756
 #, fuzzy
 msgid "Invalid map"
 msgstr "Μη έγκυρη συνθήκη"
 
-#: src/prog.cc:7872
+#: src/prog.cc:8085
 msgid "Running maple text translation __.map"
 msgstr "Εκτελείται μετάφραση κειμένου maple __.map"
 
-#: src/prog.cc:7892
+#: src/prog.cc:8105
 msgid "Running TI89 text translation __.ti"
 msgstr ""
 
-#: src/prog.cc:8142
+#: src/prog.cc:8356
 msgid "No help file found"
 msgstr ""
 
-#: src/prog.cc:8348
+#: src/prog.cc:8562
 msgid "Restoring epsilon to 1e-6 from "
 msgstr ""
 
-#: src/prog.cc:8352
+#: src/prog.cc:8566
 msgid "Restoring proba epsilon to 1e-6 from "
 msgstr ""
 
-#: src/prog.cc:8646
+#: src/prog.cc:8860
 #, fuzzy
 msgid "invalid |"
 msgstr "Μη έγκυρη συνθήκη"
 
-#: src/prog.cc:8694
+#: src/prog.cc:8908
 msgid "Invalid |"
 msgstr ""
 
-#: src/prog.cc:8790
+#: src/prog.cc:9004
 msgid "inputform may be used in a window environment only"
 msgstr ""
 
-#: src/prog.cc:8818
+#: src/prog.cc:9032
 msgid "Inputform reads "
 msgstr ""
 
-#: src/prog.cc:9392
+#: src/prog.cc:9606
 msgid "Error printasmaple_lib"
 msgstr ""
 
-#: src/prog.cc:10450
+#: src/prog.cc:10664
 msgid "Invalid unit exponent"
 msgstr ""
 
-#: src/prog.cc:10603
+#: src/prog.cc:10817
 #, fuzzy
 msgid "printasunit error"
 msgstr "Συντακτικό λάθος"
 
-#: src/prog.cc:10759
+#: src/prog.cc:10977
 msgid "User operator not available on this architecture"
 msgstr ""
 
-#: src/prog.cc:10771
+#: src/prog.cc:10989
 msgid "Operator name must be of type string"
 msgstr ""
 
-#: src/prog.cc:10859
+#: src/prog.cc:11077
 msgid "Non existent Folder"
 msgstr ""
 
-#: src/prog.cc:10907
+#: src/prog.cc:11125
 msgid "No case applies"
 msgstr ""
 
-#: src/prog.cc:11065
+#: src/prog.cc:11283
 msgid "Unable to handle when condition "
 msgstr ""
 
-#: src/prog.cc:11071
+#: src/prog.cc:11289
 msgid ""
 "when2sign does not work properly with infinities. Replace inf by Inf and run "
 "limit after."
 msgstr ""
 
-#: src/prog.cc:11304
+#: src/prog.cc:11522
 #, fuzzy
 msgid "assert failure: "
 msgstr "Προσθήκη σχήματος"
@@ -3594,7 +3594,7 @@ msgstr ""
 msgid "Iquo"
 msgstr ""
 
-#: src/usual.cc:6341 src/gen.cc:7546
+#: src/usual.cc:6341 src/gen.cc:7549
 msgid "Division by 0"
 msgstr ""
 
@@ -3672,447 +3672,447 @@ msgstr ""
 msgid "Function not defined"
 msgstr ""
 
-#: src/gen.cc:311
+#: src/gen.cc:314
 msgid " in "
 msgstr ""
 
-#: src/gen.cc:328
+#: src/gen.cc:331
 msgid " instruction #"
 msgstr ""
 
-#: src/gen.cc:330
+#: src/gen.cc:333
 msgid " error, try debug("
 msgstr ""
 
-#: src/gen.cc:391
+#: src/gen.cc:394
 msgid "Bad Argument Type"
 msgstr ""
 
-#: src/gen.cc:395
+#: src/gen.cc:398
 msgid "Bad Argument Value"
 msgstr ""
 
-#: src/gen.cc:403 src/gen.cc:490 src/gen.cc:494
+#: src/gen.cc:406 src/gen.cc:493 src/gen.cc:497
 msgid " Error: Bad Argument Type"
 msgstr ""
 
-#: src/gen.cc:407 src/gen.cc:498 src/gen.cc:502
+#: src/gen.cc:410 src/gen.cc:501 src/gen.cc:505
 msgid " Error: Bad Argument Value"
 msgstr ""
 
-#: src/gen.cc:411 src/gen.cc:506 src/gen.cc:510
+#: src/gen.cc:414 src/gen.cc:509 src/gen.cc:513
 msgid " Error: Invalid dimension"
 msgstr ""
 
-#: src/gen.cc:415
+#: src/gen.cc:418
 msgid "Division of "
 msgstr ""
 
-#: src/gen.cc:415 src/gen.cc:514
+#: src/gen.cc:418 src/gen.cc:517
 msgid " by 0"
 msgstr ""
 
-#: src/gen.cc:419
+#: src/gen.cc:422
 msgid "Unable to check sign: "
 msgstr "Αδύνατος ο έλεγχος προσήμου"
 
-#: src/gen.cc:423
+#: src/gen.cc:426
 msgid "Invalid series expansion: "
 msgstr ""
 
-#: src/gen.cc:427
+#: src/gen.cc:430
 msgid "Too few arguments: "
 msgstr ""
 
-#: src/gen.cc:431
+#: src/gen.cc:434
 msgid "Too many arguments: "
 msgstr ""
 
-#: src/gen.cc:435
+#: src/gen.cc:438
 msgid "Max order ("
 msgstr ""
 
-#: src/gen.cc:435 src/gen.cc:535
+#: src/gen.cc:438 src/gen.cc:538
 msgid ") exceeded or non unidirectional series"
 msgstr ""
 
-#: src/gen.cc:439
+#: src/gen.cc:442
 msgid "calculation size limit exceeded"
 msgstr ""
 
-#: src/gen.cc:466 src/gen.cc:470
+#: src/gen.cc:469 src/gen.cc:473
 msgid "Error: Bad Argument Type"
 msgstr ""
 
-#: src/gen.cc:474 src/gen.cc:478
+#: src/gen.cc:477 src/gen.cc:481
 msgid "Error: Bad Argument Value"
 msgstr ""
 
-#: src/gen.cc:482 src/gen.cc:486
+#: src/gen.cc:485 src/gen.cc:489
 msgid "Error: Invalid dimension"
 msgstr "Error: Μη έγκυρες διαστάσεις"
 
-#: src/gen.cc:514
+#: src/gen.cc:517
 msgid "Error: Division of "
 msgstr ""
 
-#: src/gen.cc:518
+#: src/gen.cc:521
 msgid "Error: Unable to check sign: "
 msgstr "Error: Αδύνατος ο έλεγχος προσήμου"
 
-#: src/gen.cc:522
+#: src/gen.cc:525
 msgid "Error: Invalid series expansion: "
 msgstr ""
 
-#: src/gen.cc:527
+#: src/gen.cc:530
 msgid "Error: Too few arguments: "
 msgstr ""
 
-#: src/gen.cc:531
+#: src/gen.cc:534
 msgid "Error: Too many arguments: "
 msgstr ""
 
-#: src/gen.cc:535
+#: src/gen.cc:538
 msgid "Error: Max order ("
 msgstr ""
 
-#: src/gen.cc:539
+#: src/gen.cc:542
 msgid "Error: calculation size limit exceeded"
 msgstr ""
 
-#: src/gen.cc:1290
+#: src/gen.cc:1293
 msgid "complex constructor"
 msgstr ""
 
-#: src/gen.cc:1345
+#: src/gen.cc:1348
 msgid "makegen of type "
 msgstr ""
 
-#: src/gen.cc:1357 src/gen.cc:1370
+#: src/gen.cc:1360 src/gen.cc:1373
 msgid "complex<double>"
 msgstr ""
 
-#: src/gen.cc:1580
+#: src/gen.cc:1583
 msgid "Gen Destructor"
 msgstr ""
 
-#: src/gen.cc:1661
+#: src/gen.cc:1664
 msgid "Gen Operator ="
 msgstr ""
 
-#: src/gen.cc:1705
+#: src/gen.cc:1708
 msgid "To_int"
 msgstr ""
 
-#: src/gen.cc:1735
+#: src/gen.cc:1738
 msgid "gen.cc/_FRAC2_SYMB"
 msgstr ""
 
-#: src/gen.cc:2138 src/gen.cc:2151
+#: src/gen.cc:2141 src/gen.cc:2154
 msgid "Running non recursive evaluator"
 msgstr ""
 
-#: src/gen.cc:2148
+#: src/gen.cc:2151
 msgid "Too many recursions)"
 msgstr "Πάρα πολλές αναδρομές"
 
-#: src/gen.cc:2571 src/hist.cxx:4020
+#: src/gen.cc:2574 src/hist.cxx:4020
 msgid "Evalf"
 msgstr "Προσεγγιστικός υπολογισμός"
 
-#: src/gen.cc:2741 src/gen.cc:2751
+#: src/gen.cc:2744 src/gen.cc:2754
 msgid "Undefined"
 msgstr ""
 
-#: src/gen.cc:2743 src/gen.cc:2754
+#: src/gen.cc:2746 src/gen.cc:2757
 msgid "Infinity error"
 msgstr ""
 
-#: src/gen.cc:3107
+#: src/gen.cc:3110
 msgid "Conj"
 msgstr ""
 
-#: src/gen.cc:3564
+#: src/gen.cc:3567
 msgid "reim"
 msgstr ""
 
-#: src/gen.cc:3683
+#: src/gen.cc:3686
 msgid "Re"
 msgstr ""
 
-#: src/gen.cc:3798
+#: src/gen.cc:3801
 msgid "Im"
 msgstr ""
 
-#: src/gen.cc:3968
+#: src/gen.cc:3971
 msgid "Abs"
 msgstr ""
 
-#: src/gen.cc:3997
+#: src/gen.cc:4000
 msgid "Linfnorm"
 msgstr ""
 
-#: src/gen.cc:4114
+#: src/gen.cc:4117
 msgid "Arg"
 msgstr ""
 
-#: src/gen.cc:4155
+#: src/gen.cc:4158
 msgid "Bindigits"
 msgstr ""
 
-#: src/gen.cc:4165 src/gen.cc:4167
+#: src/gen.cc:4168 src/gen.cc:4170
 msgid "addpoly"
 msgstr ""
 
-#: src/gen.cc:4237 src/gen.cc:4239
+#: src/gen.cc:4240 src/gen.cc:4242
 msgid "Bad mod:"
 msgstr ""
 
-#: src/gen.cc:4265 src/gen.cc:4274 src/gen.cc:4282
+#: src/gen.cc:4268 src/gen.cc:4277 src/gen.cc:4285
 msgid "Mod are different"
 msgstr ""
 
-#: src/gen.cc:4447
+#: src/gen.cc:4450
 msgid ""
 "Warning + is vector addition, run list1.extend(list2) for list concatenation"
 msgstr ""
 
-#: src/gen.cc:5062 src/gen.cc:5064
+#: src/gen.cc:5065 src/gen.cc:5067
 msgid "subpoly"
 msgstr ""
 
-#: src/gen.cc:5638 src/gen.cc:5640
+#: src/gen.cc:5641 src/gen.cc:5643
 msgid "mulpoly"
 msgstr ""
 
-#: src/gen.cc:6088
+#: src/gen.cc:6091
 msgid ""
 "Python compatibility, integer*list will do vector multiplication, run "
 "list*integer to duplicate list"
 msgstr ""
 
-#: src/gen.cc:6508
+#: src/gen.cc:6511
 msgid ""
 "Warning, ^ is ambiguous on non square matrices. Use .^ to apply ^ element by "
 "element."
 msgstr ""
 
-#: src/gen.cc:6739
+#: src/gen.cc:6742
 msgid "Use matpow to force computation of a power of matrix via jordanisation"
 msgstr ""
 
-#: src/gen.cc:6780
+#: src/gen.cc:6783
 msgid "Negative to a fractional power"
 msgstr ""
 
-#: src/gen.cc:7034
+#: src/gen.cc:7037
 msgid "Unable to multiply two graphic objects"
 msgstr ""
 
-#: src/gen.cc:7303
+#: src/gen.cc:7306
 msgid "Inv of non-square matrix"
 msgstr ""
 
-#: src/gen.cc:7436
+#: src/gen.cc:7439
 msgid "Pow"
 msgstr ""
 
-#: src/gen.cc:7563
+#: src/gen.cc:7566
 msgid "iquo"
 msgstr "iquo"
 
-#: src/gen.cc:7725
+#: src/gen.cc:7728
 msgid ""
 "Warning: A/B with B a square matrix is a misleading notation interpreted as "
 "inv(B)*A"
 msgstr ""
 
-#: src/gen.cc:7728
+#: src/gen.cc:7731
 msgid ""
 "Warning, pointwise division of a by b. For matrix division, please use inv(b)"
 "*a or a*inv(b)"
 msgstr ""
 
-#: src/gen.cc:7938
+#: src/gen.cc:7941
 msgid "rdiv"
 msgstr ""
 
-#: src/gen.cc:8556
+#: src/gen.cc:8559
 msgid ""
 "Warning, sign might return 0 incorrectly because the value of eps is too "
 "large "
 msgstr ""
 
-#: src/gen.cc:9002
+#: src/gen.cc:9005
 msgid "Gen [int]"
 msgstr ""
 
-#: src/gen.cc:9008
+#: src/gen.cc:9011
 msgid "Index outside range : "
 msgstr ""
 
-#: src/gen.cc:9091 src/gen.cc:9171
+#: src/gen.cc:9094 src/gen.cc:9174
 msgid "Warning, using :0:-step, use :-1:-step for ::"
 msgstr ""
 
-#: src/gen.cc:9368
+#: src/gen.cc:9371
 msgid "Warning, evaluating ("
 msgstr ""
 
-#: src/gen.cc:9393
+#: src/gen.cc:9396
 msgid "Index out of range"
 msgstr "Δείκτης εκτός πεδίου τιμών"
 
-#: src/gen.cc:9497
+#: src/gen.cc:9500
 msgid "islesscomplexthan mod"
 msgstr ""
 
-#: src/gen.cc:9780
+#: src/gen.cc:9783
 msgid "power_basis_exp"
 msgstr ""
 
-#: src/gen.cc:10377
+#: src/gen.cc:10380
 msgid "symgcd"
 msgstr ""
 
-#: src/gen.cc:10459
+#: src/gen.cc:10462
 msgid "simplify: Polynomials do not have the same dimension"
 msgstr ""
 
-#: src/gen.cc:10507
+#: src/gen.cc:10510
 #, fuzzy
 msgid "gen.cc:simplify"
 msgstr "Απλοποίηση"
 
-#: src/gen.cc:10511
+#: src/gen.cc:10514
 msgid "gen.cc:simplify/tmp.type!=_EXT"
 msgstr ""
 
-#: src/gen.cc:10518 src/hist.cxx:4033 src/Equation.cc:4533
+#: src/gen.cc:10521 src/hist.cxx:4033 src/Equation.cc:4533
 msgid "simplify"
 msgstr ""
 
-#: src/gen.cc:10718 src/hist.cxx:4338
+#: src/gen.cc:10721 src/hist.cxx:4338
 msgid "%"
 msgstr "%"
 
-#: src/gen.cc:10785
+#: src/gen.cc:10788
 msgid "irem"
 msgstr ""
 
-#: src/gen.cc:10956
+#: src/gen.cc:10959
 msgid "Not invertible "
 msgstr ""
 
-#: src/gen.cc:10986 src/gen.cc:10989
+#: src/gen.cc:10989 src/gen.cc:10992
 msgid "invmod"
 msgstr ""
 
-#: src/gen.cc:11127
+#: src/gen.cc:11130
 msgid "Reconstructed denominator is not prime with modulo"
 msgstr ""
 
-#: src/gen.cc:11175 src/gen.cc:11192
+#: src/gen.cc:11178 src/gen.cc:11195
 msgid "powmod"
 msgstr ""
 
-#: src/gen.cc:11213
+#: src/gen.cc:11216
 msgid "No Integer Solution"
 msgstr "Δεν υπάρχει ακέραιη λύση"
 
-#: src/gen.cc:11220
+#: src/gen.cc:11223
 msgid "isqrt"
 msgstr ""
 
-#: src/gen.cc:11262
+#: src/gen.cc:11265
 msgid "is_probab_prime_p"
 msgstr ""
 
-#: src/gen.cc:11296
+#: src/gen.cc:11299
 msgid "nextprime"
 msgstr ""
 
-#: src/gen.cc:11305 src/gen.cc:11326
+#: src/gen.cc:11308 src/gen.cc:11329
 #, fuzzy
 msgid "Interrupted"
 msgstr "Διαδίκτυο"
 
-#: src/gen.cc:11313
+#: src/gen.cc:11316
 msgid "prevprime"
 msgstr ""
 
-#: src/gen.cc:11336
+#: src/gen.cc:11339
 msgid "jacobi"
 msgstr ""
 
-#: src/gen.cc:11372
+#: src/gen.cc:11375
 msgid "legendre"
 msgstr "υπόμνημα"
 
-#: src/gen.cc:11413
+#: src/gen.cc:11416
 msgid "has_denominator"
 msgstr ""
 
-#: src/gen.cc:11754 src/gen.cc:11765 src/gen.cc:11773
+#: src/gen.cc:11757 src/gen.cc:11768 src/gen.cc:11776
 msgid ""
 "Warning, i is usually sqrt(-1), I'm using a symbolic variable instead but "
 "you should check your input"
 msgstr ""
 
-#: src/gen.cc:12255
+#: src/gen.cc:12269
 msgid "Empty array"
 msgstr ""
 
-#: src/gen.cc:12260
+#: src/gen.cc:12274
 msgid "Bad array indexes"
 msgstr ""
 
-#: src/gen.cc:13884 src/Editeur.cc:2492
+#: src/gen.cc:13906 src/Editeur.cc:2492
 msgid "print"
 msgstr "εκτύπωση"
 
-#: src/gen.cc:14625 src/gen.cc:14684
+#: src/gen.cc:14647 src/gen.cc:14706
 msgid "Unable to convert to real "
 msgstr ""
 
-#: src/gen.cc:14770 src/gen.cc:14791 src/gen.cc:14897 src/gen.cc:14916
+#: src/gen.cc:14792 src/gen.cc:14813 src/gen.cc:14919 src/gen.cc:14938
 msgid "real_object + gen"
 msgstr ""
 
-#: src/gen.cc:15053
+#: src/gen.cc:15075
 msgid ""
 "Compile with MPFR or USE_GMP_REPLACEMENTS if you want transcendental long "
 "float support"
 msgstr ""
 
-#: src/gen.cc:15341
+#: src/gen.cc:15363
 msgid "real_interval inv"
 msgstr ""
 
-#: src/gen.cc:15357 src/gen.cc:15379 src/gen.cc:15390 src/gen.cc:15401
-#: src/gen.cc:15412 src/gen.cc:15423 src/gen.cc:15434 src/gen.cc:15445
-#: src/gen.cc:15456 src/gen.cc:15467 src/gen.cc:15478 src/gen.cc:15489
-#: src/gen.cc:15500 src/gen.cc:15511 src/gen.cc:15522
+#: src/gen.cc:15379 src/gen.cc:15401 src/gen.cc:15412 src/gen.cc:15423
+#: src/gen.cc:15434 src/gen.cc:15445 src/gen.cc:15456 src/gen.cc:15467
+#: src/gen.cc:15478 src/gen.cc:15489 src/gen.cc:15500 src/gen.cc:15511
+#: src/gen.cc:15522 src/gen.cc:15533 src/gen.cc:15544
 msgid "real_interval sqrt"
 msgstr ""
 
-#: src/gen.cc:15368
+#: src/gen.cc:15390
 msgid "real_interval abs"
 msgstr ""
 
-#: src/gen.cc:15598
+#: src/gen.cc:15620
 msgid "real_interval mul"
 msgstr ""
 
-#: src/gen.cc:15628
+#: src/gen.cc:15650
 msgid "real_interval mul 2"
 msgstr ""
 
-#: src/gen.cc:15730
+#: src/gen.cc:15752
 msgid "MPFR error reading binary "
 msgstr ""
 
-#: src/gen.cc:15732
+#: src/gen.cc:15754
 msgid "Error no MPFR reading "
 msgstr ""
 

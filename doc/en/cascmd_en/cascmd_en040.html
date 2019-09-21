@@ -13,10 +13,9 @@
 <hr>
 <h3 id="sec57" class="subsection">3.7.6  Export to presentation or content MathML : <span style="font-family:monospace">export_mathml</span><a id="hevea_default21"></a></h3>
 <p>
-The command <span style="font-family:monospace">export_mathml</span> accepts one or two arguments: an expression and optionally the symbol <span style="font-family:monospace">content</span> or <span style="font-family:monospace">display</span>. If <span style="font-family:monospace">content</span> is specified, it converts the expression to content MathML, while for <span style="font-family:monospace">display</span> it converts it to presentation MathML. If the second argument is omitted, the return value contains both presentation and content MathML within a <span style="font-family:monospace">semantics</span> block. The return value in each case is a string containing a single <span style="font-family:monospace">math</span> block.</p><p>In each of the following examples the return string is indented for better readability.<br>
-Input :
+The command <span style="font-family:monospace">export_mathml</span> accepts one or two arguments: an expression and optionally the symbol <span style="font-family:monospace">content</span> or <span style="font-family:monospace">display</span>. If <span style="font-family:monospace">content</span> is specified, it converts the expression to content MathML, while for <span style="font-family:monospace">display</span> it converts it to presentation MathML. If the second argument is omitted, the return value contains both presentation and content MathML within a <span style="font-family:monospace">semantics</span> block. The return value in each case is a string containing a single <span style="font-family:monospace">math</span> block.</p><p>For example, input :
 </p><div class="center">
-<span style="font-family:monospace">export_mathml(a+2*b)
+	<span style="font-family:monospace">xml_print(export_mathml(a+2*b))
 </span></div><p>
 Output :
 </p><pre class="verbatim">&lt;math xmlns='http://www.w3.org/1998/Math/MathML'&gt;
@@ -47,7 +46,7 @@ Output :
 </pre><p>
 Input :
 </p><div class="center">
-<span style="font-family:monospace">export_mathml(a+2*b,content)
+	<span style="font-family:monospace">xml_print(export_mathml(a+2*b,content))
 </span></div><p>
 Output :
 </p><pre class="verbatim">&lt;math xmlns='http://www.w3.org/1998/Math/MathML'&gt;
@@ -64,7 +63,7 @@ Output :
 </pre><p>
 Input :
 </p><div class="center">
-<span style="font-family:monospace">export_mathml(a+2*b,display)
+	<span style="font-family:monospace">xml_print(export_mathml(a+2*b,display))
 </span></div><p>
 Output :
 </p><pre class="verbatim">&lt;math xmlns='http://www.w3.org/1998/Math/MathML'&gt;

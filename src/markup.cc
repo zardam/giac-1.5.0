@@ -144,6 +144,10 @@ bool is_leading_bracket(const string &s) {
   return is_prefix(s,"\\left(") || is_prefix(s,"\\left\\{") || is_prefix(s,"\\left[");
 }
 
+bool is_closing_bracket(const string &s) {
+  return is_suffix(s,"\\right)") || is_suffix(s,"\\right\\}") || is_suffix(s,"\\right]");
+}
+
 bool is_greek_letter(const string &s) {
   switch (s.size()) {
   case 2:
@@ -205,13 +209,14 @@ string tex_implmul(const MarkupBlock &ml,const MarkupBlock &prev) {
        (is_prefix(ml.latex,"\\mathrm{") &&
         !is_substr(ml.latex.substr(8,ml.latex.find("}",8)-8),"\\_")) ||
        (is_prefix(ml.latex,"\\operatorname{") &&
+        (prev.latex.empty() || !isdigit(prev.latex[prev.latex.size()-1])) &&
         !is_latex_command_suffix(prev.latex,"^") && !is_latex_command_suffix(prev.latex,"_")) ||
        is_latex_command_suffix(prev.latex,"\\mathrm") ||
        is_latex_command_suffix(prev.latex,"\\operatorname")))
     return "\\,";
   else if (!is_texmacs_compatible_latex_export &&
            (ml.ctype(_MLBLOCK_ELEMAPP) || is_prefix(ml.latex,"\\operatorname{") ||
-            is_leading_bracket(ml.latex)))
+            is_leading_bracket(ml.latex) || is_closing_bracket(prev.latex)))
     return " ";
   return tex_itimes;
 }
@@ -2761,24 +2766,43 @@ MarkupBlock gen2markup(const gen &g,int flags_orig,int &idc,GIAC_CONTEXT) {
         ml.latex=tmp.latex+"\\mathclose{"+string(g.is_symb_of_sommet(at_increment)?"++}":"--}");
       return ml;
     }
-    if (g.is_symb_of_sommet(at_when) && vectarg && g._SYMBptr->feuille._VECTptr->size()==3) {
+    if ((g.is_symb_of_sommet(at_when) || g.is_symb_of_sommet(at_piecewise)) &&
+        vectarg && g._SYMBptr->feuille._VECTptr->size()>=3) {
       const vecteur &args=*g._SYMBptr->feuille._VECTptr;
       ml.priority=_PRIORITY_COND;
-      tmp=gen2markup(args[0],flags,idc,contextptr);
-      prepend_minus(tmp,flags);
-      if (tmp.priority>=ml.priority)
-        parenthesize(tmp,flags);
-      get_leftright(makevecteur(args[1],args[2]),&ml,left,right,flags,idc,contextptr);
+      MarkupBlock otw;
+      int nargs=args.size();
+      bool has_otherwise=(nargs%2)!=0;
+      if (has_otherwise) {
+        otw=gen2markup(args.back(),flags,idc,contextptr);
+        prepend_minus(otw,flags);
+      }
+      for (int i=0;i<nargs/2;++i) {
+        get_leftright(makevecteur(args[2*i+1],args[2*i]),&ml,left,right,flags,idc,contextptr);
+        if (mml_content)
+          ml.content+=mml_tag("piece",left.content+right.content);
+        if (mml_presentation)
+          ml.markup+=mml_tag("mtr",mml_tag("mtd",left.markup+"<mo>,</mo>")+
+                                   mml_tag("mtd",right.markup));
+        if (tex)
+          ml.latex+=left.latex+",&"+right.latex+"\\\\";
+      }
+      if (has_otherwise) {
+        if (mml_content)
+          ml.content+=mml_tag("otherwise",otw.content);
+        if (mml_presentation)
+          ml.markup+=mml_tag("mtr",mml_tag("mtd",otw.markup+"<mo>,</mo>")+
+                                   mml_tag("mtd","<mi mathvariant='normal'>otherwise</mi>"));
+        if (tex)
+          ml.latex+=otw.latex+",&\\text{otherwise}";
+      }
       if (mml_content)
-        ml.content=mml_tag("piecewise",mml_tag("piece",left.content+tmp.content)+
-                                       mml_tag("otherwise",right.content),++idc);
+        ml.content=mml_tag("piecewise",ml.content,++idc);
       if (mml_presentation)
-        ml.markup=mml_tag(
-          "mrow",tmp.markup+"<mo lspace='mediummathspace' rspace='mediummathspace'>?</mo>"+
-                 left.markup+"<mo lspace='mediummathspace' rspace='mediummathspace'>:</mo>"+
-                 right.markup,idc);
+        ml.markup=mml_tag("mfenced",mml_tag("mtable",ml.markup,0,"columnalign","left"),
+                          idc,"open","{","close"," ");
       if (tex)
-        ml.latex=tmp.latex+"\\:\\mathord{?}\\:"+left.latex+"\\:\\mathord{:}\\:"+right.latex;
+        ml.latex="\\begin{cases}"+ml.latex+"\\end{cases}";
       return ml;
     }
     if (g.is_symb_of_sommet(at_factorial)) {
@@ -2815,9 +2839,8 @@ MarkupBlock gen2markup(const gen &g,int flags_orig,int &idc,GIAC_CONTEXT) {
     if (g.is_symb_of_sommet(at_l1norm) || g.is_symb_of_sommet(at_l2norm) ||
         g.is_symb_of_sommet(at_norm) || g.is_symb_of_sommet(at_maxnorm) ||
         g.is_symb_of_sommet(at_matrix_norm)) {
-      tmp=gen2markup(vectarg?g._SYMBptr->feuille._VECTptr->front()
-                              :g._SYMBptr->feuille,
-                       flags,idc,contextptr);
+      tmp=gen2markup(vectarg?g._SYMBptr->feuille._VECTptr->front():g._SYMBptr->feuille,
+                     flags,idc,contextptr);
       prepend_minus(tmp,flags);
       MarkupBlock d;
       int n=-2;
@@ -3056,12 +3079,110 @@ string export_latex(const gen &g,GIAC_CONTEXT) {
   return ml.latex;
 }
 
+// XML pretty printing
+#define XML_INDENT 2
+const string xml_element_name_end=" \t\n\r>";
+string trim_string(const string &s) {
+  size_t start,end;
+  for (start=0;start<s.size() && isspace(s[start]);start++);
+  for (end=s.size();end-->0 && isspace(s[end]););
+  return s.substr(start,end-start+1);
+}
+bool xml_read_element(const string &xml,size_t &pos,string &element,string &attrib,string &content) {
+  while (pos<xml.size() && isspace(xml[pos])) ++pos;
+  if (pos==xml.size()) {
+    element=attrib=content="";
+    return true;
+  }
+  if (xml[pos]!='<') return false;
+  size_t start=pos+1;
+  if (is_prefix(xml.substr(start),"--!")) {
+    pos=xml.find("-->",start);
+    if (pos==string::npos) return false;
+    element="";
+    content=xml.substr(start+3,pos-start-3);
+    pos+=3;
+    return true;
+  }
+  while (xml_element_name_end.find(xml[++pos])==string::npos) {
+    if (pos+1==xml.size()) return false;
+  }
+  string e=xml.substr(start,pos-start);
+  size_t astart=pos;
+  while (xml[pos++]!='>') {
+    if (pos==xml.size()) return false;
+  }
+  if (xml[pos-2]=='/') {
+    content=attrib="";
+    if (is_suffix(e,"/"))
+      e="/"+e.substr(0,e.size()-1);
+    else {
+      attrib=trim_string(xml.substr(astart,pos-astart-2));
+      e="/"+e;
+    }
+  } else if (xml[pos-2]=='?' && e=="?xml" && pos-astart-2>0)
+    attrib=trim_string(xml.substr(astart,pos-astart-2));
+  else {
+    size_t p=pos,cstart=pos,q;
+    int level=1;
+    while(p<xml.size()) {
+      if (xml[p]=='<') {
+        q=xml.find(">",p+1);
+        if (q==string::npos) return false;
+        if (xml[q-1]=='/') {
+          p=q+1;
+          continue;
+        }
+        if (xml[p+1]=='/') {
+          level--;
+          if (level==0 && is_prefix(xml.substr(p+2),e) &&
+              xml_element_name_end.find(xml[p+2+e.size()])!=string::npos) {
+            pos=q+1;
+            break;
+          }
+        } else level++;
+        p=q;
+      }
+      ++p;
+    }
+    if(p==xml.size()) return false;
+    attrib=trim_string(xml.substr(astart,cstart-astart-1));
+    content=trim_string(xml.substr(cstart,p-cstart));
+  }
+  element=e;
+  return true;
+}
+string xml_pretty_print(const string &xml,int level=0) {
+  size_t pos=0;
+  string element,attrib,content,indent=string(level*XML_INDENT,32),ret="";
+  while(pos!=xml.size()) {
+    if (!xml_read_element(xml,pos,element,attrib,content)) return xml;
+    if (!attrib.empty()) attrib=" "+attrib;
+    if (element.empty() && content.empty()) continue;
+    if (element.empty()) // the "element" is actually a comment
+      ret+=indent+"<--!"+content+"-->\n";
+    else if (element[0]=='?')
+      ret+=indent+"<"+element+attrib+"?>\n";
+    else if (element[0]=='/')
+      ret+=indent+"<"+element.substr(1)+attrib+"/>\n";
+    else
+      ret+=indent+"<"+element+attrib+">"+xml_pretty_print(content,level+1)+"</"+element+">\n";
+  }
+  if (trim_string(ret).empty())
+    return "";
+  if (level==0 && ret.size()>0 && ret[ret.size()-1]=='\n')
+    ret=ret.substr(0,ret.size()-1);
+  return (level>0?"\n":"")+ret+(level>1?string((level-1)*XML_INDENT,32):"");
+}
+
+const string mathml_header_attributes="mode='display' xmlns='http://www.w3.org/1998/Math/MathML'";
+
 string export_mathml_content(const gen &g,GIAC_CONTEXT) {
   MarkupBlock ml;
   int idc=0,flags=_MARKUP_TOPLEVEL | _MARKUP_MATHML_CONTENT;
   ml=gen2markup(g,flags,idc,contextptr);
   prepend_minus(ml,flags);
-  return "<math xmlns='http://www.w3.org/1998/Math/MathML'>"+ml.content+"</math>";
+  return "<math "+mathml_header_attributes+">"+ml.content+"</math>";
 }
 
 string export_mathml_presentation(const gen &g,GIAC_CONTEXT) {
@@ -3069,7 +3190,7 @@ string export_mathml_presentation(const gen &g,GIAC_CONTEXT) {
   int idc=0,flags=_MARKUP_TOPLEVEL | _MARKUP_ELEMPOW | _MARKUP_MATHML_PRESENTATION;
   ml=gen2markup(g,flags,idc,contextptr);
   prepend_minus(ml,flags);
-  return "<math xmlns='http://www.w3.org/1998/Math/MathML'>"+ml.markup+"</math>";
+  return "<math "+mathml_header_attributes+">"+ml.markup+"</math>";
 }
 
 string export_mathml(const gen &g,GIAC_CONTEXT) {
@@ -3077,7 +3198,7 @@ string export_mathml(const gen &g,GIAC_CONTEXT) {
   int idc=0,flags=_MARKUP_TOPLEVEL | _MARKUP_MATHML_PRESENTATION | _MARKUP_MATHML_CONTENT;
   ml=gen2markup(g,flags,idc,contextptr);
   prepend_minus(ml,flags);
-  return "<math xmlns='http://www.w3.org/1998/Math/MathML'><semantics>"+ml.markup+
+  return "<math "+mathml_header_attributes+"><semantics>"+ml.markup+
          "<annotation-xml encoding='MathML-Content'>"+ml.content+"</annotation-xml>"+
          "<annotation encoding='Giac'>"+str_to_mml(g.print(contextptr),false)+
          "</annotation></semantics></math>";
@@ -3134,9 +3255,22 @@ gen _export_mathml(const gen &g,GIAC_CONTEXT) {
   }
   return string2gen(ret,false);
 }
-static const char _export_mathml_s []="export_mathml";
-static define_unary_function_eval (__export_mathml,&_export_mathml,_export_mathml_s);
+static const char _export_mathml_s[]="export_mathml";
+static define_unary_function_eval(__export_mathml,&_export_mathml,_export_mathml_s);
 define_unary_function_ptr5(at_export_mathml,alias_at_export_mathml,&__export_mathml,0,true)
+
+gen _xml_print(const gen &g,GIAC_CONTEXT) {
+  if (g.type!=_STRNG)
+    return gentypeerr(contextptr);
+  if (g.subtype==-1)
+    return g;
+  string s=g.print(contextptr);
+  s=s.substr(1,s.size()-2);
+  return string2gen(xml_pretty_print(s),false);
+}
+static const char _xml_print_s[]="xml_print";
+static define_unary_function_eval(__xml_print,&_xml_print,_xml_print_s);
+define_unary_function_ptr5(at_xml_print,alias_at_xml_print,&__xml_print,0,true)
 
 #ifndef NO_NAMESPACE_GIAC
 } // namespace giac

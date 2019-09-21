@@ -4,31 +4,27 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="hevea 2.29+5 of 2017-05-18">
 <link rel="stylesheet" type="text/css" href="cascmd_en.css">
-<title>Polynomials of several variables: 
-%%%{ %%%}</title>
+<title>Polynomials of a single variable: poly1</title>
 </head>
 <body >
 <a href="cascmd_en321.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="cascmd_en323.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h3 id="sec394" class="subsection">5.29.2  Polynomials of several variables: 
-<span style="font-family:monospace">%%%{ %%%}</span></h3>
+<h3 id="sec394" class="subsection">5.29.1  Polynomials of a single variable: <span style="font-family:monospace">poly1</span></h3>
 <p>
-<a id="hevea_default540"></a></p><p>A polynomial of several variables is represented
+<a id="hevea_default540"></a>
+A polynomial of one variable is represented either 
+by a symbolic expression or by the list of its 
+coefficients in decreasing powers order (dense representation).
+In the latter case, to avoid confusion with other kinds of list
 </p><ul class="itemize"><li class="li-itemize">
-by a symbolic expression 
-</li><li class="li-itemize">or by a dense recursive 1-d representation like above
-</li><li class="li-itemize">or by a sum of
-monomials with non-zero coefficients (distributed sparse
-representation).<br>
-A monomial with several variables is represented by a coefficient and a
-list of integers (interpreted as powers of a variable list). The 
-delimiters for monomials are
-<span style="font-family:monospace">%%%{</span> and <span style="font-family:monospace">%%%}</span>, for example 3<span style="font-style:italic">x</span><sup>2</sup><span style="font-style:italic">y</span> is represented by
-<span style="font-family:monospace">%%%{3,[2,1]%%%}</span> with respect to the variable list 
-<span style="font-family:monospace">[x,y]</span>).
-</li></ul>
+use <code>poly1[...]</code> as delimiters in inputs
+</li><li class="li-itemize">check for    in <span style="font-family:monospace">Xcas</span> output.
+</li></ul><p>
+Note that polynomials represented as lists of coefficients
+are always written in decreasing powers order even if 
+<span style="font-family:monospace">increasing power</span> is checked in <span style="font-family:monospace">cas</span> configuration.</p>
 <hr>
 <a href="cascmd_en321.html"><img src="previous_motif.gif" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>

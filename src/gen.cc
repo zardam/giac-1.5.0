@@ -1,5 +1,8 @@
 // -*- mode:C++ ; compile-command: "g++ -I.. -I../include -DHAVE_CONFIG_H -DIN_GIAC -DGIAC_GENERIC_CONSTANTS -fno-strict-aliasing -g -c gen.cc -Wall" -*-
 #include "giacPCH.h"
+#ifdef NUMWORKS
+#include "kdisplay.h"
+#endif
 
 /*
  *  Copyright (C) 2001,14 B. Parisse, Institut Fourier, 38402 St Martin d'Heres
@@ -15894,6 +15897,21 @@ void sprint_double(char * s,double d){
 #endif
   }
 
+  gen iprotecteval(const gen & g,int level,GIAC_CONTEXT){
+#ifdef NUMWORKS
+    enable_back_interrupt();
+    gen res=protecteval(g,level,contextptr);
+    disable_back_interrupt();
+    return res;
+#else
+    return protecteval(g,level,contextptr);
+#endif
+  }
+
+#if 0 // def NUMWORKS
+#undef HAVE_LIBPTHREAD
+#endif
+
 #ifdef HAVE_LIBPTHREAD
   struct caseval_param{
     const char * s;
@@ -15908,13 +15926,14 @@ void sprint_double(char * s,double d){
     pthread_mutex_lock(&ptr->mutex);
     gen g(ptr->s,ptr->contextptr);
     g=equaltosto(g,ptr->contextptr);
-    ptr->ans=protecteval(g,1,ptr->contextptr);
+    ptr->ans=iprotecteval(g,1,ptr->contextptr);
     pthread_mutex_unlock(&ptr->mutex);
     return ptr;
   }
 #endif
 
   const char * caseval(const char *s){
+    ctrl_c=interrupted=false;
     static string * sptr=0;
     if (!sptr) sptr=new string;
     string & S=*sptr;
@@ -15967,7 +15986,7 @@ void sprint_double(char * s,double d){
     if (cres){
       g=gen(s,&C);
       g=equaltosto(g,&C);
-      g=protecteval(g,1,&C);
+      g=iprotecteval(g,1,&C);
     }
     else {
       // void * ptr;
@@ -16015,7 +16034,7 @@ void sprint_double(char * s,double d){
     g=equaltosto(g,&C);
     if (g.type==_VECT && !g._VECTptr->empty() && g._VECTptr->front().is_symb_of_sommet(at_set_language)){
       vecteur v=*g._VECTptr;
-      protecteval(v.front(),1,&C);
+      iprotecteval(v.front(),1,&C);
       v.erase(v.begin());
       if (g.subtype==_SEQ__VECT && v.size()==1)
 	g=v.front();
@@ -16025,13 +16044,17 @@ void sprint_double(char * s,double d){
     gen gp=g;
     if (gp.is_symb_of_sommet(at_add_autosimplify))
       gp=gp._SYMBptr->feuille;
+#ifdef NUMWORKS
+    bool push=false;
+#else
     bool push=!gp.is_symb_of_sommet(at_mathml) && !gp.is_symb_of_sommet(at_set_language);
+#endif
     //bool push=!g.is_symb_of_sommet(at_mathml);
     if (push){
       history_in(&C).push_back(g);
       // COUT << "hin " << g << '\n';
     }
-    g=protecteval(g,1,&C);
+    g=iprotecteval(g,1,&C);
     if (push){
       history_out(&C).push_back(g);
       // COUT << "hout " << g << '\n';
@@ -16077,11 +16100,29 @@ void sprint_double(char * s,double d){
 #endif // EMCC
     if (calc_mode(&C)==1 && !lop(g,at_rootof).empty())
       g=evalf(g,1,&C);
-    if (has_undef_stringerr(g,S))
+    if (has_undef_stringerr(g,S)){
       S="GIAC_ERROR: "+S;
+    }
     else {
-      S=g.print(&C);
 #ifdef NUMWORKS // replace ],[ by ][
+      gen last=g;
+      while (last.type==_VECT && last.subtype!=_LOGO__VECT && !last._VECTptr->empty()){
+	gen tmp=last._VECTptr->back();
+	if (tmp.is_symb_of_sommet(at_equal))
+	  last=vecteur(last._VECTptr->begin(),last._VECTptr->end()-1);
+	else
+	  last=tmp;
+      }
+      if (last.is_symb_of_sommet(at_pnt)){
+	xcas::displaygraph(g,&C);
+	S="Graphic_object";
+      }
+      else {
+	if (taille(g,100)>=100)
+	  S="Large_object";
+	else
+	  S=g.print(&C);
+      }
       string S_;
       S_ += S[0];
       for (size_t i=1;i+1<S.size();++i){
@@ -16096,6 +16137,7 @@ void sprint_double(char * s,double d){
       if (S.size()>=3 && S[0]=='[' && S[1]!='[' && S[S.size()-1]==']')
 	S='['+S+']'; // vector/list not allowed in Numworks calc app
 #else
+      S=g.print(&C);
 #if !defined GIAC_GGB 
       if (g.type==_FRAC || g.type==_ZINT){
 	S += "=";	  
