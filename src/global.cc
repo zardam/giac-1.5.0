@@ -600,6 +600,7 @@ extern "C" void Sleep(unsigned int miliSecond);
   }
 
   bool python_color=false;
+  bool numworks_shell=true;
 #ifdef NUMWORKS
   static int _python_compat_=true;
 #else

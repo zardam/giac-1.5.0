@@ -10707,7 +10707,7 @@ namespace giac {
     gen c=a._VECTptr->back(),b;
     if (a._VECTptr->size()==3 && c.type==_INT_ && (b=a._VECTptr->front()).type==_INT_ && (*a._VECTptr)[1].type==_INT_){
       // 565 color
-      int d=(((a.val*32)/256)<<11) | (((b.val*64)/256)<<5) | ((c.val*32)/256);
+      int d=(((b.val*32)/256)<<11) | ((((*a._VECTptr)[1].val*64)/256)<<5) | ((c.val*32)/256);
       if (d>0 && d<512){
 	d += (1<<11);
       }
@@ -10813,7 +10813,11 @@ namespace giac {
     read_tmintmaxtstep(v,t,3,tmin,tmax,tstep,tminmax_defined,tstep_defined,contextptr);
     if (tmin>tmax || tstep<=0)
       return gensizeerr(gettext("Time"));
+#ifdef NUMWORKS
+    int maxstep=80;
+#else
     int maxstep=500;
+#endif
     if (tminmax_defined && tstep_defined)
       maxstep=giacmax(maxstep,2*int((tmax-tmin)/tstep));
     int vs=int(v.size());
@@ -10969,6 +10973,11 @@ namespace giac {
 	v.erase(v.begin()+i);
 	--s;
       }
+      if (v[i].type==_VECT && v[i]._VECTptr->size()==1 && v[i]._VECTptr->front().type==_VECT){
+	initcondv.push_back(v[i]._VECTptr->front());
+	v.erase(v.begin()+i);
+	--s;
+      }
       if (v[i].is_symb_of_sommet(at_equal) && v[i]._SYMBptr->feuille.type==_VECT && v[i]._SYMBptr->feuille._VECTptr->size()==2 && v[i]._SYMBptr->feuille._VECTptr->front()==at_plotode){
 	gen add=v[i]._SYMBptr->feuille._VECTptr->back();
 	if (add.type==_VECT && !add._VECTptr->empty()){
@@ -10988,7 +10997,10 @@ namespace giac {
     v=vecteur(args._VECTptr->begin(),args._VECTptr->begin()+s);
     if (s>=2){
       initcondv.insert(initcondv.begin(),v[0]);
-      initcondv.insert(initcondv.begin()+1,v[1]);
+      if (v[1].type==_VECT || s==2)
+	initcondv.insert(initcondv.begin()+1,v[1]);
+      else
+	initcondv.insert(initcondv.begin()+1,makevecteur(v[1],v[2]));
     }
     switch (s){
     case 0: case 1:

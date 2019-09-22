@@ -12157,19 +12157,19 @@ void sprint_double(char * s,double d){
     }
   }
   if (i!=0){
-#ifdef NUMWORKS
-    *buf='*';
-    ++buf;
-    *buf='1';
-    ++buf;
-    *buf='0';
-    ++buf;
-    *buf='^';
-    ++buf;
-#else
-    *buf='e';
-    ++buf;
-#endif
+    if (!numworks_shell){
+      *buf='*';
+      ++buf;
+      *buf='1';
+      ++buf;
+      *buf='0';
+      ++buf;
+      *buf='^';
+      ++buf;
+    } else {
+      *buf='e';
+      ++buf;
+    }
     sprint_int(buf,i);
   }
 }
@@ -12593,20 +12593,19 @@ void sprint_double(char * s,double d){
     case _MATRIX__VECT:
       if (calc_mode(contextptr)==1)
 	s="{";
-      else
+      else {
 	// s="matrix[";
-#ifdef NUMWORKS
-	s="[";
-#else
-	s=abs_calc_mode(contextptr)==38?"[":"matrix[";
-#endif
+	if (!numworks_shell)
+	  s="[";
+	else
+	  s=abs_calc_mode(contextptr)==38?"[":"matrix[";
+      }
       break;
     case _POLY1__VECT:
-#ifdef NUMWORKS
-      s="[";
-#else
-      s="poly1[";
-#endif
+      if (!numworks_shell)
+	s="[";
+      else
+	s="poly1[";
       break;
     case _ASSUME__VECT:
       s = "assume[";
@@ -12621,14 +12620,14 @@ void sprint_double(char * s,double d){
       s= "rgba[";
       break;
     case _LIST__VECT:
-#ifdef NUMWORKS
-      s="[";
-#else
-      if (tex)
-	s="\\{";
-      else
-	s=abs_calc_mode(contextptr)==38?"{":"list[";
-#endif
+      if (!numworks_shell)
+	s="[";
+      else {
+	if (tex)
+	  s="\\{";
+	else
+	  s=abs_calc_mode(contextptr)==38?"{":"list[";
+      }
       break;
     case _GGB__VECT:
       if (calc_mode(contextptr)==1)
@@ -15940,6 +15939,14 @@ void sprint_double(char * s,double d){
     static context * contextptr=0;
     if (!contextptr) contextptr=new context;
     context & C=*contextptr;
+    if (!strcmp(s,"shell off")){
+      numworks_shell=false;
+      return "shell off";
+    }
+    if (!strcmp(s,"shell on")){
+      numworks_shell=true;
+      return "shell on";
+    }
     const char init[]="init geogebra";
     const char close[]="close geogebra";
     if (!strcmp(s,init)){
@@ -16123,19 +16130,21 @@ void sprint_double(char * s,double d){
 	else
 	  S=g.print(&C);
       }
-      string S_;
-      S_ += S[0];
-      for (size_t i=1;i+1<S.size();++i){
-	if (S[i-1]==']' && S[i]==',' && S[i+1]=='[')
-	  ;
-	else
-	  S_ += S[i];
+      if (!numworks_shell){
+	string S_;
+	S_ += S[0];
+	for (size_t i=1;i+1<S.size();++i){
+	  if (S[i-1]==']' && S[i]==',' && S[i+1]=='[')
+	    ;
+	  else
+	    S_ += S[i];
+	}
+	if (S.size()>1)
+	  S_ +=S[S.size()-1];
+	S=S_;
+	if (S.size()>=3 && S[0]=='[' && S[1]!='[' && S[S.size()-1]==']')
+	  S='['+S+']'; // vector/list not allowed in Numworks calc app
       }
-      if (S.size()>1)
-	S_ +=S[S.size()-1];
-      S=S_;
-      if (S.size()>=3 && S[0]=='[' && S[1]!='[' && S[S.size()-1]==']')
-	S='['+S+']'; // vector/list not allowed in Numworks calc app
 #else
       S=g.print(&C);
 #if !defined GIAC_GGB 
