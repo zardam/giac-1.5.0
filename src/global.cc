@@ -1746,6 +1746,7 @@ extern "C" void Sleep(unsigned int miliSecond);
       return _turtle_();
   }
 
+#ifndef NUMWORKS
   // protect turtle access by a lock
   // turtle changes are mutually exclusive even in different contexts
 #ifdef HAVE_LIBPTHREAD
@@ -1774,6 +1775,7 @@ extern "C" void Sleep(unsigned int miliSecond);
 #endif
     return *ans;
   }
+#endif
 
   // Other global variables
 #ifdef NSPIRE
@@ -4061,7 +4063,9 @@ extern "C" void Sleep(unsigned int miliSecond);
 #endif
   { 
     _pl._i_sqrt_minus1_=1;
+#ifndef NUMWORKS
     _turtle_stack_.push_back(_turtle_);
+#endif
     _debug_ptr=new debug_struct;
     _thread_param_ptr=new thread_param;
     _parsed_genptr_=new gen;
@@ -4140,7 +4144,9 @@ extern "C" void Sleep(unsigned int miliSecond);
      _max_sum_sqrt_=g._max_sum_sqrt_;
      _max_sum_add_=g._max_sum_add_;
      _turtle_=g._turtle_;
+#ifndef NUMWORKS
      _turtle_stack_=g._turtle_stack_;
+#endif
      _autoname_=g._autoname_;
      _format_double_=g._format_double_;
      _extra_ptr_=g._extra_ptr_;
@@ -5999,8 +6005,12 @@ unsigned int ConvertUTF8toUTF16 (
     }
     if (posturtle>=0 && posturtle<cs){
       // add python turtle shortcuts
-      static bool alertturtle=true;      
+      static bool alertturtle=true;
+#ifdef NUMWORKS
+      cur += "pu:=penup:;up:=penup:; pd:=pendown:;down:=pendown:; fd:=forward:;bk:=backward:; rt:=right:; lt:=left:; pos:=position:; seth:=heading:;setheading:=heading:; ";
+#else
       cur += "pu:=penup:;up:=penup:; pd:=pendown:;down:=pendown:; fd:=forward:;bk:=backward:; rt:=right:; lt:=left:; pos:=position:; seth:=heading:;setheading:=heading:; reset:=efface:;";
+#endif
       if (alertturtle){
 	alertturtle=false;
 	alert("pu:=penup;up:=penup; pd:=pendown;down:=pendown; fd:=forward;bk:=backward; rt:=right; lt:=left; pos:=position; seth:=heading;setheading:=heading; reset:=efface",contextptr);
@@ -6356,7 +6366,9 @@ unsigned int ConvertUTF8toUTF16 (
 		){
 	      string filename=cur.substr(pos+5,posi-pos-5)+".py";
 	      // CERR << "import " << filename << endl;
-	      s += python2xcas(giac_read_file(filename.c_str()),contextptr); // recursive call
+	      const char * ptr=giac_read_file(filename.c_str());
+	      if (ptr)
+		s += python2xcas(ptr,contextptr); // recursive call
 	      cur ="";
 	      // CERR << s << endl;
 	      continue;

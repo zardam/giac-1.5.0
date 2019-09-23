@@ -13674,6 +13674,7 @@ namespace giac {
       return g.print(context0);
   }
 
+#ifndef NUMWORKS // in kdisplay.cc
 #if defined RTOS_THREADX || defined NSPIRE || defined FXCG
   logo_turtle vecteur2turtle(const vecteur & v){
     return logo_turtle();
@@ -14683,6 +14684,7 @@ gen _vers(const gen & g,GIAC_CONTEXT){
   define_unary_function_ptr5( at_turtle_stack ,alias_at_turtle_stack,&__turtle_stack,0,T_LOGO);
 
 #endif
+#endif  // NUMWORKS
 
   static const char _ramene_s []="ramene";
   static define_unary_function_eval2 (__ramene,&_read,_ramene_s,&printastifunction);

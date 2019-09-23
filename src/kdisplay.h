@@ -254,6 +254,7 @@ namespace xcas {
   };
   
   void displaygraph(const giac::gen & ge, const giac::context * contextptr);
+  void displaylogo();
 #ifndef NO_NAMESPACE_XCAS
 } // namespace xcas
 #endif // ndef NO_NAMESPACE_XCAS

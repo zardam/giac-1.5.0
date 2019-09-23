@@ -493,7 +493,7 @@ throw(std::runtime_error("Stopped by user interruption.")); \
     int _i_sqrt_minus1_;
   };
   std::string gen2string(const gen & g);
-#if 0 // def NUMWORKS
+#ifdef NUMWORKS
   struct logo_turtle {
     double x,y;
     double theta; // theta is given in degrees or radians dep. on angle_mode
@@ -507,6 +507,7 @@ throw(std::runtime_error("Stopped by user interruption.")); \
     // <0 fill a polygon from previous turtle positions
     int s;//std::string s;
     logo_turtle(): x(100),y(100),theta(0),visible(true),mark(true),direct(true),color(0),turtle_length(10),radius(0) {}
+  };
 #else // NUMWORKS
   struct logo_turtle {
     double x,y;
@@ -615,7 +616,9 @@ throw(std::runtime_error("Stopped by user interruption.")); \
     std::string _autosimplify_;
     std::string _lastprog_name_;
     std::string _currently_scanned_;
+#ifndef NUMWORKS
     std::vector<logo_turtle> _turtle_stack_; 
+#endif
     double _total_time_;
     void * _evaled_table_;
     void * _extra_ptr_;
@@ -792,8 +795,12 @@ throw(std::runtime_error("Stopped by user interruption.")); \
   std::string lastprog_name(GIAC_CONTEXT);
   std::string lastprog_name(const std::string & b,GIAC_CONTEXT);
 
+#ifdef NUMWORKS
+  logo_turtle & turtle();
+#else
   logo_turtle & turtle(GIAC_CONTEXT);
   std::vector<logo_turtle> & turtle_stack(GIAC_CONTEXT);
+#endif
 
   int & angle_mode(GIAC_CONTEXT);
   int get_mode_set_radian(GIAC_CONTEXT);

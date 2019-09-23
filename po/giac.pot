@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-20 08:50+0200\n"
+"POT-Creation-Date: 2019-09-23 15:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,7 +100,7 @@ msgstr ""
 
 #: src/sym2poly.cc:3049 src/gausspol.cc:266 src/gausspol.cc:346
 #: src/gausspol.cc:381 src/gausspol.cc:1026 src/gausspol.cc:1698
-#: src/gausspol.cc:3784 src/gausspol.cc:5111 src/threaded.cc:3833
+#: src/gausspol.cc:3784 src/gausspol.cc:5111 src/threaded.cc:3839
 #: src/maple.cc:1264 src/ti89.cc:2673 src/ti89.cc:2685 src/modpoly.cc:489
 #: src/modpoly.cc:507 src/modpoly.cc:651 src/modpoly.cc:669 src/modpoly.cc:765
 #: src/modpoly.cc:781 src/modpoly.cc:803 src/modpoly.cc:819
@@ -201,27 +201,27 @@ msgstr ""
 msgid "Unable to make thread"
 msgstr ""
 
-#: src/threaded.cc:3449
+#: src/threaded.cc:3455
 msgid "complex_smod"
 msgstr ""
 
-#: src/threaded.cc:3971 src/threaded.cc:4007 src/threaded.cc:4009
+#: src/threaded.cc:3977 src/threaded.cc:4013 src/threaded.cc:4015
 msgid "invmodext"
 msgstr ""
 
-#: src/threaded.cc:4580
+#: src/threaded.cc:4586
 msgid "interp_tk"
 msgstr ""
 
-#: src/threaded.cc:4800
+#: src/threaded.cc:4806
 msgid "vector<int> operator /"
 msgstr ""
 
-#: src/threaded.cc:4807
+#: src/threaded.cc:4813
 msgid "vector<int> operator %"
 msgstr ""
 
-#: src/threaded.cc:4814
+#: src/threaded.cc:4820
 msgid "vector<int> operator >"
 msgstr ""
 
@@ -399,11 +399,11 @@ msgstr ""
 msgid "Bessel not implemented"
 msgstr ""
 
-#: src/moyal.cc:3952
+#: src/moyal.cc:3956
 msgid "Bessel"
 msgstr ""
 
-#: src/maple.cc:227 src/vecteur.cc:11491
+#: src/maple.cc:227 src/vecteur.cc:11493
 msgid "Option keep_pivot not applicable"
 msgstr ""
 
@@ -503,7 +503,7 @@ msgstr ""
 msgid "Selecting last arc"
 msgstr ""
 
-#: src/ti89.cc:2025 src/vecteur.cc:10454
+#: src/ti89.cc:2025 src/vecteur.cc:10456
 msgid "minor_det option applies only to det"
 msgstr ""
 
@@ -619,7 +619,7 @@ msgstr ""
 msgid "2nd arg"
 msgstr ""
 
-#: src/misc.cc:1798 src/misc.cc:1838 src/misc.cc:1844 src/vecteur.cc:11356
+#: src/misc.cc:1798 src/misc.cc:1838 src/misc.cc:1844 src/vecteur.cc:11358
 #: src/cocoa.cc:3349 src/gen.cc:4304 src/gen.cc:10138
 msgid "Not invertible"
 msgstr ""
@@ -632,7 +632,7 @@ msgstr ""
 msgid "Not a vector potential"
 msgstr ""
 
-#: src/misc.cc:2067 src/vecteur.cc:14645 src/vecteur.cc:14666
+#: src/misc.cc:2067 src/vecteur.cc:14647 src/vecteur.cc:14668
 msgid "Low accuracy"
 msgstr ""
 
@@ -1050,15 +1050,15 @@ msgstr ""
 msgid "Warning, z*argument has a non-zero integral part"
 msgstr ""
 
-#: src/symbolic.cc:1176
+#: src/symbolic.cc:1190
 msgid "For: Unable to check test"
 msgstr ""
 
-#: src/symbolic.cc:1257 src/prog.cc:1911 src/prog.cc:1926
+#: src/symbolic.cc:1271 src/prog.cc:1911 src/prog.cc:1926
 msgid "Ifte: Unable to check test"
 msgstr ""
 
-#: src/symbolic.cc:1387
+#: src/symbolic.cc:1401
 msgid "Bad state"
 msgstr ""
 
@@ -1510,15 +1510,15 @@ msgstr ""
 msgid " is not rational w.r.t. "
 msgstr ""
 
-#: src/solve.cc:7725
+#: src/solve.cc:7729
 msgid "Error solving equations. Check that your variables are purged"
 msgstr ""
 
-#: src/solve.cc:7731
+#: src/solve.cc:7735
 msgid "Warning: algsubs selected one branch. Consider running G:=gbasis("
 msgstr ""
 
-#: src/solve.cc:7929
+#: src/solve.cc:7933
 msgid "Unable to minimize at given precision, last value "
 msgstr ""
 
@@ -1818,7 +1818,7 @@ msgstr ""
 msgid "RK8 evolve not successfull"
 msgstr ""
 
-#: src/intg.cc:6011
+#: src/intg.cc:6015
 msgid "Warning time reversal"
 msgstr ""
 
@@ -2038,168 +2038,168 @@ msgstr ""
 msgid "schur row "
 msgstr ""
 
-#: src/vecteur.cc:2696
+#: src/vecteur.cc:2698
 msgid "Proot error : no root found for "
 msgstr ""
 
-#: src/vecteur.cc:2999
+#: src/vecteur.cc:3001
 msgid "dotvector"
 msgstr ""
 
-#: src/vecteur.cc:3164
+#: src/vecteur.cc:3166
 msgid "dotvecteur"
 msgstr ""
 
-#: src/vecteur.cc:4842
+#: src/vecteur.cc:4844
 msgid "mmultck"
 msgstr ""
 
-#: src/vecteur.cc:6502
+#: src/vecteur.cc:6504
 msgid ""
 "Probabilistic algorithm for determinant\n"
 "(run proba_epsilon:=0 for a deterministic answer, this is slower).\n"
 "Error probability is less than "
 msgstr ""
 
-#: src/vecteur.cc:6624
+#: src/vecteur.cc:6626
 msgid " Early termination"
 msgstr ""
 
-#: src/vecteur.cc:6641
+#: src/vecteur.cc:6643
 msgid " dividing by determinant"
 msgstr ""
 
-#: src/vecteur.cc:6644
+#: src/vecteur.cc:6646
 msgid " end dividing by determinant"
 msgstr ""
 
-#: src/vecteur.cc:6748
+#: src/vecteur.cc:6750
 #, c-format
 msgid ""
 "%gen\n"
 "Reduce column %gen with pivot %gen at row %gen"
 msgstr ""
 
-#: src/vecteur.cc:6756
+#: src/vecteur.cc:6758
 #, c-format
 msgid "Exchange row %gen and row %gen"
 msgstr ""
 
-#: src/vecteur.cc:6781 src/vecteur.cc:6806
+#: src/vecteur.cc:6783 src/vecteur.cc:6808
 #, c-format
 msgid "L%gen <- (%gen)*L%gen-(%gen)*L%gen on %gen"
 msgstr ""
 
-#: src/vecteur.cc:7399
+#: src/vecteur.cc:7401
 #, c-format
 msgid "End reduction %gen"
 msgstr ""
 
-#: src/vecteur.cc:10273
+#: src/vecteur.cc:10275
 msgid "Unable to find a modulus to solve"
 msgstr ""
 
-#: src/vecteur.cc:10279
+#: src/vecteur.cc:10281
 msgid "Incompatible system"
 msgstr ""
 
-#: src/vecteur.cc:10528
+#: src/vecteur.cc:10530
 msgid "idn"
 msgstr ""
 
-#: src/vecteur.cc:11495
+#: src/vecteur.cc:11497
 msgid "Warning: non-square matrix!"
 msgstr ""
 
-#: src/vecteur.cc:13457
+#: src/vecteur.cc:13459
 msgid ""
 "Probabilistic answer. Run proba_epsilon:=0 for a certified result. Error <"
 msgstr ""
 
-#: src/vecteur.cc:13677
+#: src/vecteur.cc:13679
 msgid "polymat2matpoly"
 msgstr ""
 
-#: src/vecteur.cc:13709
+#: src/vecteur.cc:13711
 msgid "polymat2mat"
 msgstr ""
 
-#: src/vecteur.cc:13754
+#: src/vecteur.cc:13756
 msgid "rat_jordan_block"
 msgstr ""
 
-#: src/vecteur.cc:13800
+#: src/vecteur.cc:13802
 msgid "pseudo_rat_ro_rat"
 msgstr ""
 
-#: src/vecteur.cc:13865
+#: src/vecteur.cc:13867
 msgid "Low accuracy for Schur row "
 msgstr ""
 
-#: src/vecteur.cc:14456
+#: src/vecteur.cc:14458
 msgid "Unable to find exact eigenvalues. Trying approx"
 msgstr ""
 
-#: src/vecteur.cc:14617
+#: src/vecteur.cc:14619
 msgid ""
 "Low accuracy or not diagonalizable at some eigenvalue. Try jordan if the "
 "matrix is exact."
 msgstr ""
 
-#: src/vecteur.cc:14741
+#: src/vecteur.cc:14743
 msgid "Unable to find all eigenvalues"
 msgstr ""
 
-#: src/vecteur.cc:14765
+#: src/vecteur.cc:14767
 msgid " is not analytic"
 msgstr ""
 
-#: src/vecteur.cc:14921 src/vecteur.cc:14968
+#: src/vecteur.cc:14923 src/vecteur.cc:14970
 msgid "cross"
 msgstr ""
 
-#: src/vecteur.cc:15036
+#: src/vecteur.cc:15038
 msgid "vecteur.cc vecteur2gsl_vector"
 msgstr ""
 
-#: src/vecteur.cc:15268 src/vecteur.cc:15292
+#: src/vecteur.cc:15270 src/vecteur.cc:15294
 msgid "LAPACK LU error"
 msgstr ""
 
-#: src/vecteur.cc:15315
+#: src/vecteur.cc:15317
 msgid "Expecting a square matrix"
 msgstr ""
 
-#: src/vecteur.cc:15440 src/vecteur.cc:15689
+#: src/vecteur.cc:15444 src/vecteur.cc:15695
 msgid "LAPACK not available"
 msgstr ""
 
-#: src/vecteur.cc:15446
+#: src/vecteur.cc:15450
 msgid "Lapack conversion error"
 msgstr ""
 
-#: src/vecteur.cc:15458 src/vecteur.cc:15470 src/vecteur.cc:15489
-#: src/vecteur.cc:15714 src/vecteur.cc:15728
+#: src/vecteur.cc:15462 src/vecteur.cc:15474 src/vecteur.cc:15493
+#: src/vecteur.cc:15720 src/vecteur.cc:15734
 msgid "LAPACK error "
 msgstr ""
 
-#: src/vecteur.cc:15679
+#: src/vecteur.cc:15683
 msgid "Warning: svd is implemented for numeric matrices"
 msgstr ""
 
-#: src/vecteur.cc:15951
+#: src/vecteur.cc:15957
 msgid "Non positive definite"
 msgstr ""
 
-#: src/vecteur.cc:15971
+#: src/vecteur.cc:15977
 msgid "Not invertible matrice"
 msgstr ""
 
-#: src/vecteur.cc:16438 src/vecteur.cc:16616
+#: src/vecteur.cc:16444 src/vecteur.cc:16622
 msgid "Integer matrix expected"
 msgstr ""
 
-#: src/vecteur.cc:16772
+#: src/vecteur.cc:16778
 msgid "Expecting file name to convert"
 msgstr ""
 
@@ -2215,34 +2215,34 @@ msgstr ""
 msgid "Square is flat!"
 msgstr ""
 
-#: src/global.cc:3431 src/hist.menus:1 src/hist.menus:4 src/History.cc:227
+#: src/global.cc:3434 src/hist.menus:1 src/hist.menus:4 src/History.cc:227
 #: src/History.cc:3727 src/Editeur.cc:2445
 msgid "File"
 msgstr ""
 
-#: src/global.cc:3804
+#: src/global.cc:3807
 msgid ""
 "\n"
 "Evaluation time: "
 msgstr ""
 
-#: src/global.cc:3820
+#: src/global.cc:3823
 msgid "Thread "
 msgstr ""
 
-#: src/global.cc:3890
+#: src/global.cc:3893
 msgid "Cancel thread "
 msgstr ""
 
-#: src/global.cc:3912
+#: src/global.cc:3915
 msgid "Evaluation time: "
 msgstr ""
 
-#: src/global.cc:6014
+#: src/global.cc:6025
 msgid "Assigning phase, j, J and rect."
 msgstr ""
 
-#: src/global.cc:6024
+#: src/global.cc:6035
 msgid ""
 "Assigning log2, gamma, fabs, modf, radians and degrees. Not supported: "
 "copysign."
@@ -2836,100 +2836,100 @@ msgstr ""
 msgid "Time"
 msgstr ""
 
-#: src/plot.cc:11116
+#: src/plot.cc:11128
 msgid "End interactive_plotode"
 msgstr ""
 
-#: src/plot.cc:11320
+#: src/plot.cc:11332
 msgid "End of stream"
 msgstr ""
 
-#: src/plot.cc:11676 src/History.cc:1728
+#: src/plot.cc:11688 src/History.cc:1728
 msgid "Unable to open file "
 msgstr ""
 
-#: src/plot.cc:11679
+#: src/plot.cc:11691
 msgid "Error writing "
 msgstr ""
 
-#: src/plot.cc:11701
+#: src/plot.cc:11713
 msgid "Unable to read file"
 msgstr ""
 
-#: src/plot.cc:11891
+#: src/plot.cc:11903
 msgid "Bad iteration"
 msgstr ""
 
-#: src/plot.cc:12148
+#: src/plot.cc:12160
 msgid "Near "
 msgstr ""
 
-#: src/plot.cc:12255
+#: src/plot.cc:12267
 msgid ""
 "Singular points directions: [cell_i, cell_j, singularity, next solution] "
 msgstr ""
 
-#: src/plot.cc:12457
+#: src/plot.cc:12469
 msgid "Bad branch, questionnable accuracy"
 msgstr ""
 
-#: src/plot.cc:12527 src/plot.cc:12569 src/plot.cc:12631
+#: src/plot.cc:12539 src/plot.cc:12581 src/plot.cc:12643
 msgid "Warning! Could not loop or reach boundaries "
 msgstr ""
 
-#: src/plot.cc:12625
+#: src/plot.cc:12637
 msgid "Implicitplot "
 msgstr ""
 
-#: src/plot.cc:12649 src/plot3d.cc:2139
+#: src/plot.cc:12661 src/plot3d.cc:2139
 msgid "Variables must be free"
 msgstr ""
 
-#: src/plot.cc:12653
+#: src/plot.cc:12665
 msgid "Impliciplot: temporarily swtiching to real mode"
 msgstr ""
 
-#: src/plot.cc:13966
+#: src/plot.cc:13979
 msgid "vecteur2turtle"
 msgstr ""
 
-#: src/plot.cc:14305
+#: src/plot.cc:14318
 msgid "Give a name to the procedure, e.g. test"
 msgstr ""
 
-#: src/plot.cc:14310
+#: src/plot.cc:14323
 msgid "Give a name to thr procedure, e.g. \"test\""
 msgstr ""
 
-#: src/plot.cc:14328
+#: src/plot.cc:14341
 msgid "Give a filename, e.g. \"test\""
 msgstr ""
 
-#: src/plot.cc:14336
+#: src/plot.cc:14349
 msgid "Instruction debut_enregistrement not found"
 msgstr ""
 
-#: src/plot.cc:14577
+#: src/plot.cc:14590
 msgid "Integer argument >= 2"
 msgstr ""
 
-#: src/plot.cc:14714
+#: src/plot.cc:14728
 msgid "Collinear points"
 msgstr ""
 
-#: src/plot.cc:15049
+#: src/plot.cc:15063
 msgid "Circle centers are identical"
 msgstr ""
 
-#: src/plot.cc:15224 src/Graph.cc:6814
+#: src/plot.cc:15238 src/Graph.cc:6814
 msgid "reciprocation"
 msgstr ""
 
-#: src/plot.cc:15432 src/plot.cc:15436 src/plot.cc:15451
+#: src/plot.cc:15446 src/plot.cc:15450 src/plot.cc:15465
 msgid "conj_harmonique"
 msgstr ""
 
-#: src/plot.cc:15713
+#: src/plot.cc:15727
 msgid "enveloppe"
 msgstr ""
 
@@ -4027,52 +4027,52 @@ msgstr ""
 msgid "Bad array indexes"
 msgstr ""
 
-#: src/gen.cc:13906 src/Editeur.cc:2492
+#: src/gen.cc:13905 src/Editeur.cc:2492
 msgid "print"
 msgstr ""
 
-#: src/gen.cc:14647 src/gen.cc:14706
+#: src/gen.cc:14646 src/gen.cc:14705
 msgid "Unable to convert to real "
 msgstr ""
 
-#: src/gen.cc:14792 src/gen.cc:14813 src/gen.cc:14919 src/gen.cc:14938
+#: src/gen.cc:14791 src/gen.cc:14812 src/gen.cc:14918 src/gen.cc:14937
 msgid "real_object + gen"
 msgstr ""
 
-#: src/gen.cc:15075
+#: src/gen.cc:15074
 msgid ""
 "Compile with MPFR or USE_GMP_REPLACEMENTS if you want transcendental long "
 "float support"
 msgstr ""
 
-#: src/gen.cc:15363
+#: src/gen.cc:15362
 msgid "real_interval inv"
 msgstr ""
 
-#: src/gen.cc:15379 src/gen.cc:15401 src/gen.cc:15412 src/gen.cc:15423
-#: src/gen.cc:15434 src/gen.cc:15445 src/gen.cc:15456 src/gen.cc:15467
-#: src/gen.cc:15478 src/gen.cc:15489 src/gen.cc:15500 src/gen.cc:15511
-#: src/gen.cc:15522 src/gen.cc:15533 src/gen.cc:15544
+#: src/gen.cc:15378 src/gen.cc:15400 src/gen.cc:15411 src/gen.cc:15422
+#: src/gen.cc:15433 src/gen.cc:15444 src/gen.cc:15455 src/gen.cc:15466
+#: src/gen.cc:15477 src/gen.cc:15488 src/gen.cc:15499 src/gen.cc:15510
+#: src/gen.cc:15521 src/gen.cc:15532 src/gen.cc:15543
 msgid "real_interval sqrt"
 msgstr ""
 
-#: src/gen.cc:15390
+#: src/gen.cc:15389
 msgid "real_interval abs"
 msgstr ""
 
-#: src/gen.cc:15620
+#: src/gen.cc:15619
 msgid "real_interval mul"
 msgstr ""
 
-#: src/gen.cc:15650
+#: src/gen.cc:15649
 msgid "real_interval mul 2"
 msgstr ""
 
-#: src/gen.cc:15752
+#: src/gen.cc:15751
 msgid "MPFR error reading binary "
 msgstr ""
 
-#: src/gen.cc:15754
+#: src/gen.cc:15753
 msgid "Error no MPFR reading "
 msgstr ""
 

@@ -18,12 +18,747 @@
 #ifdef NUMWORKS
 
 #include "kdisplay.h"
+#include "input_parser.h"
 //giac::context * contextptr=0;
 int clip_ymin=0;
 using namespace std;
 using namespace giac;
 const int LCD_WIDTH_PX=320;
 const int LCD_HEIGHT_PX=222;
+
+// Numworks Logo commands
+#ifndef NO_NAMESPACE_GIAC
+namespace giac {
+#endif // ndef NO_NAMESPACE_GIAC
+  void DefineStatusMessage(const char * s,int a,int b,int c){
+  }
+
+  void DisplayStatusArea(){
+  }
+  
+  logo_turtle * turtleptr=0;
+  
+  logo_turtle & turtle(){
+    if (!turtleptr)
+      turtleptr=new logo_turtle;
+    return * turtleptr;
+  }
+  
+  const int MAX_LOGO=666; // 512;
+
+  std::vector<logo_turtle> & turtle_stack(){
+    static std::vector<logo_turtle> * ans = 0;
+    if (!ans){
+      // initialize from python app storage
+      ans=new std::vector<logo_turtle>(1,(*turtleptr));
+     
+    }
+    return *ans;
+  }
+
+  logo_turtle vecteur2turtle(const vecteur & v){
+    int s=int(v.size());
+    if (s>=5 && v[0].type==_DOUBLE_ && v[1].type==_DOUBLE_ && v[2].type==_DOUBLE_ && v[3].type==_INT_ && v[4].type==_INT_ ){
+      logo_turtle t;
+      t.x=v[0]._DOUBLE_val;
+      t.y=v[1]._DOUBLE_val;
+      t.theta=v[2]._DOUBLE_val;
+      int i=v[3].val;
+      t.mark=(i%2)!=0;
+      i=i >> 1;
+      t.visible=(i%2)!=0;
+      i=i >> 1;
+      t.direct = (i%2)!=0;
+      i=i >> 1;
+      t.turtle_length = i & 0xff;
+      i=i >> 8;
+      t.color = i;
+      t.radius = v[4].val;
+      if (s>5 && v[5].type==_INT_)
+	t.s=v[5].val;
+      else
+	t.s=-1;
+      return t;
+    }
+#ifndef NO_STDEXCEPT
+    setsizeerr(gettext("vecteur2turtle")); // FIXME
+#endif
+    return logo_turtle();
+  }
+
+  static int turtle_status(const logo_turtle & turtle){
+    int status= (turtle.color << 11) | ( (turtle.turtle_length & 0xff) << 3) ;
+    if (turtle.direct)
+      status += 4;
+    if (turtle.visible)
+      status += 2;
+    if (turtle.mark)
+      status += 1;
+    return status;
+  }
+
+  bool set_turtle_state(const vecteur & v,GIAC_CONTEXT){
+    if (v.size()>=2 && v[0].type==_DOUBLE_ && v[1].type==_DOUBLE_){
+      vecteur w(v);
+      int s=int(w.size());
+      if (s==2)
+	w.push_back(double((*turtleptr).theta));
+      if (s<4)
+	w.push_back(turtle_status((*turtleptr)));
+      if (s<5)
+	w.push_back(0);
+      if (w[2].type==_DOUBLE_ && w[3].type==_INT_ && w[4].type==_INT_){
+	(*turtleptr)=vecteur2turtle(w);
+#ifdef TURTLETAB
+	turtle_stack_push_back(*turtleptr);
+#else
+	turtle_stack().push_back((*turtleptr));
+#endif
+	return true;
+      }
+    }
+    return false;
+  }
+
+  gen turtle2gen(const logo_turtle & turtle){
+    return gen(makevecteur(turtle.x,turtle.y,double(turtle.theta),turtle_status(turtle),turtle.radius,turtle.s),_LOGO__VECT);
+  }
+
+  gen turtle_state(GIAC_CONTEXT){
+    return turtle2gen((*turtleptr));
+  }
+
+  static gen update_turtle_state(bool clrstring,GIAC_CONTEXT){
+#ifdef TURTLETAB
+    if (turtle_stack_size>=MAX_LOGO)
+      return gensizeerr("Not enough memory");
+#else
+    if (turtle_stack().size()>=MAX_LOGO){
+      ctrl_c=true; interrupted=true;
+      return gensizeerr("Not enough memory");
+    }
+#endif
+    if (clrstring)
+      (*turtleptr).s=-1;
+    (*turtleptr).theta = (*turtleptr).theta - floor((*turtleptr).theta/360)*360;
+#ifdef TURTLETAB
+    turtle_stack_push_back((*turtleptr));
+#else
+    turtle_stack().push_back((*turtleptr));
+#endif
+    gen res=turtle_state(contextptr);
+#ifdef EMCC // should directly interact with canvas
+    return gen(turtlevect2vecteur(turtle_stack()),_LOGO__VECT);
+#endif
+    return res;
+  }
+
+  gen _avance(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    double i;
+    if (g.type!=_INT_){
+      if (g.type==_VECT)
+	i=(*turtleptr).turtle_length;
+      else {
+	gen g1=evalf_double(g,1,contextptr);
+	if (g1.type==_DOUBLE_)
+	  i=g1._DOUBLE_val;
+	else
+	  return gensizeerr(contextptr);
+      }
+    }
+    else
+      i=g.val;
+    (*turtleptr).x += i * std::cos((*turtleptr).theta*deg2rad_d);
+    (*turtleptr).y += i * std::sin((*turtleptr).theta*deg2rad_d) ;
+    (*turtleptr).radius = 0;
+    return update_turtle_state(true,contextptr);
+  }
+  static const char _avance_s []="avance";
+  static define_unary_function_eval2 (__avance,&_avance,_avance_s,&printastifunction);
+  define_unary_function_ptr5( at_avance ,alias_at_avance,&__avance,0,T_LOGO);
+
+  static const char _forward_s []="forward";
+  static define_unary_function_eval (__forward,&_avance,_forward_s);
+  define_unary_function_ptr5( at_forward ,alias_at_forward,&__forward,0,true);
+
+  gen _recule(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    if (g.type==_VECT)
+      return _avance(-(*turtleptr).turtle_length,contextptr);
+    return _avance(-g,contextptr);
+  }
+  static const char _recule_s []="recule";
+  static define_unary_function_eval2 (__recule,&_recule,_recule_s,&printastifunction);
+  define_unary_function_ptr5( at_recule ,alias_at_recule,&__recule,0,T_LOGO);
+
+  static const char _backward_s []="backward";
+  static define_unary_function_eval (__backward,&_recule,_backward_s);
+  define_unary_function_ptr5( at_backward ,alias_at_backward,&__backward,0,true);
+
+  gen _position(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    if (g.type!=_VECT)
+      return makevecteur((*turtleptr).x,(*turtleptr).y);
+    // return turtle_state();
+    vecteur v = *g._VECTptr;
+    int s=int(v.size());
+    if (!s)
+      return makevecteur((*turtleptr).x,(*turtleptr).y);
+    v[0]=evalf_double(v[0],1,contextptr);
+    if (s>1)
+      v[1]=evalf_double(v[1],1,contextptr);
+    if (s>2)
+      v[2]=evalf_double(v[2],1,contextptr); 
+    if (set_turtle_state(v,contextptr))
+      return update_turtle_state(true,contextptr);
+    return zero;
+  }
+  static const char _position_s []="position";
+  static define_unary_function_eval2 (__position,&_position,_position_s,&printastifunction);
+  define_unary_function_ptr5( at_position ,alias_at_position,&__position,0,T_LOGO);
+
+  gen _cap(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    gen gg=evalf_double(g,1,contextptr);
+    if (gg.type!=_DOUBLE_)
+      return double((*turtleptr).theta);
+    (*turtleptr).theta=gg._DOUBLE_val;
+    (*turtleptr).radius = 0;
+    return update_turtle_state(true,contextptr);
+  }
+  static const char _cap_s []="cap";
+  static define_unary_function_eval2 (__cap,&_cap,_cap_s,&printastifunction);
+  define_unary_function_ptr5( at_cap ,alias_at_cap,&__cap,0,T_LOGO);
+
+  static const char _heading_s []="heading";
+  static define_unary_function_eval (__heading,&_cap,_heading_s);
+  define_unary_function_ptr5( at_heading ,alias_at_heading,&__heading,0,true);
+
+
+  gen _tourne_droite(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    if (g.type!=_INT_){
+      if (g.type==_VECT)
+	(*turtleptr).theta -= 90;
+      else {
+	gen g1=evalf_double(g,1,contextptr);
+	if (g1.type==_DOUBLE_)
+	  (*turtleptr).theta -= g1._DOUBLE_val;
+	else
+	  return gensizeerr(contextptr);
+      }
+    }
+    else
+      (*turtleptr).theta -= g.val;
+    (*turtleptr).radius = 0;
+    return update_turtle_state(true,contextptr);
+  }
+  static const char _tourne_droite_s []="tourne_droite";
+  static define_unary_function_eval2 (__tourne_droite,&_tourne_droite,_tourne_droite_s,&printastifunction);
+  define_unary_function_ptr5( at_tourne_droite ,alias_at_tourne_droite,&__tourne_droite,0,T_LOGO);
+
+  gen _tourne_gauche(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    if (g.type==_VECT){
+      (*turtleptr).theta += 90;
+      (*turtleptr).radius = 0;
+      return update_turtle_state(true,contextptr);
+    }
+    return _tourne_droite(-g,contextptr);
+  }
+  static const char _tourne_gauche_s []="tourne_gauche";
+  static define_unary_function_eval2 (__tourne_gauche,&_tourne_gauche,_tourne_gauche_s,&printastifunction);
+  define_unary_function_ptr5( at_tourne_gauche ,alias_at_tourne_gauche,&__tourne_gauche,0,T_LOGO);
+
+  gen _leve_crayon(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    (*turtleptr).mark = false;
+    (*turtleptr).radius = 0;
+    return update_turtle_state(true,contextptr);
+  }
+  static const char _leve_crayon_s []="leve_crayon";
+  static define_unary_function_eval2 (__leve_crayon,&_leve_crayon,_leve_crayon_s,&printastifunction);
+  define_unary_function_ptr5( at_leve_crayon ,alias_at_leve_crayon,&__leve_crayon,0,T_LOGO);
+
+  static const char _penup_s []="penup";
+  static define_unary_function_eval (__penup,&_leve_crayon,_penup_s);
+  define_unary_function_ptr5( at_penup ,alias_at_penup,&__penup,0,T_LOGO);
+
+  gen _baisse_crayon(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    (*turtleptr).mark = true;
+    (*turtleptr).radius = 0;
+    return update_turtle_state(true,contextptr);
+  }
+  static const char _baisse_crayon_s []="baisse_crayon";
+  static define_unary_function_eval2 (__baisse_crayon,&_baisse_crayon,_baisse_crayon_s,&printastifunction);
+  define_unary_function_ptr5( at_baisse_crayon ,alias_at_baisse_crayon,&__baisse_crayon,0,T_LOGO);
+
+  static const char _pendown_s []="pendown";
+  static define_unary_function_eval (__pendown,&_baisse_crayon,_pendown_s);
+  define_unary_function_ptr5( at_pendown ,alias_at_pendown,&__pendown,0,T_LOGO);
+
+  vector<string> * ecrisptr=0;
+  vector<string> & ecristab(){
+    if (!ecrisptr)
+      ecrisptr=new vector<string>;
+    return * ecrisptr;
+  }
+  gen _ecris(const gen & g,GIAC_CONTEXT){    
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+#if 0 //def TURTLETAB
+    return gensizeerr("String support does not work with static turtle table");
+#endif
+    // logo instruction
+    (*turtleptr).radius=14;
+    if (g.type==_VECT){ 
+      vecteur & v =*g._VECTptr;
+      int s=int(v.size());
+      if (s==2 && v[1].type==_INT_){
+	(*turtleptr).radius=absint(v[1].val);
+	(*turtleptr).s=ecristab().size();
+	ecristab().push_back(gen2string(v.front()));
+	return update_turtle_state(false,contextptr);
+      }
+      if (s==4 && v[1].type==_INT_ && v[2].type==_INT_ && v[3].type==_INT_){
+	logo_turtle t=(*turtleptr);
+	_leve_crayon(0,contextptr);
+	_position(makevecteur(v[2],v[3]),contextptr);
+	(*turtleptr).radius=absint(v[1].val);
+	(*turtleptr).s=ecristab().size();
+	ecristab().push_back(gen2string(v.front()));
+	update_turtle_state(false,contextptr);
+	(*turtleptr)=t;
+	return update_turtle_state(true,contextptr);
+      }
+    }
+    (*turtleptr).s=ecristab().size();
+    ecristab().push_back(gen2string(g));
+    return update_turtle_state(false,contextptr);
+  }
+  static const char _ecris_s []="ecris";
+  static define_unary_function_eval2 (__ecris,&_ecris,_ecris_s,&printastifunction);
+  define_unary_function_ptr5( at_ecris ,alias_at_ecris,&__ecris,0,T_LOGO);
+
+  gen _signe(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    return _ecris(makevecteur(g,20,10,10),contextptr);
+  }
+  static const char _signe_s []="signe";
+  static define_unary_function_eval2 (__signe,&_signe,_signe_s,&printastifunction);
+  define_unary_function_ptr5( at_signe ,alias_at_signe,&__signe,0,T_LOGO);
+
+  gen _saute(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    _leve_crayon(0,contextptr);
+    _avance(g,contextptr);
+    return _baisse_crayon(0,contextptr);
+  }
+  static const char _saute_s []="saute";
+  static define_unary_function_eval2 (__saute,&_saute,_saute_s,&printastifunction);
+  define_unary_function_ptr5( at_saute ,alias_at_saute,&__saute,0,T_LOGO);
+
+  static const char _jump_s []="jump";
+  static define_unary_function_eval2 (__jump,&_saute,_jump_s,&printastifunction);
+  define_unary_function_ptr5( at_jump ,alias_at_jump,&__jump,0,T_LOGO);
+
+  gen _pas_de_cote(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    _leve_crayon(0,contextptr);
+    _tourne_droite(-90,contextptr);
+    _avance(g,contextptr);
+    _tourne_droite(90,contextptr);
+    return _baisse_crayon(0,contextptr);
+  }
+  static const char _pas_de_cote_s []="pas_de_cote";
+  static define_unary_function_eval2 (__pas_de_cote,&_pas_de_cote,_pas_de_cote_s,&printastifunction);
+  define_unary_function_ptr5( at_pas_de_cote ,alias_at_pas_de_cote,&__pas_de_cote,0,T_LOGO);
+
+  static const char _skip_s []="skip";
+  static define_unary_function_eval2 (__skip,&_pas_de_cote,_skip_s,&printastifunction);
+  define_unary_function_ptr5( at_skip ,alias_at_skip,&__skip,0,T_LOGO);
+
+  gen _cache_tortue(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    (*turtleptr).visible=false;
+    (*turtleptr).radius = 0;
+    return update_turtle_state(true,contextptr);
+  }
+  static const char _cache_tortue_s []="cache_tortue";
+  static define_unary_function_eval2 (__cache_tortue,&_cache_tortue,_cache_tortue_s,&printastifunction);
+  define_unary_function_ptr5( at_cache_tortue ,alias_at_cache_tortue,&__cache_tortue,0,T_LOGO);
+
+  static const char _hideturtle_s []="hideturtle";
+  static define_unary_function_eval (__hideturtle,&_cache_tortue,_hideturtle_s);
+  define_unary_function_ptr5( at_hideturtle ,alias_at_hideturtle,&__hideturtle,0,true);
+
+  gen _montre_tortue(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    (*turtleptr).visible=true;
+    (*turtleptr).radius = 0;
+    return update_turtle_state(true,contextptr);
+  }
+  static const char _montre_tortue_s []="montre_tortue";
+  static define_unary_function_eval2 (__montre_tortue,&_montre_tortue,_montre_tortue_s,&printastifunction);
+  define_unary_function_ptr5( at_montre_tortue ,alias_at_montre_tortue,&__montre_tortue,0,T_LOGO);
+
+  static const char _showturtle_s []="showturtle";
+  static define_unary_function_eval (__showturtle,&_montre_tortue,_showturtle_s);
+  define_unary_function_ptr5( at_showturtle ,alias_at_showturtle,&__showturtle,0,true);
+
+
+  gen _repete(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    if (g.type!=_VECT || g._VECTptr->size()<2)
+      return gensizeerr(contextptr);
+    // logo instruction
+    vecteur v = *g._VECTptr;
+    v[0]=eval(v[0],contextptr);
+    if (v.front().type!=_INT_)
+      return gentypeerr(contextptr);
+    gen prog=vecteur(v.begin()+1,v.end());
+    int i=absint(v.front().val);
+    gen res;
+    for (int j=0;j<i;++j){
+      res=eval(prog,contextptr);
+    }
+    return res;
+  }
+  static const char _repete_s []="repete";
+  static define_unary_function_eval_quoted (__repete,&_repete,_repete_s);
+  define_unary_function_ptr5( at_repete ,alias_at_repete,&__repete,_QUOTE_ARGUMENTS,T_RETURN);
+
+  gen _crayon(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    if (g.type==_STRNG) return _crayon(gen(*g._STRNGptr,contextptr),contextptr);
+    // logo instruction
+    if (g.type==_VECT && g._VECTptr->size()==3)
+      return _crayon(_rgb(g,contextptr),contextptr);
+    if (g.type!=_INT_){
+      gen res=(*turtleptr).color;
+      res.subtype=_INT_COLOR;
+      return res;
+    }
+    (*turtleptr).color=g.val;
+    (*turtleptr).radius = 0;
+    return update_turtle_state(true,contextptr);
+  }
+  static const char _crayon_s []="crayon";
+  static define_unary_function_eval2 (__crayon,&_crayon,_crayon_s,&printastifunction);
+  define_unary_function_ptr5( at_crayon ,alias_at_crayon,&__crayon,0,T_LOGO);
+
+  static const char _pencolor_s []="pencolor";
+  static define_unary_function_eval (__pencolor,&_crayon,_pencolor_s);
+  define_unary_function_ptr5( at_pencolor ,alias_at_pencolor,&__pencolor,0,T_LOGO);
+
+  gen _efface_logo(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    if (g.type==_INT_){
+      _crayon(int(FL_WHITE),contextptr);
+      _recule(g,contextptr);
+      return _crayon(0,contextptr);
+    }
+    // logo instruction
+    (*turtleptr) = logo_turtle();
+#ifdef TURTLETAB
+    turtle_stack_size=0;
+#else
+    turtle_stack().clear();
+#endif
+    ecristab().clear();
+    return update_turtle_state(true,contextptr);
+  }
+  static const char _efface_logo_s []="efface";
+  static define_unary_function_eval2 (__efface_logo,&_efface_logo,_efface_logo_s,&printastifunction);
+  define_unary_function_ptr5( at_efface_logo ,alias_at_efface_logo,&__efface_logo,0,T_LOGO);
+
+  static const char _efface_s []="efface";
+  static define_unary_function_eval2 (__efface,&_efface_logo,_efface_s,&printastifunction);
+  define_unary_function_ptr5( at_efface ,alias_at_efface,&__efface,0,T_LOGO);
+
+  static const char _reset_s []="reset";
+  static define_unary_function_eval2 (__reset,&_efface_logo,_reset_s,&printastifunction);
+  define_unary_function_ptr5( at_reset ,alias_at_reset,&__reset,0,T_LOGO);
+
+  static const char _clearscreen_s []="clearscreen";
+  static define_unary_function_eval2 (__clearscreen,&_efface_logo,_clearscreen_s,&printastifunction);
+  define_unary_function_ptr5( at_clearscreen ,alias_at_clearscreen,&__clearscreen,0,T_LOGO);
+
+  gen _debut_enregistrement(const gen &g,GIAC_CONTEXT){
+    return undef;
+  }
+  static const char _debut_enregistrement_s []="debut_enregistrement";
+  static define_unary_function_eval2 (__debut_enregistrement,&_debut_enregistrement,_debut_enregistrement_s,&printastifunction);
+  define_unary_function_ptr5( at_debut_enregistrement ,alias_at_debut_enregistrement,&__debut_enregistrement,0,T_LOGO);
+
+  static const char _fin_enregistrement_s []="fin_enregistrement";
+  static define_unary_function_eval2 (__fin_enregistrement,&_debut_enregistrement,_fin_enregistrement_s,&printastifunction);
+  define_unary_function_ptr5( at_fin_enregistrement ,alias_at_fin_enregistrement,&__fin_enregistrement,0,T_LOGO);
+
+  static const char _turtle_stack_s []="turtle_stack";
+  static define_unary_function_eval2 (__turtle_stack,&_debut_enregistrement,_turtle_stack_s,&printastifunction);
+  define_unary_function_ptr5( at_turtle_stack ,alias_at_turtle_stack,&__turtle_stack,0,T_LOGO);
+
+  gen _vers(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    if (g.type!=_VECT || g._VECTptr->size()!=2)
+      return gensizeerr(contextptr);
+    gen x=evalf_double(g._VECTptr->front(),1,contextptr),
+      y=evalf_double(g._VECTptr->back(),1,contextptr);
+    if (x.type!=_DOUBLE_ || y.type!=_DOUBLE_)
+      return gensizeerr(contextptr);
+    double xv=x._DOUBLE_val,yv=y._DOUBLE_val,xt=(*turtleptr).x,yt=(*turtleptr).y;
+    double theta=atan2(yv-yt,xv-xt);
+    return _cap(theta*180/M_PI,contextptr);
+  }
+  static const char _vers_s []="vers";
+  static define_unary_function_eval2 (__vers,&_vers,_vers_s,&printastifunction);
+  define_unary_function_ptr5( at_vers ,alias_at_vers,&__vers,0,T_LOGO);
+
+  static int find_radius(const gen & g,int & r,int & theta2,bool & direct){
+    int radius;
+    direct=true;
+    theta2 = 360 ;
+    // logo instruction
+    if (g.type==_VECT && !g._VECTptr->empty()){
+      vecteur v = *g._VECTptr;
+      bool seg=false;
+      if (v.back()==at_segment){
+	v.pop_back();
+	seg=true;
+      }
+      if (v.size()<2)
+	return RAND_MAX; // setdimerr(contextptr);
+      if (v[0].type==_INT_)
+	r=v[0].val;
+      else {
+	gen v0=evalf_double(v[0],1,context0);
+	if (v0.type==_DOUBLE_)
+	  r=int(v0._DOUBLE_val+0.5);
+	else 
+	  return RAND_MAX; // setsizeerr(contextptr);
+      }
+      if (r<0){
+	r=-r;
+	direct=false;
+      }
+      int theta1;
+      if (v[1].type==_DOUBLE_)
+	theta1=int(v[1]._DOUBLE_val+0.5);
+      else { 
+	if (v[1].type==_INT_)
+	  theta1=v[1].val;
+	else return RAND_MAX; // setsizeerr(contextptr);
+      }
+      while (theta1<0)
+	theta1 += 360;
+      if (v.size()>=3){
+	if (v[2].type==_DOUBLE_)
+	  theta2 = int(v[2]._DOUBLE_val+0.5);
+	else {
+	  if (v[2].type==_INT_)
+	    theta2 = v[2].val;
+	  else return RAND_MAX; // setsizeerr(contextptr);
+	}
+	while (theta2<0)
+	  theta2 += 360;
+	radius = giacmin(r,512) | (giacmin(theta1,360) << 9) | (giacmin(theta2,360) << 18 ) | (seg?(1<<28):0);
+      }
+      else {// angle 1=0
+	theta2 = theta1;
+	if (theta2<0)
+	  theta2 += 360;
+	radius = giacmin(r,512) | (giacmin(theta2,360) << 18 ) | (seg?(1<<28):0);
+      }
+      return radius;
+    }
+    radius = 10;
+    if (g.type==_INT_)
+      radius= (r=g.val);
+    if (g.type==_DOUBLE_)
+      radius= (r=int(g._DOUBLE_val));
+    if (radius<=0){
+      radius = -radius;
+      direct=false;
+    }
+    radius = giacmin(radius,512 )+(360 << 18) ; // 2nd angle = 360 degrees
+    return radius;
+  }
+
+  static void turtle_move(int r,int theta2,GIAC_CONTEXT){
+    double theta0;
+    if ((*turtleptr).direct)
+      theta0=(*turtleptr).theta-90;
+    else {
+      theta0=(*turtleptr).theta+90;
+      theta2=-theta2;
+    }
+    (*turtleptr).x += r*(std::cos(M_PI/180*(theta2+theta0))-std::cos(M_PI/180*theta0));
+    (*turtleptr).y += r*(std::sin(M_PI/180*(theta2+theta0))-std::sin(M_PI/180*theta0));
+    (*turtleptr).theta = (*turtleptr).theta+theta2 ;
+    if ((*turtleptr).theta<0)
+      (*turtleptr).theta += 360;
+    if ((*turtleptr).theta>360)
+      (*turtleptr).theta -= 360;
+  }
+
+  gen _rond(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    int r,theta2,tmpr;
+    tmpr=find_radius(g,r,theta2,(*turtleptr).direct);
+    if (tmpr==RAND_MAX)
+      return gensizeerr(contextptr);
+    (*turtleptr).radius=tmpr;
+    turtle_move(r,theta2,contextptr);
+    return update_turtle_state(true,contextptr);
+  }
+  static const char _rond_s []="rond";
+  static define_unary_function_eval2 (__rond,&_rond,_rond_s,&printastifunction);
+  define_unary_function_ptr5( at_rond ,alias_at_rond,&__rond,0,T_LOGO);
+
+  gen _disque(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    int r,theta2,tmpr=find_radius(g,r,theta2,(*turtleptr).direct);
+    if (tmpr==RAND_MAX)
+      return gensizeerr(contextptr);
+    (*turtleptr).radius=tmpr;
+    turtle_move(r,theta2,contextptr);
+    (*turtleptr).radius += 1 << 27;
+    return update_turtle_state(true,contextptr);
+  }
+  static const char _disque_s []="disque";
+  static define_unary_function_eval2 (__disque,&_disque,_disque_s,&printastifunction);
+  define_unary_function_ptr5( at_disque ,alias_at_disque,&__disque,0,T_LOGO);
+
+  gen _disque_centre(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    int r,theta2;
+    bool direct;
+    int radius=find_radius(g,r,theta2,direct);
+    if (radius==RAND_MAX)
+      return gensizeerr(contextptr);
+    r=absint(r);
+    _saute(r,contextptr);
+    _tourne_gauche(direct?90:-90,contextptr);
+    (*turtleptr).radius = radius;
+    (*turtleptr).direct=direct;
+    turtle_move(r,theta2,contextptr);
+    (*turtleptr).radius += 1 << 27;
+    update_turtle_state(true,contextptr);
+    _tourne_droite(direct?90:-90,contextptr);
+    return _saute(-r,contextptr);
+  }
+  static const char _disque_centre_s []="disque_centre";
+  static define_unary_function_eval2 (__disque_centre,&_disque_centre,_disque_centre_s,&printastifunction);
+  define_unary_function_ptr5( at_disque_centre ,alias_at_disque_centre,&__disque_centre,0,T_LOGO);
+
+  gen _polygone_rempli(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    if (g.type==_INT_){
+      (*turtleptr).radius=-absint(g.val);
+      if ((*turtleptr).radius<-1)
+	return update_turtle_state(true,contextptr);
+    }
+    return gensizeerr(gettext("Integer argument >= 2"));
+  }
+  static const char _polygone_rempli_s []="polygone_rempli";
+  static define_unary_function_eval2 (__polygone_rempli,&_polygone_rempli,_polygone_rempli_s,&printastifunction);
+  define_unary_function_ptr5( at_polygone_rempli ,alias_at_polygone_rempli,&__polygone_rempli,0,T_LOGO);
+
+  gen _rectangle_plein(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    gen gx=g,gy=g;
+    if (g.type==_VECT && g._VECTptr->size()==2){
+      gx=g._VECTptr->front();
+      gy=g._VECTptr->back();
+    }
+    for (int i=0;i<2;++i){
+      _avance(gx,contextptr);
+      _tourne_droite(-90,contextptr);
+      _avance(gy,contextptr);
+      _tourne_droite(-90,contextptr);
+    }
+    //for (int i=0;i<turtle_stack().size();++i){ *logptr(contextptr) << turtle2gen(turtle_stack()[i]) <<endl;}
+    return _polygone_rempli(-8,contextptr);
+  }
+  static const char _rectangle_plein_s []="rectangle_plein";
+  static define_unary_function_eval2 (__rectangle_plein,&_rectangle_plein,_rectangle_plein_s,&printastifunction);
+  define_unary_function_ptr5( at_rectangle_plein ,alias_at_rectangle_plein,&__rectangle_plein,0,T_LOGO);
+
+  gen _triangle_plein(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    gen gx=g,gy=g,gtheta=60;
+    if (g.type==_VECT && g._VECTptr->size()>=2){
+      vecteur & v=*g._VECTptr;
+      gx=v.front();
+      gy=v[1];
+      gtheta=90;
+      if (v.size()>2)
+	gtheta=v[2];
+    }
+    logo_turtle t=(*turtleptr);
+    _avance(gx,contextptr);
+    double save_x=(*turtleptr).x,save_y=(*turtleptr).y;
+    _recule(gx,contextptr);
+    _tourne_gauche(gtheta,contextptr);
+    _avance(gy,contextptr);
+    (*turtleptr).x=save_x;
+    (*turtleptr).y=save_y;
+    update_turtle_state(true,contextptr);
+    (*turtleptr)=t;
+    (*turtleptr).radius=0;
+    update_turtle_state(true,contextptr);
+    return _polygone_rempli(-3,contextptr);
+  }
+  static const char _triangle_plein_s []="triangle_plein";
+  static define_unary_function_eval2 (__triangle_plein,&_triangle_plein,_triangle_plein_s,&printastifunction);
+  define_unary_function_ptr5( at_triangle_plein ,alias_at_triangle_plein,&__triangle_plein,0,T_LOGO);
+
+  gen _dessine_tortue(const gen & g,GIAC_CONTEXT){
+    if ( g.type==_STRNG && g.subtype==-1) return  g;
+    // logo instruction
+    /*
+      _triangle_plein(makevecteur(17,5));
+      _tourne_droite(90);
+      _triangle_plein(makevecteur(5,17));
+      return _tourne_droite(-90);
+    */
+    double save_x=(*turtleptr).x,save_y=(*turtleptr).y;
+    _tourne_droite(90,contextptr);
+    _avance(5,contextptr);
+    _tourne_gauche(106,contextptr);
+    _avance(18,contextptr);
+    _tourne_gauche(148,contextptr);
+    _avance(18,contextptr);
+    _tourne_gauche(106,contextptr);
+    _avance(5,contextptr);
+    (*turtleptr).x=save_x; (*turtleptr).y=save_y;
+    gen res(_tourne_gauche(90,contextptr));
+    if (is_one(g))
+      return res;
+    return _polygone_rempli(-9,contextptr);
+  }
+  static const char _dessine_tortue_s []="dessine_tortue";
+  static define_unary_function_eval2 (__dessine_tortue,&_dessine_tortue,_dessine_tortue_s,&printastifunction);
+  define_unary_function_ptr5( at_dessine_tortue ,alias_at_dessine_tortue,&__dessine_tortue,0,T_LOGO);
+  
+#ifndef NO_NAMESPACE_GIAC
+} // namespace giac
+#endif // ndef NO_NAMESPACE_GIAC
+
 
 #ifndef NO_NAMESPACE_XCAS
 namespace xcas {
@@ -2324,7 +3059,7 @@ namespace xcas {
   }
 
   void Turtle::draw(){
-    const int deltax=0,deltay=24;
+    const int deltax=0,deltay=0;
     int horizontal_pixels=LCD_WIDTH_PX-2*giac::COORD_SIZE;
     // Check for fast redraw
     // Then redraw the background
@@ -2425,7 +3160,7 @@ namespace xcas {
 #else
 	  logo_turtle current =(*turtleptr)[k];
 #endif
-#if 0
+#if 1
 	  if (current.s>=0){ // Write a string
 	    //cout << current.radius << " " << current.s << endl;
 	    if (current.s<ecristab().size())
@@ -2562,11 +3297,11 @@ namespace xcas {
       }
     }
     // UI
-    // DefineStatusMessage((char*)"+-: zoom, pad: move, EXIT: quit", 1, 0, 0);
+    DefineStatusMessage((char*)"+-: zoom, pad: move, EXIT: quit", 1, 0, 0);
     // EnableStatusArea(2);
     for (;;){
       gr.draw();
-      // DisplayStatusArea();
+      DisplayStatusArea();
       // int x=0,y=LCD_HEIGHT_PX-STATUS_AREA_PX-17;
       // PrintMini(&x,&y,(unsigned char *)"menu",0x04,0xffffffff,0,0,COLOR_BLACK,COLOR_WHITE,1,0);
       int key=-1;
@@ -2669,6 +3404,37 @@ namespace xcas {
     }
     // aborttimer = Timer_Install(0, check_execution_abort, 100); if (aborttimer > 0) { Timer_Start(aborttimer); }
     return ;
+  }
+
+  void displaylogo(){
+#ifdef TURTLETAB
+    xcas::Turtle t={tablogo,0,0,1,1};
+#else
+    xcas::Turtle t={&turtle_stack(),0,0,1,1};
+#endif
+    DefineStatusMessage((char*)"+-: zoom, pad: move, EXIT: quit", 1, 0, 0);
+    DisplayStatusArea();
+    while (1){
+      int save_ymin=clip_ymin;
+      clip_ymin=24;
+      t.draw();
+      clip_ymin=save_ymin;
+      int key;
+      GetKey(&key);
+      if (key==KEY_CTRL_EXIT || key==KEY_PRGM_ACON || key==KEY_CTRL_MENU || key==KEY_CTRL_EXE || key==KEY_CTRL_VARS)
+	break;
+      if (key==KEY_CTRL_UP){ t.turtley += 10; }
+      if (key==KEY_CTRL_PAGEUP) { t.turtley += 100; }
+      if (key==KEY_CTRL_DOWN) { t.turtley -= 10; }
+      if (key==KEY_CTRL_PAGEDOWN) { t.turtley -= 100;}
+      if (key==KEY_CTRL_LEFT) { t.turtlex -= 10; }
+      if (key==KEY_SHIFT_LEFT) { t.turtlex -= 100; }
+      if (key==KEY_CTRL_RIGHT) { t.turtlex += 10; }
+      if (key==KEY_SHIFT_RIGHT) { t.turtlex += 100;}
+      if (key==KEY_CHAR_PLUS) { t.turtlezoom *= 2;}
+      if (key==KEY_CHAR_MINUS){ t.turtlezoom /= 2;  }
+    }
+    numworks_giac_hide_graph();
   }
 
 #ifndef NO_NAMESPACE_XCAS

@@ -15931,6 +15931,23 @@ void sprint_double(char * s,double d){
   }
 #endif
 
+  bool islogo(const gen & g){
+    if (g.type!=_VECT || g._VECTptr->empty()) return false;
+    if (g.subtype==_LOGO__VECT) return true;
+    const vecteur & v=*g._VECTptr;
+    if (islogo(v.back()))
+      return true;
+    for (size_t i=0;i<v.size();++i){
+      if (v[i].type==_VECT && v[i].subtype==_LOGO__VECT)
+	return true;
+    }
+    return false;
+  }
+#ifdef NUMWORKS
+  extern logo_turtle * turtleptr;
+  gen _efface_logo(const gen & g,GIAC_CONTEXT);
+#endif
+      
   const char * caseval(const char *s){
     ctrl_c=interrupted=false;
     static string * sptr=0;
@@ -15947,6 +15964,12 @@ void sprint_double(char * s,double d){
       numworks_shell=true;
       return "shell on";
     }
+#ifdef NUMWORKS
+    if (!turtleptr){
+      turtle();
+      _efface_logo(vecteur(0),contextptr);
+    }
+#endif
     const char init[]="init geogebra";
     const char close[]="close geogebra";
     if (!strcmp(s,init)){
@@ -16125,6 +16148,8 @@ void sprint_double(char * s,double d){
 	S="Graphic_object";
       }
       else {
+	if (islogo(g))
+	  xcas::displaylogo();
 	if (taille(g,100)>=100)
 	  S="Large_object";
 	else
