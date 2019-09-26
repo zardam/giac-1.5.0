@@ -8256,7 +8256,7 @@ namespace giac {
   define_unary_function_ptr5( at_curve ,alias_at_curve,&__curve,0,true);
 
   gen plotparam(const gen & f,const gen & vars,const vecteur & attributs,bool densityplot,double function_xmin,double function_xmax,double function_ymin,double function_ymax,double function_tmin, double function_tmax,double function_tstep,const gen & equation,const gen & parameq,const gen & vparam,const context * contextptr){
-    if (function_tstep<=0 || (function_tmax-function_tmin)/function_tstep>max_nstep)
+    if (function_tstep<=0 || (function_tmax-function_tmin)/function_tstep>max_nstep || function_tmax==function_tmin)
       return gensizeerr(gettext("Plotparam: unable to discretize: tmin, tmax, tstep=")+print_DOUBLE_(function_tmin,12)+","+print_DOUBLE_(function_tmax,12)+","+print_DOUBLE_(function_tstep,12)+gettext("\nTry a larger value for tstep"));
     gen fC(f);
     if (f.type==_VECT && f._VECTptr->size()==2)

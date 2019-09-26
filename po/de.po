@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-23 15:23+0200\n"
+"POT-Creation-Date: 2019-09-26 08:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -106,7 +106,7 @@ msgstr ""
 #: src/sym2poly.cc:3049 src/gausspol.cc:266 src/gausspol.cc:346
 #: src/gausspol.cc:381 src/gausspol.cc:1026 src/gausspol.cc:1698
 #: src/gausspol.cc:3784 src/gausspol.cc:5111 src/threaded.cc:3839
-#: src/maple.cc:1264 src/ti89.cc:2673 src/ti89.cc:2685 src/modpoly.cc:489
+#: src/maple.cc:1264 src/ti89.cc:2682 src/ti89.cc:2694 src/modpoly.cc:489
 #: src/modpoly.cc:507 src/modpoly.cc:651 src/modpoly.cc:669 src/modpoly.cc:765
 #: src/modpoly.cc:781 src/modpoly.cc:803 src/modpoly.cc:819
 #: src/modpoly.cc:1606 src/solve.cc:4462 src/solve.cc:4544 src/intg.cc:3518
@@ -526,107 +526,107 @@ msgstr "Noch nicht implementiert"
 msgid "Array too large"
 msgstr "Array zu groß"
 
-#: src/ti89.cc:751
+#: src/ti89.cc:754
 msgid "Selecting last arc"
 msgstr "Auswahl des letzten Bogens"
 
-#: src/ti89.cc:2025 src/vecteur.cc:10456
+#: src/ti89.cc:2028 src/vecteur.cc:10456
 msgid "minor_det option applies only to det"
 msgstr "Option minor_det gilt nur für Determinante"
 
-#: src/ti89.cc:2919
+#: src/ti89.cc:2928
 msgid "TI stop"
 msgstr "TI-Stopp"
 
-#: src/ti89.cc:3286
+#: src/ti89.cc:3295
 msgid "Can't find length of non tokenized programs"
 msgstr "Ermitteln der Länge von nicht-tokenisierten Programmen nicht möglich"
 
-#: src/ti89.cc:3518
+#: src/ti89.cc:3527
 msgid "Unknown sysvar tag"
 msgstr "Unbekanntes sysvar-Tag"
 
-#: src/ti89.cc:3650
+#: src/ti89.cc:3659
 msgid "Parser internal token"
 msgstr "Parserinternes Token"
 
-#: src/ti89.cc:3691
+#: src/ti89.cc:3700
 msgid "Unknown secondary tag"
 msgstr "Unbekanntes sekundäres Tag"
 
-#: src/ti89.cc:3835
+#: src/ti89.cc:3844
 msgid "empty local declaration"
 msgstr "leere lokale Deklaration"
 
-#: src/ti89.cc:3890
+#: src/ti89.cc:3899
 msgid "End structure "
 msgstr "Ende Struktur "
 
-#: src/ti89.cc:4186
+#: src/ti89.cc:4195
 msgid "Unknown instruction tag:"
 msgstr "Unbekanntes Anweisungstag:"
 
-#: src/ti89.cc:4232
+#: src/ti89.cc:4241
 msgid "Data_var_tag not implemented"
 msgstr "Data_var_tag nicht implementiert"
 
-#: src/ti89.cc:4234
+#: src/ti89.cc:4243
 msgid "Gdb_var_tag not implemented"
 msgstr "Gdb_var_tag nicht implementiert"
 
-#: src/ti89.cc:4236
+#: src/ti89.cc:4245
 msgid "Unable to find pic_var_tag length"
 msgstr "Ermitteln der Länge von pic_var_tag nicht möglich"
 
-#: src/ti89.cc:4238
+#: src/ti89.cc:4247
 msgid "Unable to find text_var_tag length"
 msgstr "Ermitteln der Länge von text_var_tag nicht möglich"
 
-#: src/ti89.cc:4249
+#: src/ti89.cc:4258
 msgid "End_tag/End_of_segment"
 msgstr "End_tag/End_of_segment"
 
-#: src/ti89.cc:4251
+#: src/ti89.cc:4260
 msgid "Asm programs not implemented"
 msgstr "ASM-Programme nicht implementiert"
 
-#: src/ti89.cc:4253
+#: src/ti89.cc:4262
 msgid "3rd party data"
 msgstr "Externe Daten"
 
-#: src/ti89.cc:4510
+#: src/ti89.cc:4519
 msgid "start tag"
 msgstr "Starttag"
 
-#: src/ti89.cc:4559
+#: src/ti89.cc:4568
 msgid "Internal sincos token"
 msgstr "Internes sincos-Token"
 
-#: src/ti89.cc:4707
+#: src/ti89.cc:4716
 msgid "fig_tag"
 msgstr "fig_tag"
 
-#: src/ti89.cc:4709
+#: src/ti89.cc:4718
 msgid "mac_tag"
 msgstr "mac_tag"
 
-#: src/ti89.cc:4742
+#: src/ti89.cc:4751
 msgid "Unknown tag "
 msgstr "Unbekanntes Tag "
 
-#: src/ti89.cc:4829
+#: src/ti89.cc:4838
 msgid "Unable to open "
 msgstr "Öffnen nicht möglich "
 
-#: src/ti89.cc:4839
+#: src/ti89.cc:4848
 msgid "Too short for a TI archive"
 msgstr "Zu kurz für ein TI-Archiv"
 
-#: src/ti89.cc:4849
+#: src/ti89.cc:4858
 msgid "Not long enough"
 msgstr "Nicht lang genug"
 
-#: src/ti89.cc:4925
+#: src/ti89.cc:4934
 msgid "Not a TI89/92 program/function/group file"
 msgstr "Keine TI89/92-Programm-/Funktions-/Gruppendatei"
 

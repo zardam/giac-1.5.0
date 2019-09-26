@@ -125,14 +125,16 @@ extern   const int LCD_HEIGHT_PX;
 #define KEY_CTRL_VARS       30016
 #define KEY_CTRL_UP         1
 #define KEY_CTRL_DOWN       2
-#define KEY_CTRL_LEFT       3
-#define KEY_CTRL_RIGHT      0
+#define KEY_CTRL_LEFT       0
+#define KEY_CTRL_RIGHT      3
 #define KEY_CTRL_F1         30009
 #define KEY_CTRL_F2         30010
 #define KEY_CTRL_F3         30011
 #define KEY_CTRL_F4         30012
 #define KEY_CTRL_F5         30013
 #define KEY_CTRL_F6         30014
+#define KEY_CTRL_F7         30014
+#define KEY_CTRL_F14         30014
 #define KEY_CTRL_CATALOG    30100
 #define KEY_CTRL_CAPTURE    30055
 #define KEY_CTRL_CLIP       30050
@@ -217,7 +219,7 @@ namespace xcas {
   void display(Equation &eq ,int x,int y,const giac::context *);
   // replace selection in eq by tmp
   void replace_selection(Equation & eq,const giac::gen & tmp,giac::gen * gsel,const std::vector<int> * gotoptr,const giac::context *);
-  int eqw_select_leftright(xcas::Equation & g,bool left,int exchange=0);
+  int eqw_select_leftright(xcas::Equation & g,bool left,int exchange,const giac::context *);
 
   class Graph2d{
   public:
@@ -255,8 +257,17 @@ namespace xcas {
   
   void displaygraph(const giac::gen & ge, const giac::context * contextptr);
   void displaylogo();
+  giac::gen eqw(const giac::gen & ge,bool editable,const giac::context * contextptr);
 #ifndef NO_NAMESPACE_XCAS
 } // namespace xcas
+#endif // ndef NO_NAMESPACE_XCAS
+
+#ifndef NO_NAMESPACE_XCAS
+namespace giac {
+#endif // ndef NO_NAMESPACE_XCAS
+  gen turtle_state(const giac::context * contextptr);
+#ifndef NO_NAMESPACE_XCAS
+} // namespace giac
 #endif // ndef NO_NAMESPACE_XCAS
 
 #endif // _KDISPLAY_H

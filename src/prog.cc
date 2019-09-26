@@ -552,7 +552,7 @@ namespace giac {
     return g==cst_pi || g==cst_euler_gamma || is_inf(g) || is_undef(g) || (g.type==_IDNT && (strcmp(g._IDNTptr->id_name,"i")==0 || strcmp(g._IDNTptr->id_name,"None")==0 || strcmp(g._IDNTptr->id_name,"cmath")==0 || strcmp(g._IDNTptr->id_name,"math")==0 || strcmp(g._IDNTptr->id_name,"kandinsky")==0 || strcmp(g._IDNTptr->id_name,"pass")==0));
   }
 
-  bool warn_equal_in_prog=true;
+  bool warn_equal_in_prog=true,warn_symb_program_sto=true;
   gen _warn_equal_in_prog(const gen & g,GIAC_CONTEXT){
     if (is_zero(g) && g.type!=_VECT){
       warn_equal_in_prog=false;
@@ -1177,7 +1177,7 @@ namespace giac {
     bool warn=false;
 #ifndef GIAC_HAS_STO_38
     if (logptr(contextptr) && calc_mode(contextptr)!=1)
-      warn=true;
+      warn=warn_symb_program_sto; // true;
 #endif
     if (warn){
       *logptr(contextptr) << gettext("// Parsing ") << d << '\n';

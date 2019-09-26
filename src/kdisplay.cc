@@ -21,6 +21,9 @@
 #include "input_parser.h"
 //giac::context * contextptr=0;
 int clip_ymin=0;
+int lang=0;
+bool xthetat=true;
+int esc_flag=0;
 using namespace std;
 using namespace giac;
 const int LCD_WIDTH_PX=320;
@@ -35,7 +38,47 @@ namespace giac {
 
   void DisplayStatusArea(){
   }
-  
+
+  void set_xcas_status(){
+  }
+  int GetSetupSetting(int mode){
+    return 0;
+  }
+
+  void handle_f5(){
+  }
+
+  void copy_clipboard(const string & s,bool b){
+  }
+  string paste_clipboard(){
+    return "";
+  }
+  bool inputline(const char * prompt,std::string & res,bool b){
+    return false;
+  }
+  bool inputline(const char * prompt,int pos,std::string & res,bool b){
+    return false;
+  }
+  void invalid_varname(){
+  }
+  bool confirm_overwrite(){
+    return true;
+  }
+  int confirm(const char * prompt1,const char * prompt2){
+    return KEY_CTRL_F6;
+  }
+  bool isalphanum(char c){
+    return (c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9');
+  }
+  const char * keytostring(int key,int keyflag){
+    return 0;
+  }
+  void translate_fkey(int & key){
+  }
+  const char * console_menu(int key,int keyflag){
+    return "factor";
+  }
+
   logo_turtle * turtleptr=0;
   
   logo_turtle & turtle(){
@@ -44,7 +87,7 @@ namespace giac {
     return * turtleptr;
   }
   
-  const int MAX_LOGO=666; // 512;
+  const int MAX_LOGO=368; // 512;
 
   std::vector<logo_turtle> & turtle_stack(){
     static std::vector<logo_turtle> * ans = 0;
@@ -946,7 +989,7 @@ namespace xcas {
     int xleft,ytop,xright,ybottom,gselpos;
     int newxleft,newytop,newxright,newybottom;
     gen * gsel,*gselparent;
-    if (Equation_adjust_xy(g,xleft,ytop,xright,ybottom,gsel,gselparent,gselpos)){
+    if (Equation_adjust_xy(g,xleft,ytop,xright,ybottom,gsel,gselparent,gselpos) && gselparent){
       Equation_select(*gselparent,true);
       //cout << "gselparent " << *gselparent << endl;
       Equation_adjust_xy(g,newxleft,newytop,newxright,newybottom,gsel,gselparent,gselpos);
@@ -1064,12 +1107,12 @@ namespace xcas {
       fontsize=18;
     if (fontsize>=18){
       y -= 16;// status area shift
-      numworks_giac_draw_string(x,y,c,bg,s);
+      numworks_giac_draw_string(x,y,mode==4?bg:c,mode==4?c:bg,s);
       // PrintMini(&x,&y,(unsigned char *)s,mode,0xffffffff,0,0,c,bg,1,0);
       return;
     }
     y -= 12;
-    numworks_giac_draw_string_small(x,y,c,bg,s);// PrintMiniMini( &x, &y, (unsigned char *)s, mode,c, 0 );
+    numworks_giac_draw_string_small(x,y,mode==4?bg:c,mode==4?c:bg,s);// PrintMiniMini( &x, &y, (unsigned char *)s, mode,c, 0 );
     return;
   }
   
@@ -3309,7 +3352,7 @@ namespace xcas {
 #if 0
       if (key==KEY_CTRL_F1){
 	char menu_xmin[32],menu_xmax[32],menu_ymin[32],menu_ymax[32];
-	ustl::string s;
+	string s;
 	s="xmin "+print_DOUBLE_(gr.window_xmin,6);
 	strcpy(menu_xmin,s);
 	s="xmax "+print_DOUBLE_(gr.window_xmax,6);
@@ -3339,7 +3382,7 @@ namespace xcas {
 	int sres = doMenu(&smallmenu);
 	if(sres == MENU_RETURN_SELECTION) {
 	  const char * ptr=0;
-	  ustl::string s1; double d;
+	  string s1; double d;
 	  if (smallmenu.selection==1){
 	    if (inputdouble(menu_xmin,d)){
 	      gr.window_xmin=d;
@@ -3421,7 +3464,7 @@ namespace xcas {
       clip_ymin=save_ymin;
       int key;
       GetKey(&key);
-      if (key==KEY_CTRL_EXIT || key==KEY_PRGM_ACON || key==KEY_CTRL_MENU || key==KEY_CTRL_EXE || key==KEY_CTRL_VARS)
+      if (key==KEY_CTRL_EXIT || key==KEY_CTRL_OK || key==KEY_PRGM_ACON || key==KEY_CTRL_MENU || key==KEY_CTRL_EXE || key==KEY_CTRL_VARS)
 	break;
       if (key==KEY_CTRL_UP){ t.turtley += 10; }
       if (key==KEY_CTRL_PAGEUP) { t.turtley += 100; }
@@ -3435,6 +3478,610 @@ namespace xcas {
       if (key==KEY_CHAR_MINUS){ t.turtlezoom /= 2;  }
     }
     numworks_giac_hide_graph();
+  }
+
+  bool ispnt(const gen & g){
+    if (g.is_symb_of_sommet(giac::at_pnt))
+      return true;
+    if (g.type!=_VECT || g._VECTptr->empty())
+      return false;
+    return ispnt(g._VECTptr->back());
+  }
+
+  giac::gen eqw(const giac::gen & ge,bool editable,GIAC_CONTEXT){
+    bool edited=false;
+    const int margin=24;
+#ifdef CURSOR
+    Cursor_SetFlashOff();
+#endif
+    giac::gen geq(_copy(ge,contextptr));
+    // if (ge.type!=giac::_DOUBLE_ && giac::has_evalf(ge,geq,1,contextptr)) geq=giac::symb_equal(ge,geq);
+    int line=-1,col=-1,nlines=0,ncols=0,listormat=0;
+    xcas::Equation eq(0,0,geq,contextptr);
+    giac::eqwdata eqdata=xcas::Equation_total_size(eq.data);
+    if (eqdata.dx>1.5*LCD_WIDTH_PX || eqdata.dy>1.5*LCD_HEIGHT_PX){
+      if (eqdata.dx>2.25*LCD_WIDTH_PX || eqdata.dy>2.25*LCD_HEIGHT_PX)
+	eq.attr=giac::attributs(14,COLOR_WHITE,COLOR_BLACK);
+      else
+	eq.attr=giac::attributs(16,COLOR_WHITE,COLOR_BLACK);
+      eq.data=0; // clear memory
+      eq.data=xcas::Equation_compute_size(geq,eq.attr,LCD_WIDTH_PX,contextptr);
+      eqdata=xcas::Equation_total_size(eq.data);
+    }
+    int dx=(eqdata.dx-LCD_WIDTH_PX)/2,dy=LCD_HEIGHT_PX-2*margin+eqdata.y;
+    if (geq.type==_VECT){
+      nlines=geq._VECTptr->size();
+      if (eqdata.dx>=LCD_WIDTH_PX)
+	dx=-20; // line=nlines/2;
+      //else
+      if (geq.subtype!=_SEQ__VECT){
+	line=0;
+	listormat=1;
+	if (ckmatrix(geq)){
+	  ncols=geq._VECTptr->front()._VECTptr->size();
+	  if (eqdata.dy>=LCD_HEIGHT_PX-margin)
+	    dy=eqdata.y+eqdata.dy+32;// col=ncols/2;
+	  // else
+	  col=0;
+	  listormat=2;
+	}
+      }
+    }
+    if (!listormat){
+      xcas::Equation_select(eq.data,true);
+      xcas::eqw_select_down(eq.data);
+    }
+    //cout << eq.data << endl;
+    int firstrun=2;
+    for (;;){
+#if 1
+      if (firstrun==2){
+	DefineStatusMessage((char*)(lang?"EXE: quitte, resultat dans last":"EXE: quit, result stored in last"), 1, 0, 0);
+	DisplayStatusArea();
+	firstrun=1;
+      }
+      else
+	set_xcas_status();
+#else
+      DefineStatusMessage((char*)"+-: zoom, pad: move, EXIT: quit", 1, 0, 0);
+      EnableStatusArea(2);
+      DisplayStatusArea();
+#endif
+      gen value;
+      if (listormat) // select line l, col c
+	xcas::eqw_select(eq.data,line,col,true,value);
+      if (eqdata.dx>LCD_WIDTH_PX){
+	if (dx<-20)
+	  dx=-20;
+	if (dx>eqdata.dx-LCD_WIDTH_PX+20)
+	  dx=eqdata.dx-LCD_WIDTH_PX+20;
+      }
+#define EQW_TAILLE 18
+      if (eqdata.dy>LCD_HEIGHT_PX-2*EQW_TAILLE){
+	if (dy-eqdata.y<LCD_HEIGHT_PX-2*EQW_TAILLE)
+	  dy=eqdata.y+LCD_HEIGHT_PX-2*EQW_TAILLE;
+	if (dy-eqdata.y>eqdata.dy+32)
+	  dy=eqdata.y+eqdata.dy+32;
+      }
+      drawRectangle(0, STATUS_AREA_PX, LCD_WIDTH_PX, LCD_HEIGHT_PX-STATUS_AREA_PX,COLOR_WHITE);
+      // Bdisp_AllClr_VRAM();
+      int save_clip_ymin=clip_ymin;
+      clip_ymin=STATUS_AREA_PX;
+      xcas::display(eq,dx,dy,contextptr);
+#if 0
+      string menu(" ");
+      menu += menu_f1;
+      while (menu.size()<6)
+	menu += " ";
+      menu += " | ";
+      menu += string(menu_f2);
+      while (menu.size()<13)
+	menu += " ";
+      menu += " | edit+-| cmds | A<>a | eval";
+      PrintMini(0,58,menu.c_str(),4);
+#endif
+      //draw_menu(2);
+      clip_ymin=save_clip_ymin;
+      int keyflag = GetSetupSetting( (unsigned int)0x14);
+      bool alph=keyflag==4||keyflag==0x84||keyflag==8||keyflag==0x88;
+      if (firstrun){ // workaround for e.g. 1+x/2 partly not displayed
+	firstrun=0;
+	continue;
+      }
+      int key;
+      //cout << eq.data << endl;
+      GetKey(&key);
+      if (key==KEY_CTRL_OK){
+	numworks_giac_hide_graph();
+	return geq;
+      }
+      if (key==KEY_CTRL_EXIT || key==KEY_CTRL_AC || key==KEY_CTRL_EXE){
+	if (!edited){
+	  numworks_giac_hide_graph();
+	  return geq;
+	}
+	if (confirm(lang?"Vraiment abandonner?":"Really leave",lang?"F1: retour editeur,  F6: confirmer":"F1: back to editor,  F6: confirm")==KEY_CTRL_F6){
+	  numworks_giac_hide_graph();
+	  return undef;
+	}
+      }
+      if (key==KEY_CTRL_UNDO){
+	giac::swapgen(eq.undodata,eq.data);
+	continue;
+      }
+      if (key==KEY_CTRL_F5){
+	handle_f5();
+	continue;
+      }
+      int redo=0;
+      bool ins=key==KEY_CHAR_STORE  || key==KEY_CHAR_RPAR || key==KEY_CHAR_LPAR || key==KEY_CHAR_COMMA || key==KEY_CTRL_PASTE;
+      int xleft,ytop,xright,ybottom,gselpos; gen * gsel=0,*gselparent=0;
+      if (key==KEY_CTRL_CLIP){
+	xcas::Equation_adjust_xy(eq.data,xleft,ytop,xright,ybottom,gsel,gselparent,gselpos,0);
+	if (gsel==0)
+	  gsel==&eq.data;
+	// cout << "var " << g << " " << eq.data << endl;
+	if (xcas::do_select(*gsel,true,value) && value.type==_EQW){
+	  //cout << g << ":=" << value._EQWptr->g << endl;
+	  copy_clipboard(value._EQWptr->g.print(contextptr),true);
+	  continue;
+	}
+      }
+      if (key==KEY_CHAR_STORE){
+	int keyflag = GetSetupSetting( (unsigned int)0x14);
+	if (keyflag==0)
+	  handle_f5();
+	std::string varname;
+	if (inputline((lang?"Stocker la selection dans":"Save selection in",lang?"Nom de variable: ":"Variable name: "),varname,false) && !varname.empty() && isalpha(varname[0])){
+	  giac::gen g(varname,contextptr);
+	  giac::gen ge(eval(g,1,contextptr));
+	  if (g.type!=_IDNT){
+	    invalid_varname();
+	    continue;
+	  }
+	  if (ge==g || confirm_overwrite()){
+	    vector<int> goto_sel;
+	    xcas::Equation_adjust_xy(eq.data,xleft,ytop,xright,ybottom,gsel,gselparent,gselpos,&goto_sel);
+	    if (gsel==0)
+	      gsel==&eq.data;
+	    // cout << "var " << g << " " << eq.data << endl;
+	    if (xcas::do_select(*gsel,true,value) && value.type==_EQW){
+	      //cout << g << ":=" << value._EQWptr->g << endl;
+	      giac::sto(value._EQWptr->g,g,contextptr);
+	    }
+	  }
+	}
+	continue;
+      }
+      if (key==KEY_CTRL_DEL){
+	vector<int> goto_sel;
+	if (xcas::Equation_adjust_xy(eq.data,xleft,ytop,xright,ybottom,gsel,gselparent,gselpos,&goto_sel) && gsel && xcas::do_select(*gsel,true,value) && value.type==_EQW){
+	  value=value._EQWptr->g;
+	  if (value.type==_SYMB){
+	    gen tmp=value._SYMBptr->feuille;
+	    if (tmp.type!=_VECT || tmp.subtype!=_SEQ__VECT){
+	      xcas::replace_selection(eq,tmp,gsel,&goto_sel,contextptr);
+	      continue;
+	    }
+	  }
+	  if (!goto_sel.empty() && gselparent && gselparent->type==_VECT && !gselparent->_VECTptr->empty()){
+	    vecteur & v=*gselparent->_VECTptr;
+	    if (v.back().type==_EQW){
+	      gen opg=v.back()._EQWptr->g;
+	      if (opg.type==_FUNC){
+		int i=0;
+		for (;i<v.size()-1;++i){
+		  if (&v[i]==gsel)
+		    break;
+		}
+		if (i<v.size()-1){
+		  if (v.size()==5 && (opg==at_integrate || opg==at_sum) && i>=2)
+		    v.erase(v.begin()+2,v.begin()+4);
+		  else
+		    v.erase(v.begin()+i);
+		  xcas::do_select(*gselparent,true,value);
+		  if (value.type==_EQW){
+		    value=value._EQWptr->g;
+		    // cout << goto_sel << " " << value << endl; continue;
+		    if (v.size()==2 && (opg==at_plus || opg==at_prod))
+		      value=eval(value,1,contextptr);
+		    goto_sel.erase(goto_sel.begin());
+		    xcas::replace_selection(eq,value,gselparent,&goto_sel,contextptr);
+		    continue;
+		  }
+		}
+	      }
+	    }
+	  }
+	}
+      }
+      if (key==KEY_CTRL_F3){
+	if (keyflag==1){
+	  if (eq.attr.fontsize>=18) continue;
+	  xcas::do_select(eq.data,true,value);
+	  if (value.type==_EQW)
+	    geq=value._EQWptr->g;
+	  if (eq.attr.fontsize==14)
+	    eq.attr.fontsize=16;
+	  else
+	    eq.attr.fontsize=18;
+	  redo=1;
+	}
+	else {
+	  if (alph){
+	    if (eq.attr.fontsize<=14) continue;
+	    xcas::do_select(eq.data,true,value);
+	    if (value.type==_EQW)
+	      geq=value._EQWptr->g;
+	    if (eq.attr.fontsize==16)
+	      eq.attr.fontsize=14;
+	    else
+	      eq.attr.fontsize=16;
+	    redo=1;
+	  }
+	  else {
+	    // Edit
+	    edited=true;
+	    ins=true;
+	  }
+	}
+      }
+      if (key==KEY_CHAR_IMGNRY)
+	key='i';
+      const char keybuf[2]={(key==KEY_CHAR_PMINUS?'-':char(key)),0};
+      const char * adds=(key==KEY_CHAR_PMINUS ||
+			 (key==char(key) && (isalphanum(key)|| key=='.' ))
+			 )?keybuf:keytostring(key,keyflag);
+      translate_fkey(key);
+      if ( key==KEY_CTRL_F1 || key==KEY_CTRL_F2 ||
+	   (key>=KEY_CTRL_F7 && key<=KEY_CTRL_F14)){
+	adds=console_menu(key,1);//alph?"simplify":(keyflag==1?"factor":"partfrac");
+	// workaround for infinitiy
+	if (strlen(adds)>=2 && adds[0]=='o' && adds[1]=='o')
+	  key=KEY_CTRL_F5;      
+      }
+      if (key==KEY_CTRL_F5)
+	adds="oo";
+      if (key==KEY_CTRL_F6){
+	adds=alph?"regroup":(keyflag==1?"evalf":"eval");
+      }
+      if (key==KEY_CHAR_MINUS)
+	adds="-";
+      if (key==KEY_CHAR_EQUAL)
+	adds="=";
+      if (key==KEY_CHAR_RECIP)
+	adds="inv";
+      if (key==KEY_CHAR_SQUARE)
+	adds="sq";
+      if (key==KEY_CHAR_POWROOT)
+	adds="surd";
+      if (key==KEY_CHAR_CUBEROOT)
+	adds="surd";
+      int addssize=adds?strlen(adds):0;
+      // cout << addssize << " " << adds << endl;
+      if (key==KEY_CTRL_EXE){
+	if (xcas::do_select(eq.data,true,value) && value.type==_EQW){
+	  //cout << "ok " << value._EQWptr->g << endl;
+	  //DefineStatusMessage((char*)lang?"resultat stocke dans last":"result stored in last", 1, 0, 0);
+	  //DisplayStatusArea();
+	  giac::sto(value._EQWptr->g,giac::gen("last",contextptr),contextptr);
+	  return value._EQWptr->g;
+	}
+	//cout << "no " << eq.data << endl; if (value.type==_EQW) cout << value._EQWptr->g << endl ;
+	return geq;
+      }
+      if ( key!=KEY_CHAR_MINUS && key!=KEY_CHAR_EQUAL &&
+	   (ins || key==KEY_CHAR_PI || key==KEY_CTRL_F5 || (addssize==1 && (isalphanum(adds[0])|| adds[0]=='.' || adds[0]=='-') ) )
+	   ){
+	edited=true;
+	if (line>=0 && xcas::eqw_select(eq.data,line,col,true,value)){
+	  string s;
+	  if (ins){
+	    if (key==KEY_CTRL_PASTE)
+	      s=paste_clipboard();
+	    else {
+	      if (value.type==_EQW){
+		s=value._EQWptr->g.print(contextptr);
+	      }
+	      else
+		s=value.print(contextptr);
+	    }
+	  }
+	  else
+	    s = adds;
+	  string msg("Line ");
+	  msg += print_INT_(line+1);
+	  msg += " Col ";
+	  msg += print_INT_(col+1);
+	  if (inputline(msg.c_str(),0,s,false)==KEY_CTRL_EXE){
+	    value=gen(s,contextptr);
+	    if (col<0)
+	      (*geq._VECTptr)[line]=value;
+	    else
+	      (*((*geq._VECTptr)[line]._VECTptr))[col]=value;
+	    redo=2;
+	    key=KEY_SHIFT_RIGHT;
+	  }
+	  else
+	    continue;
+	}
+	else {
+	  vector<int> goto_sel;
+	  if (xcas::Equation_adjust_xy(eq.data,xleft,ytop,xright,ybottom,gsel,gselparent,gselpos,&goto_sel) && gsel && xcas::do_select(*gsel,true,value) && value.type==_EQW){
+	    string s;
+	    if (ins){
+	      if (key==KEY_CTRL_PASTE)
+		s=paste_clipboard();
+	      else {
+		s = value._EQWptr->g.print(contextptr);
+		if (key==KEY_CHAR_COMMA)
+		  s += ',';
+	      }
+	    }
+	    else
+	      s = adds;
+	    if (inputline(value._EQWptr->g.print(contextptr).c_str(),0,s,false)==KEY_CTRL_EXE){
+	      value=gen(s,contextptr);
+	      //cout << value << " goto " << goto_sel << endl;
+	      xcas::replace_selection(eq,value,gsel,&goto_sel,contextptr);
+	      firstrun=-1; // workaround, force 2 times display
+	    }
+	    continue;
+	  }
+	}
+      }
+      if (redo){
+	eq.data=0; // clear memory
+	eq.data=xcas::Equation_compute_size(geq,eq.attr,LCD_WIDTH_PX,contextptr);
+	eqdata=xcas::Equation_total_size(eq.data);
+	if (redo==1){
+	  dx=(eqdata.dx-LCD_WIDTH_PX)/2;
+	  dy=LCD_HEIGHT_PX-2*margin+eqdata.y;
+	  if (listormat) // select line l, col c
+	    xcas::eqw_select(eq.data,line,col,true,value);
+	  else {
+	    xcas::Equation_select(eq.data,true);
+	    xcas::eqw_select_down(eq.data);
+	  }
+	  continue;
+	}
+      }
+      bool doit=eqdata.dx>=LCD_WIDTH_PX;
+      int delta=0;
+      if (listormat){
+	if (key==KEY_CTRL_LEFT  || (!doit && key==KEY_SHIFT_LEFT)){
+	  if (line>=0 && xcas::eqw_select(eq.data,line,col,false,value)){
+	    if (col>=0){
+	      --col;
+	      if (col<0){
+		col=ncols-1;
+		if (line>0)
+		  --line;
+	      }
+	    }
+	    else {
+	      if (line>0)
+		--line;
+	    }
+	    xcas::eqw_select(eq.data,line,col,true,value);
+	    if (doit) dx -= value._EQWptr->dx;
+	  }
+	  continue;
+	}
+	if (doit && key==KEY_SHIFT_LEFT){
+	  dx -= 20;
+	  continue;
+	}
+	if (key==KEY_CTRL_RIGHT  || (!doit && key==KEY_SHIFT_RIGHT)) {
+	  if (line>=0 && xcas::eqw_select(eq.data,line,col,false,value)){
+	    if (doit)
+	      dx += value._EQWptr->dx;
+	    if (col>=0){
+	      ++col;
+	      if (col==ncols){
+		col=0;
+		if (line<nlines-1)
+		  ++line;
+	      }
+	    } else {
+	      if (line<nlines-1)
+		++line;
+	    }
+	    xcas::eqw_select(eq.data,line,col,true,value);
+	  }
+	  continue;
+	}
+	if (key==KEY_SHIFT_RIGHT && doit){
+	  dx += 20;
+	  continue;
+	}
+	doit=eqdata.dy>=LCD_HEIGHT_PX-2*margin;
+	if (key==KEY_CTRL_UP || (!doit && key==KEY_CTRL_PAGEUP)){
+	  if (line>0 && col>=0 && xcas::eqw_select(eq.data,line,col,false,value)){
+	    --line;
+	    xcas::eqw_select(eq.data,line,col,true,value);
+	    if (doit)
+	      dy += value._EQWptr->dy+eq.attr.fontsize/2;
+	  }
+	  continue;
+	}
+	if (key==KEY_CTRL_PAGEUP && doit){
+	  dy += 10;
+	  continue;
+	}
+	if (key==KEY_CTRL_DOWN  || (!doit && key==KEY_CTRL_PAGEDOWN)){
+	  if (line<nlines-1 && col>=0 && xcas::eqw_select(eq.data,line,col,false,value)){
+	    if (doit)
+	      dy -= value._EQWptr->dy+eq.attr.fontsize/2;
+	    ++line;
+	    xcas::eqw_select(eq.data,line,col,true,value);
+	  }
+	  continue;
+	}
+	if ( key==KEY_CTRL_PAGEDOWN && doit){
+	  dy -= 10;
+	  continue;
+	}
+      }
+      else { // else listormat
+	if (key==KEY_CTRL_LEFT){
+	  delta=xcas::eqw_select_leftright(eq,true,alph?2:0,contextptr);
+	  // cout << "left " << delta << endl;
+	  if (doit) dx += (delta?delta:-20);
+	  continue;
+	}
+	if (key==KEY_SHIFT_LEFT){
+	  delta=xcas::eqw_select_leftright(eq,true,1,contextptr);
+	  vector<int> goto_sel;
+	  if (doit) dx += (delta?delta:-20);
+	  continue;
+	}
+	if (key==KEY_CTRL_RIGHT){
+	  delta=xcas::eqw_select_leftright(eq,false,alph?2:0,contextptr);
+	  // cout << "right " << delta << endl;
+	  if (doit)
+	    dx += (delta?delta:20);
+	  continue;
+	}
+	if (key==KEY_SHIFT_RIGHT){
+	  delta=xcas::eqw_select_leftright(eq,false,1,contextptr);
+	  // cout << "right " << delta << endl;
+	  if (doit)
+	    dx += (delta?delta:20);
+	  // dx=eqdata.dx-LCD_WIDTH_PX+20;
+	  continue;
+	}
+	doit=eqdata.dy>=LCD_HEIGHT_PX-2*margin;
+	if (key==KEY_CTRL_UP){
+	  delta=xcas::eqw_select_up(eq.data);
+	  // cout << "up " << delta << endl;
+	  continue;
+	}
+	//cout << "up " << eq.data << endl;
+	if (key==KEY_CTRL_PAGEUP && doit){
+	  dy=eqdata.y+eqdata.dy+20;
+	  continue;
+	}
+	if (key==KEY_CTRL_DOWN){
+	  delta=xcas::eqw_select_down(eq.data);
+	  // cout << "down " << delta << endl;
+	  continue;
+	}
+	//cout << "down " << eq.data << endl;
+	if ( key==KEY_CTRL_PAGEDOWN && doit){
+	  dy=eqdata.y+LCD_HEIGHT_PX-margin;
+	  continue;
+	}
+      }
+      if (adds){
+	edited=true;
+	if (strcmp(adds,"'")==0)
+	  adds="diff";
+	if (strcmp(adds,"^2")==0)
+	  adds="sq";
+	if (strcmp(adds,">")==0)
+	  adds="simplify";
+	if (strcmp(adds,"<")==0)
+	  adds="factor";
+	if (strcmp(adds,"#")==0)
+	  adds="partfrac";
+	string cmd(adds);
+	if (cmd.size() && cmd[cmd.size()-1]=='(')
+	  cmd ='\''+cmd.substr(0,cmd.size()-1)+'\'';
+	vector<int> goto_sel;
+	if (xcas::Equation_adjust_xy(eq.data,xleft,ytop,xright,ybottom,gsel,gselparent,gselpos,&goto_sel) && gsel){
+	  gen op;
+	  int addarg=0;
+	  if (addssize==1){
+	    switch (adds[0]){
+	    case '+':
+	      addarg=1;
+	      op=at_plus;
+	      break;
+	    case '^':
+	      addarg=1;
+	      op=at_pow;
+	      break;
+	    case '=':
+	      addarg=1;
+	      op=at_equal;
+	      break;
+	    case '-':
+	      addarg=1;
+	      op=at_binary_minus;
+	      break;
+	    case '*':
+	      addarg=1;
+	      op=at_prod;
+	      break;
+	    case '/':
+	      addarg=1;
+	      op=at_division;
+	      break;
+	    case '\'':
+	      addarg=1;
+	      op=at_derive;
+	      break;
+	    }
+	  }
+	  if (op==0)
+	    op=gen(cmd,contextptr);
+	  if (op.type==_SYMB)
+	    op=op._SYMBptr->sommet;
+	  // cout << "keyed " << adds << " " << op << " " << op.type << endl;
+	  if (op.type==_FUNC){
+	    edited=true;
+	    // execute command on selection
+	    gen tmp,value;
+	    if (xcas::do_select(*gsel,true,value) && value.type==_EQW){
+	      if (op==at_integrate || op==at_sum)
+		addarg=3;
+	      if (op==at_limit)
+		addarg=2;
+	      gen args=eval(value._EQWptr->g,1,contextptr);
+	      gen vx=xthetat?t__IDNT_e:x__IDNT_e;
+	      if (addarg==1)
+		args=makesequence(args,0);
+	      if (addarg==2)
+		args=makesequence(args,vx_var,0);
+	      if (addarg==3)
+		args=makesequence(args,vx_var,0,1);
+	      if (op==at_surd)
+		args=makesequence(args,key==KEY_CHAR_CUBEROOT?3:4);
+	      if (op==at_subst)
+		args=makesequence(args,giac::symb_equal(vx_var,0));
+	      unary_function_ptr immediate_op[]={*at_eval,*at_evalf,*at_evalc,*at_regrouper,*at_simplify,*at_normal,*at_ratnormal,*at_factor,*at_cfactor,*at_partfrac,*at_cpartfrac,*at_expand,*at_canonical_form,*at_exp2trig,*at_trig2exp,*at_sincos,*at_lin,*at_tlin,*at_tcollect,*at_texpand,*at_trigexpand,*at_trigcos,*at_trigsin,*at_trigtan,*at_halftan};
+	      if (equalposcomp(immediate_op,*op._FUNCptr)){
+		set_abort();
+		tmp=(*op._FUNCptr)(args,contextptr);
+		clear_abort();
+		esc_flag=0;
+		giac::ctrl_c=false;
+		giac::interrupted=false;
+	      }
+	      else
+		tmp=symbolic(*op._FUNCptr,args);
+	      //cout << "sel " << value._EQWptr->g << " " << tmp << " " << goto_sel << endl;
+	      esc_flag=0;
+	      giac::ctrl_c=false;
+	      giac::interrupted=false;
+	      if (!is_undef(tmp)){
+		xcas::replace_selection(eq,tmp,gsel,&goto_sel,contextptr);
+		if (addarg){
+		  xcas::eqw_select_down(eq.data);
+		  xcas::eqw_select_leftright(eq,false,0,contextptr);
+		}
+		eqdata=xcas::Equation_total_size(eq.data);
+		dx=(eqdata.dx-LCD_WIDTH_PX)/2;
+		dy=LCD_HEIGHT_PX-2*margin+eqdata.y;
+		firstrun=-1; // workaround, force 2 times display
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    //*logptr(contextptr) << eq.data << endl;
   }
 
 #ifndef NO_NAMESPACE_XCAS

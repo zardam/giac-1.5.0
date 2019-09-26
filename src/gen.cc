@@ -6041,7 +6041,7 @@ namespace giac {
     }
 #endif
     case _VECT__INT_: 
-      if (b.val>=0 && python_compat(contextptr)){
+      if (b.val>=0 && python_compat(contextptr)==2){
 	vecteur res;
 	res.reserve(a._VECTptr->size()*b.val);
 	const_iterateur it,itend=a._VECTptr->end();
@@ -7097,16 +7097,16 @@ namespace giac {
     if ((b.type<=_REAL || b.type==_FLOAT_) && is_strictly_positive(-b,contextptr))
       return -sym_mult(a,-b,contextptr);
     if (a.type==_EXT){
-        if (a.is_constant() && (b.type==_POLY))
-            return a*(*b._POLYptr);
-        else
-            return algebraic_EXTension(*a._EXTptr*b,*(a._EXTptr+1));
+      if (a.is_constant() && (b.type==_POLY))
+	return a*(*b._POLYptr);
+      else
+	return algebraic_EXTension(b*(*a._EXTptr),*(a._EXTptr+1));
     }
     if (b.type==_EXT){
-        if (b.is_constant() && (a.type==_POLY))
-            return (*a._POLYptr)*b;
-        else
-            return algebraic_EXTension(a*(*b._EXTptr),*(b._EXTptr+1));
+      if (b.is_constant() && (a.type==_POLY))
+	return (*a._POLYptr)*b;
+      else
+	return algebraic_EXTension(a*(*b._EXTptr),*(b._EXTptr+1));
     }
     if ( (a.type==_INT_) && (a.val<0) && (a.val!=1<<31)){
       if (b.is_symb_of_sommet(at_inv) && (b._SYMBptr->feuille.type<_POLY || b._SYMBptr->feuille.is_symb_of_sommet(at_neg)))
@@ -15960,14 +15960,31 @@ void sprint_double(char * s,double d){
       numworks_shell=false;
       return "shell off";
     }
+    if (!strcmp(s,"warn off")){
+      warn_symb_program_sto=false;
+      return "warn off";
+    }
     if (!strcmp(s,"shell on")){
       numworks_shell=true;
       return "shell on";
+    }
+    if (!strcmp(s,"warn on")){
+      warn_symb_program_sto=true;
+      return "warn on";
     }
 #ifdef NUMWORKS
     if (!turtleptr){
       turtle();
       _efface_logo(vecteur(0),contextptr);
+    }
+    if (!strcmp(s,".")){
+      xcas::displaylogo();
+      S=turtle_state(contextptr).print(&C);
+      return S.c_str();
+    }
+    if (!strcmp(s,"..")){
+      _efface_logo(vecteur(0),contextptr);
+      return "turtle cleared";
     }
 #endif
     const char init[]="init geogebra";
@@ -16148,8 +16165,14 @@ void sprint_double(char * s,double d){
 	S="Graphic_object";
       }
       else {
-	if (islogo(g))
-	  xcas::displaylogo();
+	if (numworks_shell){
+	  if (islogo(g))
+	    xcas::displaylogo();
+	  else {
+	    if ( (g.type==_SYMB || (warn_symb_program_sto && g.type==_VECT)) && taille(g,256)<=256)
+	      xcas::eqw(g,false,&C);
+	  }
+	}
 	if (taille(g,100)>=100)
 	  S="Large_object";
 	else

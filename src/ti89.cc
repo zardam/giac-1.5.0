@@ -55,6 +55,9 @@ extern "C" {
 #include <keyboard.h>
 }
 #endif
+#ifdef NUMWORKS
+#include "kdisplay.h"
+#endif
 
 #ifndef NO_NAMESPACE_GIAC
 namespace giac {
@@ -2182,6 +2185,11 @@ namespace giac {
   define_unary_function_ptr5( at_Output ,alias_at_Output,&__Output,0,T_RETURN);
 
   gen _getKey(const gen & g,GIAC_CONTEXT){
+#ifdef NUMWORKS
+    int key;
+    GetKey(&key);
+    return key;
+#else
     if (interactive_op_tab && interactive_op_tab[4])
       return interactive_op_tab[4](g,contextptr);
     if ( g.type==_STRNG && g.subtype==-1) return  g;
@@ -2192,6 +2200,7 @@ namespace giac {
     CERR << "Waiting for a keystroke in konsole screen" << '\n';
     CIN >> ch;
     return int(ch);
+#endif
 #endif
   }
   static const char _getKey_s[]="getKey";

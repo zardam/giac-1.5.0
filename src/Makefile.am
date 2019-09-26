@@ -92,7 +92,6 @@ EXTRA_DIST = .gdbinit xgiac pgiac prime.table gen_user \
 bin_SCRIPTS = pgiac
 
 install-exec-hook:
-	cp input_lexer.h input_parser.h $(DESTDIR)$(includedir)/giac
 	rm -f $(DESTDIR)$(bindir)/cas_help
 	mv $(DESTDIR)$(bindir)/aide$(EXEEXT) $(DESTDIR)$(bindir)/cas_help
 	ln -sf cas_help $(DESTDIR)$(bindir)/en_cas_help
@@ -101,5 +100,8 @@ install-exec-hook:
 	ln -sf icas $(DESTDIR)$(bindir)/giac
 	ln -sf xcas $(DESTDIR)$(bindir)/xcasnew
 ##	$(INSTALL_DATA) $(libgiac_la_SOURCES)  $(DESTDIR)$(docdir)/src
-	$(INSTALL_DATA) config.h $(DESTDIR)$(includedir)/giac
+	mkdir -p $(DESTDIR)$(includedir)/giac
+	cp -f config.h $(DESTDIR)$(includedir)/giac
+	cp -f input_lexer.h $(DESTDIR)$(includedir)/giac
+	cp -f input_parser.h $(DESTDIR)$(includedir)/giac
 
