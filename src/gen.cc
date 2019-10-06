@@ -16170,7 +16170,7 @@ void sprint_double(char * s,double d){
 	    xcas::displaylogo();
 	  else {
 	    if ( (g.type==_SYMB || (warn_symb_program_sto && g.type==_VECT)) && taille(g,256)<=256)
-	      xcas::eqw(g,false,&C);
+	      g=xcas::eqw(g,true,&C);
 	  }
 	}
 	if (taille(g,100)>=100)

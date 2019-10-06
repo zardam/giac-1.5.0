@@ -8,18 +8,26 @@
 
 void numworks_giac_set_pixel(int x,int y,int c);
 void numworks_giac_fill_rect(int x,int y,int w,int h,int c);
+inline void drawRectangle(int x,int y,int w,int h,int c){
+  numworks_giac_fill_rect(x,y,w,h,c);
+}
 int numworks_giac_get_pixel(int x,int y);
 void numworks_giac_draw_string(int x,int y,int c,int bg,const char * s);
 inline void numworks_draw_string(int x,int y,const char * s){ numworks_giac_draw_string(x,y,giac::_BLACK,giac::_WHITE,s);}
 void numworks_giac_draw_string_small(int x,int y,int c,int bg,const char * s);
 inline void numworks_draw_string_small(int x,int y,const char * s){ numworks_giac_draw_string_small(x,y,giac::_BLACK,giac::_WHITE,s);}
 void GetKey(int * key);
+int getkey_raw(bool allow_suspend); // Numworks scan code
+int getkey(bool allow_suspend); // transformed
 void enable_back_interrupt();
 inline void set_abort(){  enable_back_interrupt(); }
 void disable_back_interrupt();
 inline void clear_abort(){  disable_back_interrupt(); }
 void numworks_giac_show_graph();
 void numworks_giac_hide_graph();
+bool isalphaactive();
+extern bool alphawasactive;
+
 #define COLOR_BLACK _BLACK
 #define COLOR_WHITE _WHITE
 extern  const int LCD_WIDTH_PX;
@@ -28,22 +36,22 @@ extern   const int LCD_HEIGHT_PX;
 #define STATUS_AREA_PX 0 // 24
 // Character codes
 #define KEY_CHAR_0          0x30
-#define KEY_CHAR_1          30
-#define KEY_CHAR_2          31
-#define KEY_CHAR_3          32
-#define KEY_CHAR_4          36
-#define KEY_CHAR_5          37
-#define KEY_CHAR_6          38
-#define KEY_CHAR_7          42
-#define KEY_CHAR_8          43
-#define KEY_CHAR_9          44
+#define KEY_CHAR_1          0x31
+#define KEY_CHAR_2          0x32
+#define KEY_CHAR_3          0x33
+#define KEY_CHAR_4          0x34
+#define KEY_CHAR_5          0x35
+#define KEY_CHAR_6          0x36
+#define KEY_CHAR_7          0x37
+#define KEY_CHAR_8          0x38
+#define KEY_CHAR_9          0x39
 #define KEY_CHAR_DP         0x2e
 #define KEY_CHAR_EXP        0x0f
-#define KEY_CHAR_PMINUS     46
-#define KEY_CHAR_PLUS       45
-#define KEY_CHAR_MINUS      46
-#define KEY_CHAR_MULT       39
-#define KEY_CHAR_DIV        40
+#define KEY_CHAR_PMINUS     30200
+#define KEY_CHAR_PLUS       43
+#define KEY_CHAR_MINUS      45
+#define KEY_CHAR_MULT       42
+#define KEY_CHAR_DIV        47
 #define KEY_CHAR_FRAC       0xbb
 #define KEY_CHAR_LPAR       0x28
 #define KEY_CHAR_RPAR       0x29
@@ -81,6 +89,9 @@ extern   const int LCD_HEIGHT_PX;
 #define KEY_CHAR_DQUATE     0x22
 #define KEY_CHAR_VALR       0xcd
 #define KEY_CHAR_THETA      0xce
+#define KEY_CHAR_FACTOR     0xda
+#define KEY_CHAR_NORMAL     0xdb
+#define KEY_CHAR_SHIFTMINUS     0xdc
 #define KEY_CHAR_A          0x41
 #define KEY_CHAR_B          0x42
 #define KEY_CHAR_C          0x43
@@ -110,8 +121,8 @@ extern   const int LCD_HEIGHT_PX;
 
 
 // Control codes
-#define KEY_CTRL_NOP        0
-#define KEY_CTRL_EXE        52
+#define KEY_CTRL_NOP        30202
+#define KEY_CTRL_EXE        30201
 #define KEY_CTRL_DEL        30025
 #define KEY_CTRL_AC         30015
 #define KEY_CTRL_FD         30046
@@ -133,11 +144,12 @@ extern   const int LCD_HEIGHT_PX;
 #define KEY_CTRL_F4         30012
 #define KEY_CTRL_F5         30013
 #define KEY_CTRL_F6         30014
-#define KEY_CTRL_F7         30014
-#define KEY_CTRL_F14         30014
+#define KEY_CTRL_F7         30015
+#define KEY_CTRL_F14         30022
 #define KEY_CTRL_CATALOG    30100
 #define KEY_CTRL_CAPTURE    30055
 #define KEY_CTRL_CLIP       30050
+#define KEY_CTRL_CUT       30250
 #define KEY_CTRL_PASTE      30036
 #define KEY_CTRL_INS        30033
 #define KEY_CTRL_MIXEDFRAC  30054
@@ -266,6 +278,12 @@ namespace xcas {
 namespace giac {
 #endif // ndef NO_NAMESPACE_XCAS
   gen turtle_state(const giac::context * contextptr);
+  int inputline(const char * msg1,const char * msg2,std::string & s,bool numeric,int ypos=65,const giac::context *contextptr=0);
+  bool inputdouble(const char * msg1,double & d);
+  bool do_confirm(const char * s);
+  int confirm(const char * msg1,const char * msg2,bool acexit=false);
+  bool confirm_overwrite();
+  void invalid_varname();
 #ifndef NO_NAMESPACE_XCAS
 } // namespace giac
 #endif // ndef NO_NAMESPACE_XCAS

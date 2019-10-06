@@ -48,31 +48,326 @@ namespace giac {
   void handle_f5(){
   }
 
-  void copy_clipboard(const string & s,bool b){
+void delete_clipboard(){}
+
+bool clip_pasted=true;
+  
+string * clipboard(){
+  static string * ptr=0;
+  if (!ptr)
+    ptr=new string;
+  return ptr;
+}
+
+void copy_clipboard(const string & s,bool status){
+  if (clip_pasted)
+    *clipboard()=s;
+  else
+    *clipboard()+=s;
+  clip_pasted=false;
+  if (status){
+    DefineStatusMessage((char*)(lang?"Selection copiee vers presse-papiers.":"Selection copied to clipboard"), 1, 0, 0);
+    DisplayStatusArea();
   }
-  string paste_clipboard(){
-    return "";
+}
+
+const char * paste_clipboard(){
+  clip_pasted=true;
+  return clipboard()->c_str();
+}
+
+int print_msg12(const char * msg1,const char * msg2,int textY=40){
+  drawRectangle(0, textY+10, LCD_WIDTH_PX, 60, COLOR_WHITE);
+  drawRectangle(3,textY+10,316,3, COLOR_BLACK);
+  drawRectangle(3,textY+10,3,60, COLOR_BLACK);
+  drawRectangle(316,textY+10,3,60, COLOR_BLACK);
+  drawRectangle(3,textY+70,316,3, COLOR_BLACK);
+  int textX=30;
+  if (msg1)
+    numworks_draw_string_small(textX,textY+20,msg1); //PrintMini(&textX,&textY,(unsigned char*)msg1,0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0); 
+  textX=10;
+  textY+=38;
+  if (msg2)
+    numworks_draw_string_small(textX,textY,msg2);// PrintMini(&textX,&textY,(unsigned char*)msg2,0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0); 
+  return textX;
+}
+
+void insert(string & s,int pos,const char * add){
+  if (pos>s.size())
+    pos=s.size();
+  if (pos<0)
+    pos=0;
+  s=s.substr(0,pos)+add+s.substr(pos,s.size()-pos);
+}
+
+  bool do_confirm(const char * s){
+    return confirm(s,(lang?"F1: oui,    F6:annuler":"F1: yes,     F6: cancel"))==KEY_CTRL_F1;
   }
-  bool inputline(const char * prompt,std::string & res,bool b){
-    return false;
-  }
-  bool inputline(const char * prompt,int pos,std::string & res,bool b){
-    return false;
-  }
-  void invalid_varname(){
-  }
+  
+  int confirm(const char * msg1,const char * msg2,bool acexit){
+    int key;
+    print_msg12(msg1,msg2);
+    while (key!=KEY_CTRL_F1 && key!=KEY_CTRL_F6){
+      GetKey(&key);
+      if (key==KEY_CTRL_EXE || key==KEY_CTRL_OK)
+	key=KEY_CTRL_F1;
+      if (key==KEY_CTRL_AC || key==KEY_CTRL_EXIT){
+	if (acexit) return -1;
+	key=KEY_CTRL_F6;
+      }
+      set_xcas_status();
+    }
+    return key;
+  }  
+  
   bool confirm_overwrite(){
+    return do_confirm(lang?"F1: oui,    F6:annuler":"F1: yes,     F6: cancel")==KEY_CTRL_F1;
+  }
+  
+  void invalid_varname(){
+    confirm(lang?"Nom de variable incorrect":"Invalid variable name", lang?"F1 ou F6: ok":"F1 or F6: ok");
+  }
+
+  const char * showCatalog(const char * text,int nmenu){
+    return "undef";
+  }
+
+  gen select_var(GIAC_CONTEXT){
+    return 0;
+  }
+
+  const char * keytostring(int key,int keyflag,bool py,const giac::context * contextptr){
+    const int textsize=512;
+    static char text[textsize];
+    if (key>=0x20 && key<=0x7e){
+      text[0]=key;
+      text[1]=0;
+      return text;
+    }
+    switch (key){
+    case KEY_CHAR_PLUS:
+      return "+";
+    case KEY_CHAR_MINUS:
+      return "-";
+    case KEY_CHAR_PMINUS:
+      return "_";
+    case KEY_CHAR_MULT:
+      return "*";
+    case KEY_CHAR_FRAC:
+      return py?"\\":"solve(";
+    case KEY_CHAR_DIV: 
+      return "/";
+    case KEY_CHAR_POW:
+      return "^";
+    case KEY_CHAR_ROOT:
+      return "sqrt(";
+    case KEY_CHAR_SQUARE:
+      return py?"**2":"^2";
+    case KEY_CHAR_CUBEROOT:
+      return py?"**(1/3)":"^(1/3)";
+    case KEY_CHAR_POWROOT:
+      return py?"**(1/":"^(1/";
+    case KEY_CHAR_RECIP:
+      return py?"**-1":"^-1";
+    case KEY_CHAR_THETA:
+      return "arg(";
+    case KEY_CHAR_VALR:
+      return "abs(";
+    case KEY_CHAR_ANGLE:
+      return "polar_complex(";
+    case KEY_CTRL_XTT:
+      return xthetat?"t":"x";
+    case KEY_CHAR_LN:
+      return "ln(";
+    case KEY_CHAR_LOG:
+      return "log10(";
+    case KEY_CHAR_EXPN10:
+      return "10^";
+    case KEY_CHAR_EXPN:
+      return "exp(";
+    case KEY_CHAR_SIN:
+      return "sin(";
+    case KEY_CHAR_COS:
+      return "cos(";
+    case KEY_CHAR_TAN:
+      return "tan(";
+    case KEY_CHAR_ASIN:
+      return "asin(";
+    case KEY_CHAR_ACOS:
+      return "acos(";
+    case KEY_CHAR_ATAN:
+      return "atan(";
+    case KEY_CTRL_MIXEDFRAC:
+      return "limit(";
+    case KEY_CTRL_FRACCNVRT:
+      return "exact(";
+      // case KEY_CTRL_FORMAT: return "purge(";
+    case KEY_CTRL_FD:
+      return "approx(";
+    case KEY_CHAR_STORE:
+      // if (keyflag==1) return "inf";
+      return "=>";
+    case KEY_CHAR_IMGNRY:
+      return "i";
+    case KEY_CHAR_PI:
+      return "pi";
+    case KEY_CTRL_VARS: {
+      giac::gen var=select_var(contextptr);
+      if (!giac::is_undef(var)){
+	strcpy(text,(var.type==giac::_STRNG?*var._STRNGptr:var.print(contextptr)).c_str());
+	return text;
+      }
+      return "VARS()";
+    }
+    case KEY_CHAR_EXP:
+      return "e";
+    case KEY_CHAR_ANS:
+      return "ans()";
+    case KEY_CTRL_INS:
+      return ":=";
+    case KEY_CHAR_MAT:{
+      // const char * ptr=input_matrix(false); if (ptr) return ptr;
+      if (showCatalog(text,17)) return text;
+      return "";
+    }
+    case KEY_CHAR_LIST: {
+      //const char * ptr=input_matrix(true); if (ptr) return ptr;
+      if (showCatalog(text,16)) return text;
+      return "";
+    }
+    case KEY_CTRL_PRGM:
+      // open functions catalog, prgm submenu
+      if(showCatalog(text,18))
+	return text;
+      return "";
+    case KEY_CTRL_CATALOG:
+      if(showCatalog(text,1)) 
+	return text;
+      return "";
+    case KEY_CTRL_F4:
+      if(showCatalog(text,0)) 
+	return text;
+      return "";
+    case KEY_SHIFT_OPTN:
+      if(showCatalog(text,10))
+	return text;
+      return "";
+    case KEY_CTRL_OPTN:
+      if(showCatalog(text,15))
+	return text;
+      return "";
+    case KEY_CTRL_QUIT: 
+      if(showCatalog(text,20))
+	return text;
+      return "";
+    case KEY_CTRL_SETUP:
+      if(showCatalog(text,7))
+	return text;
+      return "";
+    case KEY_CTRL_PASTE:
+      return paste_clipboard();
+    case KEY_CHAR_DQUATE:
+      return "\"";
+    }
+    return 0;
+  }
+  
+  const char * keytostring(int key,int keyflag,GIAC_CONTEXT){
+    return keytostring(key,keyflag,python_compat(contextptr),contextptr);
+  }
+  
+  bool stringtodouble(const string & s1,double & d){
+    gen g(s1,context0);
+    g=evalf(g,1,context0);
+    if (g.type!=_DOUBLE_){
+      confirm("Invalid value",s1.c_str());
+      return false;
+    }
+    d=g._DOUBLE_val;
     return true;
   }
-  int confirm(const char * prompt1,const char * prompt2){
-    return KEY_CTRL_F6;
+
+  bool inputdouble(const char * msg1,double & d,GIAC_CONTEXT){
+    string s1;
+    inputline(msg1,(lang?"Nouvelle valeur?":"New value?"),s1,false,65,contextptr);
+    return stringtodouble(s1,d);
   }
+  
+  int inputline(const char * msg1,const char * msg2,string & s,bool numeric,int ypos,GIAC_CONTEXT){
+    // s="";
+    int pos=s.size(),beg=0;
+    for (;;){
+      int X1=print_msg12(msg1,msg2,ypos-30);
+      int textX=X1,textY=ypos;
+      drawRectangle(textX,textY+24,LCD_WIDTH_PX-textX-4,18,COLOR_WHITE);
+      if (pos-beg>36)
+	beg=pos-12;
+      if (int(s.size())-beg<36)
+	beg=giac::giacmax(0,int(s.size())-36);
+      textX=X1;
+      numworks_draw_string_small(textX,textY,(s.substr(beg,pos-beg)+"|"+s.substr(pos,s.size()-pos)).c_str());
+      // numworks_draw_string_small(textX,textY,s.substr(beg,pos-beg).c_str());// PrintMini(&textX,&textY,(unsigned char *)s.substr(beg,pos-beg).c_str(),0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+      // numworks_draw_string_small(textX,textY,s.substr(pos,s.size()-pos).c_str());// PrintMini(&textX,&textY,(unsigned char*)s.substr(pos,s.size()-pos).c_str(),0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+      // int cursorpos=textX;
+      // drawRectangle(cursorpos,textY+24,3,18,COLOR_BLACK); // cursor
+      // PrintMini(0,58,"         |        |        |        |  A<>a  |       ",4);
+      int key;
+      GetKey(&key);
+      // if (!giac::freeze) set_xcas_status();    
+      if (key==KEY_CTRL_EXE || key==KEY_CTRL_OK)
+	return KEY_CTRL_EXE;
+      if (key>=32 && key<128){
+	if (!numeric || key=='-' || (key>='0' && key<='9'))
+	  s.insert(s.begin()+pos,char(key));
+	++pos;
+	continue;
+      }
+      if (key==KEY_CTRL_DEL){
+	if (pos){
+	  s.erase(s.begin()+pos-1);
+	  --pos;
+	}
+	continue;
+      }
+      if (key==KEY_CTRL_AC){
+	if (s=="")
+	  return KEY_CTRL_EXIT;
+	s="";
+	pos=0;
+	continue;
+      }
+      if (key==KEY_CTRL_EXIT)
+	return key;
+      if (key==KEY_CTRL_RIGHT){
+	if (pos<s.size())
+	  ++pos;
+	continue;
+      }
+      if (key==KEY_SHIFT_RIGHT){
+	pos=s.size();
+	continue;
+      }
+      if (key==KEY_CTRL_LEFT){
+	if (pos)
+	  --pos;
+	continue;
+      }
+      if (key==KEY_SHIFT_LEFT){
+	pos=0;
+	continue;
+      }
+      if (const char * ans=keytostring(key,0,false,contextptr)){
+	insert(s,pos,ans);
+	pos+=strlen(ans);
+	continue;
+      }
+    }
+  }
+
   bool isalphanum(char c){
     return (c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9');
   }
-  const char * keytostring(int key,int keyflag){
-    return 0;
-  }
+
   void translate_fkey(int & key){
   }
   const char * console_menu(int key,int keyflag){
@@ -3438,12 +3733,24 @@ namespace xcas {
       if (key==KEY_SHIFT_LEFT) { gr.left((gr.window_xmax-gr.window_xmin)/2); }
       if (key==KEY_CTRL_RIGHT) { gr.right((gr.window_xmax-gr.window_xmin)/5); }
       if (key==KEY_SHIFT_RIGHT) { gr.right((gr.window_xmax-gr.window_xmin)/5); }
-      if (key==KEY_CHAR_PLUS) { gr.zoom(0.7);}
-      if (key==KEY_CHAR_MINUS){ gr.zoom(1/0.7); }
-      if (key==KEY_CHAR_PMINUS){ gr.zoomy(1/0.7); }
-      if (key==KEY_CHAR_MULT){ gr.autoscale(); }
-      if (key==KEY_CHAR_DIV) { gr.orthonormalize(); }
-      if (key==KEY_CTRL_VARS) {gr.show_axes=!gr.show_axes;}
+      if (key==KEY_CHAR_PLUS) {
+	gr.zoom(0.7);
+      }
+      if (key==KEY_CHAR_MINUS){
+	gr.zoom(1/0.7);
+      }
+      if (key==KEY_CHAR_PMINUS){
+	gr.zoomy(1/0.7);
+      }
+      if (key==KEY_CHAR_MULT){
+	gr.autoscale();
+      }
+      if (key==KEY_CHAR_DIV) {
+	gr.orthonormalize();
+      }
+      if (key==KEY_CTRL_VARS) {
+	gr.show_axes=!gr.show_axes;
+      }
     }
     // aborttimer = Timer_Install(0, check_execution_abort, 100); if (aborttimer > 0) { Timer_Start(aborttimer); }
     return ;
@@ -3583,7 +3890,6 @@ namespace xcas {
       //draw_menu(2);
       clip_ymin=save_clip_ymin;
       int keyflag = GetSetupSetting( (unsigned int)0x14);
-      bool alph=keyflag==4||keyflag==0x84||keyflag==8||keyflag==0x88;
       if (firstrun){ // workaround for e.g. 1+x/2 partly not displayed
 	firstrun=0;
 	continue;
@@ -3591,18 +3897,29 @@ namespace xcas {
       int key;
       //cout << eq.data << endl;
       GetKey(&key);
+      bool alph=alphawasactive;
+      if (key==KEY_CTRL_EXE)
+	key=KEY_CTRL_F6;
       if (key==KEY_CTRL_OK){
 	numworks_giac_hide_graph();
+	if (edited && xcas::do_select(eq.data,true,value) && value.type==_EQW){
+	  //cout << "ok " << value._EQWptr->g << endl;
+	  //DefineStatusMessage((char*)lang?"resultat stocke dans last":"result stored in last", 1, 0, 0);
+	  //DisplayStatusArea();
+	  giac::sto(value._EQWptr->g,giac::gen("last",contextptr),contextptr);
+	  return value._EQWptr->g;
+	}
+	//cout << "no " << eq.data << endl; if (value.type==_EQW) cout << value._EQWptr->g << endl ;
 	return geq;
       }
-      if (key==KEY_CTRL_EXIT || key==KEY_CTRL_AC || key==KEY_CTRL_EXE){
+      if (key==KEY_CTRL_EXIT || key==KEY_CTRL_AC ){
 	if (!edited){
 	  numworks_giac_hide_graph();
 	  return geq;
 	}
-	if (confirm(lang?"Vraiment abandonner?":"Really leave",lang?"F1: retour editeur,  F6: confirmer":"F1: back to editor,  F6: confirm")==KEY_CTRL_F6){
+	if (confirm(lang?"Vraiment abandonner?":"Really leave",lang?"Back: retour editeur,  OK: confirmer":"Back: back to editor,  OK: confirm")==KEY_CTRL_F1){
 	  numworks_giac_hide_graph();
-	  return undef;
+	  return geq;
 	}
       }
       if (key==KEY_CTRL_UNDO){
@@ -3632,7 +3949,7 @@ namespace xcas {
 	if (keyflag==0)
 	  handle_f5();
 	std::string varname;
-	if (inputline((lang?"Stocker la selection dans":"Save selection in",lang?"Nom de variable: ":"Variable name: "),varname,false) && !varname.empty() && isalpha(varname[0])){
+	if (inputline((lang?"Stocker la selection dans":"Save selection in",lang?"Nom de variable: ":"Variable name: "),0,varname,false,65,contextptr) && !varname.empty() && isalpha(varname[0])){
 	  giac::gen g(varname,contextptr);
 	  giac::gen ge(eval(g,1,contextptr));
 	  if (g.type!=_IDNT){
@@ -3695,43 +4012,22 @@ namespace xcas {
 	  }
 	}
       }
-      if (key==KEY_CTRL_F3){
-	if (keyflag==1){
-	  if (eq.attr.fontsize>=18) continue;
-	  xcas::do_select(eq.data,true,value);
-	  if (value.type==_EQW)
-	    geq=value._EQWptr->g;
-	  if (eq.attr.fontsize==14)
-	    eq.attr.fontsize=16;
-	  else
-	    eq.attr.fontsize=18;
+      if (key=='\\'){
+	xcas::do_select(eq.data,true,value);
+	if (value.type==_EQW)
+	  geq=value._EQWptr->g;
+	if (eq.attr.fontsize<=14)
+	  eq.attr.fontsize=18;
+	else
+	  eq.attr.fontsize=14;
 	  redo=1;
-	}
-	else {
-	  if (alph){
-	    if (eq.attr.fontsize<=14) continue;
-	    xcas::do_select(eq.data,true,value);
-	    if (value.type==_EQW)
-	      geq=value._EQWptr->g;
-	    if (eq.attr.fontsize==16)
-	      eq.attr.fontsize=14;
-	    else
-	      eq.attr.fontsize=16;
-	    redo=1;
-	  }
-	  else {
-	    // Edit
-	    edited=true;
-	    ins=true;
-	  }
-	}
       }
       if (key==KEY_CHAR_IMGNRY)
 	key='i';
       const char keybuf[2]={(key==KEY_CHAR_PMINUS?'-':char(key)),0};
       const char * adds=(key==KEY_CHAR_PMINUS ||
 			 (key==char(key) && (isalphanum(key)|| key=='.' ))
-			 )?keybuf:keytostring(key,keyflag);
+			 )?keybuf:keytostring(key,keyflag,contextptr);
       translate_fkey(key);
       if ( key==KEY_CTRL_F1 || key==KEY_CTRL_F2 ||
 	   (key>=KEY_CTRL_F7 && key<=KEY_CTRL_F14)){
@@ -3757,6 +4053,10 @@ namespace xcas {
 	adds="surd";
       if (key==KEY_CHAR_CUBEROOT)
 	adds="surd";
+      if (key==KEY_CHAR_FACTOR)
+	adds="factor";
+      if (key==KEY_CHAR_NORMAL)
+	adds="normal";
       int addssize=adds?strlen(adds):0;
       // cout << addssize << " " << adds << endl;
       if (key==KEY_CTRL_EXE){
@@ -3793,7 +4093,7 @@ namespace xcas {
 	  msg += print_INT_(line+1);
 	  msg += " Col ";
 	  msg += print_INT_(col+1);
-	  if (inputline(msg.c_str(),0,s,false)==KEY_CTRL_EXE){
+	  if (inputline(msg.c_str(),0,s,false,65,contextptr)==KEY_CTRL_EXE){
 	    value=gen(s,contextptr);
 	    if (col<0)
 	      (*geq._VECTptr)[line]=value;

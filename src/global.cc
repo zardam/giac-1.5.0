@@ -269,17 +269,12 @@ extern "C" void Sleep(unsigned int miliSecond);
       return _last_evaled_function_name_;
   }
 
-  string & _currently_scanned(){
-    static string * ans=0;
-    if (!ans) ans=new string;
-    return *ans;
-  }
-
-  string & currently_scanned(GIAC_CONTEXT){
+  const char * _currently_scanned=0;
+  const char * & currently_scanned(GIAC_CONTEXT){
     if (contextptr && contextptr->globalptr )
       return contextptr->globalptr->_currently_scanned_;
     else
-      return _currently_scanned();
+      return _currently_scanned;
   }
 
   const gen * _last_evaled_argptr_=0;
@@ -6195,7 +6190,9 @@ unsigned int ConvertUTF8toUTF16 (
 	break;
     }
     // probably Python-like
-    string res(s_orig);
+    string res;
+    res.reserve(6*s_orig.size()/5);
+    res=s_orig;
     if (res.size()>18 && res.substr(0,17)=="add_autosimplify(" 
 	&& res[res.size()-1]==')'
 	)
@@ -6207,6 +6204,7 @@ unsigned int ConvertUTF8toUTF16 (
     res=glue_lines_backslash(res);
     vector<int_string> stack;
     string s,cur; 
+    s.reserve(res.capacity());
     if (pythoncompat) pythonmode=true;
     for (;res.size();){
       int pos=-1;
@@ -6720,8 +6718,9 @@ unsigned int ConvertUTF8toUTF16 (
       if (debug_infolevel)
 	*logptr(contextptr) << "Translated to Xcas as:\n" << s << '\n';
     }
+    res.clear(); cur.clear();
     // CERR << s << endl;
-    return s;
+    return string(s.begin(),s.end());
   }
   
     std::string translate_at(const char * ch){
