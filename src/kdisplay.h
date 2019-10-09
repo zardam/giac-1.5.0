@@ -27,7 +27,6 @@ void numworks_giac_show_graph();
 void numworks_giac_hide_graph();
 bool isalphaactive();
 extern bool alphawasactive;
-
 #define COLOR_BLACK _BLACK
 #define COLOR_WHITE _WHITE
 extern  const int LCD_WIDTH_PX;
@@ -121,6 +120,7 @@ extern   const int LCD_HEIGHT_PX;
 
 
 // Control codes
+#define KEY_CTRL_FORMAT     30203
 #define KEY_CTRL_NOP        30202
 #define KEY_CTRL_EXE        30201
 #define KEY_CTRL_DEL        30025
@@ -133,7 +133,7 @@ extern   const int LCD_HEIGHT_PX;
 #define KEY_CTRL_SHIFT      30006
 #define KEY_CTRL_ALPHA      30007
 #define KEY_CTRL_OPTN       30008
-#define KEY_CTRL_VARS       30016
+#define KEY_CTRL_VARS       30030
 #define KEY_CTRL_UP         1
 #define KEY_CTRL_DOWN       2
 #define KEY_CTRL_LEFT       0
@@ -274,12 +274,97 @@ namespace xcas {
 } // namespace xcas
 #endif // ndef NO_NAMESPACE_XCAS
 
+/* ************************************************************
+**************************************************************
+***********************************************************  */
+
+
 #ifndef NO_NAMESPACE_XCAS
 namespace giac {
 #endif // ndef NO_NAMESPACE_XCAS
-  gen turtle_state(const giac::context * contextptr);
+#define TEXT_MODE_NORMAL 0
+#define TEXT_MODE_INVERT 1
+#define MENUITEM_NORMAL 0
+#define MENUITEM_CHECKBOX 1
+#define MENUITEM_SEPARATOR 2
+#define MENUITEM_VALUE_NONE 0
+#define MENUITEM_VALUE_CHECKED 1
+typedef struct
+{
+  char* text; // text to be shown on screen. mandatory, must be a valid pointer to a string.
+  int type=MENUITEM_NORMAL; // type of the menu item. use MENUITEM_* to set this
+  int value=MENUITEM_VALUE_NONE; // value of the menu item. For example, if type is MENUITEM_CHECKBOX and the checkbox is checked, the value of this var will be MENUITEM_VALUE_CHECKED
+  int color=giac::_BLACK; // color of the menu item (use TEXT_COLOR_* to define)
+  // The following two settings require the menu type to be set to MENUTYPE_MULTISELECT
+  int isfolder=0; // for file browsers, this will signal the item is a folder
+  int isselected=0; // for file browsers and other multi-select screens, this will show an arrow before the item
+  int icon=-1; //for file browsers, to show a file icon. -1 shows no icon (default)
+  int token; // for syntax help on keywords not in the catalog
+} MenuItem;
+
+typedef struct
+{
+  unsigned short data[0x12*0x18];
+} MenuItemIcon;
+
+#define MENUTYPE_NORMAL 0
+#define MENUTYPE_MULTISELECT 1
+#define MENUTYPE_INSTANT_RETURN 2 // this type of menu insantly returns even if user hasn't selected an option (allows for e.g. redrawing the GUI behind it). if user hasn't exited or selected an option, menu will return MENU_RETURN_INSTANT
+#define MENUTYPE_NO_KEY_HANDLING 3 //this type of menu doesn't handle any keys, only draws.
+#define MENUTYPE_FKEYS 4 // returns GetKey value of a Fkey when one is pressed
+typedef struct {
+  char* statusText = NULL; // text to be shown on the status bar, may be empty
+  char* title = NULL; // title to be shown on the first line if not null
+  char* subtitle = NULL;
+  int titleColor=giac::_BLUE; //color of the title
+  char* nodatamsg; // message to show when there are no menu items to display
+  int startX=1; //X where to start drawing the menu. NOTE this is not absolute pixel coordinates but rather character coordinates
+  int startY=0; //Y where to start drawing the menu. NOTE this is not absolute pixel coordinates but rather character coordinates
+  int width=16; // NOTE this is not absolute pixel coordinates but rather character coordinates
+  int height=12; // NOTE this is not absolute pixel coordinates but rather character coordinates
+  int scrollbar=1; // 1 to show scrollbar, 0 to not show it.
+  int scrollout=0; // whether the scrollbar goes out of the menu area (1) or it overlaps some of the menu area (0)
+  int numitems; // number of items in menu
+  int type=MENUTYPE_NORMAL; // set to MENUTYPE_* .
+  int selection=1; // currently selected item. starts counting at 1
+  int scroll=0; // current scrolling position
+  int fkeypage=0; // for MULTISELECT menu if it should allow file selecting and show the fkey label
+  int numselitems=0; // number of selected items
+  int returnOnInfiniteScrolling=0; //whether the menu should return when user reaches the last item and presses the down key (or the first item and presses the up key)
+  int darken=0; // for dark theme on homeGUI menus
+  int miniMiniTitle=0; // if true, title will be drawn in minimini. for calendar week view
+  int pBaRtR=0; //preserve Background And Return To Redraw. Rarely used
+  MenuItem* items; // items in menu
+} Menu;
+
+#define MENU_RETURN_EXIT 0
+#define MENU_RETURN_SELECTION 1
+#define MENU_RETURN_INSTANT 2
+#define MENU_RETURN_SCROLLING 3 //for returnOnInfiniteScrolling
+
+typedef struct {
+  const char* name;
+  const char* insert;
+  const char* desc;
+  const char * example;
+  const char * example2;
+  int category;
+} catalogFunc;
+
+giac::gen select_var(const giac::context * contextptr);
+int showCatalog(char* insertText,int preselect,int menupos);
+int doMenu(Menu* menu, MenuItemIcon* icontable=NULL);
+void reset_alpha();
+// category=0 for CATALOG, 1 for OPTN
+// returns 0 on exit, 1 on success
+int doCatalogMenu(char* insertText, const char* title, int category);
+extern const char shortcuts_string[];
+extern const char apropos_string[];
+void init_locale();
+
+gen turtle_state(const giac::context * contextptr);
   int inputline(const char * msg1,const char * msg2,std::string & s,bool numeric,int ypos=65,const giac::context *contextptr=0);
-  bool inputdouble(const char * msg1,double & d);
+bool inputdouble(const char * msg1,double & d,const giac::context *contextptr);
   bool do_confirm(const char * s);
   int confirm(const char * msg1,const char * msg2,bool acexit=false);
   bool confirm_overwrite();

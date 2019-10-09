@@ -12967,7 +12967,7 @@ void sprint_double(char * s,double d){
 
   const char * printi(GIAC_CONTEXT){
 #ifdef NUMWORKS
-    return "𝐢";
+    return numworks_shell?"i":"𝐢";
 #endif
     if (calc_mode(contextptr)==1)
       return "ί";
@@ -15976,6 +15976,21 @@ void sprint_double(char * s,double d){
     if (!turtleptr){
       turtle();
       _efface_logo(vecteur(0),contextptr);
+    }
+    if (!strcmp(s,"toolbox menu")){
+      char buf[1024]="";
+      showCatalog(buf,0,0);
+      drawRectangle(0,0,320,222,_WHITE);
+      S=buf;
+      return S.c_str();
+    }
+    if (!strcmp(s,"var menu")){
+      gen g=select_var(contextptr);
+      drawRectangle(0,0,320,222,_WHITE);
+      S=g.type==_STRNG?*g._STRNGptr:g.print(contextptr);
+      if (!strcmp(S.c_str(),"undef"))
+	S="";
+      return S.c_str();
     }
     if (!strcmp(s,".")){
       xcas::displaylogo();
