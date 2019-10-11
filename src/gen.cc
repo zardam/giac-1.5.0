@@ -15979,7 +15979,7 @@ void sprint_double(char * s,double d){
     }
     if (!strcmp(s,"toolbox menu")){
       char buf[1024]="";
-      showCatalog(buf,0,0);
+      showCatalog(buf,0,0,&C);
       drawRectangle(0,0,320,222,_WHITE);
       S=buf;
       return S.c_str();

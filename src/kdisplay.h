@@ -12,10 +12,11 @@ inline void drawRectangle(int x,int y,int w,int h,int c){
   numworks_giac_fill_rect(x,y,w,h,c);
 }
 int numworks_giac_get_pixel(int x,int y);
-void numworks_giac_draw_string(int x,int y,int c,int bg,const char * s);
-inline void numworks_draw_string(int x,int y,const char * s){ numworks_giac_draw_string(x,y,giac::_BLACK,giac::_WHITE,s);}
-void numworks_giac_draw_string_small(int x,int y,int c,int bg,const char * s);
-inline void numworks_draw_string_small(int x,int y,const char * s){ numworks_giac_draw_string_small(x,y,giac::_BLACK,giac::_WHITE,s);}
+/* returns new x position */
+int numworks_giac_draw_string(int x,int y,int c,int bg,const char * s,bool fake=false);
+inline int numworks_draw_string(int x,int y,const char * s){ return numworks_giac_draw_string(x,y,giac::_BLACK,giac::_WHITE,s);}
+int numworks_giac_draw_string_small(int x,int y,int c,int bg,const char * s,bool fake=false);
+inline int numworks_draw_string_small(int x,int y,const char * s){ return numworks_giac_draw_string_small(x,y,giac::_BLACK,giac::_WHITE,s);}
 void GetKey(int * key);
 int getkey_raw(bool allow_suspend); // Numworks scan code
 int getkey(bool allow_suspend); // transformed
@@ -27,8 +28,25 @@ void numworks_giac_show_graph();
 void numworks_giac_hide_graph();
 bool isalphaactive();
 extern bool alphawasactive;
-#define COLOR_BLACK _BLACK
-#define COLOR_WHITE _WHITE
+#define COLOR_BLACK giac::_BLACK
+#define COLOR_RED giac::_RED
+#define COLOR_GREEN giac::_GREEN
+#define COLOR_CYAN giac::_CYAN
+#define COLOR_BLUE giac::_BLUE
+#define COLOR_YELLOW giac::_YELLOW
+#define COLOR_MAGENTA giac::_MAGENTA
+#define COLOR_WHITE giac::_WHITE
+#define COLOR_YELLOWDARK 64934
+#define COLOR_BROWN 65000
+#define TEXT_COLOR_BLACK giac::_BLACK
+#define TEXT_COLOR_RED giac::_RED
+#define TEXT_COLOR_GREEN giac::_GREEN
+#define TEXT_COLOR_CYAN giac::_CYAN
+#define TEXT_COLOR_BLUE giac::_BLUE
+#define TEXT_COLOR_YELLOW giac::_YELLOW
+#define TEXT_COLOR_WHITE giac::_WHITE
+#define TEXT_COLOR_MAGENTA giac::_MAGENTA
+
 extern  const int LCD_WIDTH_PX;
 extern   const int LCD_HEIGHT_PX;
 
@@ -270,6 +288,56 @@ namespace xcas {
   void displaygraph(const giac::gen & ge, const giac::context * contextptr);
   void displaylogo();
   giac::gen eqw(const giac::gen & ge,bool editable,const giac::context * contextptr);
+  typedef short int color_t;
+  typedef struct
+  {
+    std::string s;
+    color_t color=COLOR_BLACK;
+    short int newLine=0; // if 1, new line will be drawn before the text
+    short int spaceAtEnd=0;
+    short int lineSpacing=0;
+    short int minimini=0;
+    int nlines=1;
+  } textElement;
+
+#define TEXTAREATYPE_NORMAL 0
+#define TEXTAREATYPE_INSTANT_RETURN 1
+  typedef struct
+  {
+    int x=0;
+    int y=0;
+    int line=0,undoline=0;
+    int pos=0,undopos=0;
+    int clipline,undoclipline;
+    int clippos,undoclippos;
+    int width=LCD_WIDTH_PX;
+    int lineHeight=17;
+    std::vector<textElement> elements,undoelements;
+    const char* title = NULL;
+    std::string filename;
+    int scrollbar=1;
+    bool allowEXE=0; //whether to allow EXE to exit the screen
+    bool allowF1=0; //whether to allow F1 to exit the screen
+    bool editable=false;
+    bool changed=false;
+    int python=0;
+    int type=TEXTAREATYPE_NORMAL;
+  } textArea;
+
+#define TEXTAREA_RETURN_EXIT 0
+#define TEXTAREA_RETURN_EXE 1
+#define TEXTAREA_RETURN_F1 2
+  int doTextArea(textArea* text); //returns 0 when user EXITs, 1 when allowEXE is true and user presses EXE, 2 when allowF1 is true and user presses F1.
+  std::string merge_area(const std::vector<textElement> & v);
+  void save_script(const char * filename,const std::string & s);
+  void add(textArea *edptr,const std::string & s);
+
+  extern textArea * edptr;
+  std::string get_searchitem(std::string & replace);
+  int check_leave(textArea * text);
+  void reload_edptr(const char * filename,textArea *edptr);
+  void print(int &X,int&Y,const char * buf,int color,bool revert,bool fake,bool minimini);
+
 #ifndef NO_NAMESPACE_XCAS
 } // namespace xcas
 #endif // ndef NO_NAMESPACE_XCAS
@@ -289,86 +357,88 @@ namespace giac {
 #define MENUITEM_SEPARATOR 2
 #define MENUITEM_VALUE_NONE 0
 #define MENUITEM_VALUE_CHECKED 1
-typedef struct
-{
-  char* text; // text to be shown on screen. mandatory, must be a valid pointer to a string.
-  int type=MENUITEM_NORMAL; // type of the menu item. use MENUITEM_* to set this
-  int value=MENUITEM_VALUE_NONE; // value of the menu item. For example, if type is MENUITEM_CHECKBOX and the checkbox is checked, the value of this var will be MENUITEM_VALUE_CHECKED
-  int color=giac::_BLACK; // color of the menu item (use TEXT_COLOR_* to define)
-  // The following two settings require the menu type to be set to MENUTYPE_MULTISELECT
-  int isfolder=0; // for file browsers, this will signal the item is a folder
-  int isselected=0; // for file browsers and other multi-select screens, this will show an arrow before the item
-  int icon=-1; //for file browsers, to show a file icon. -1 shows no icon (default)
-  int token; // for syntax help on keywords not in the catalog
-} MenuItem;
+  typedef struct
+  {
+    char* text; // text to be shown on screen. mandatory, must be a valid pointer to a string.
+    int type=MENUITEM_NORMAL; // type of the menu item. use MENUITEM_* to set this
+    int value=MENUITEM_VALUE_NONE; // value of the menu item. For example, if type is MENUITEM_CHECKBOX and the checkbox is checked, the value of this var will be MENUITEM_VALUE_CHECKED
+    int color=giac::_BLACK; // color of the menu item (use TEXT_COLOR_* to define)
+    // The following two settings require the menu type to be set to MENUTYPE_MULTISELECT
+    int isfolder=0; // for file browsers, this will signal the item is a folder
+    int isselected=0; // for file browsers and other multi-select screens, this will show an arrow before the item
+    int icon=-1; //for file browsers, to show a file icon. -1 shows no icon (default)
+    int token; // for syntax help on keywords not in the catalog
+  } MenuItem;
 
-typedef struct
-{
-  unsigned short data[0x12*0x18];
-} MenuItemIcon;
+  typedef struct
+  {
+    unsigned short data[0x12*0x18];
+  } MenuItemIcon;
 
 #define MENUTYPE_NORMAL 0
 #define MENUTYPE_MULTISELECT 1
 #define MENUTYPE_INSTANT_RETURN 2 // this type of menu insantly returns even if user hasn't selected an option (allows for e.g. redrawing the GUI behind it). if user hasn't exited or selected an option, menu will return MENU_RETURN_INSTANT
 #define MENUTYPE_NO_KEY_HANDLING 3 //this type of menu doesn't handle any keys, only draws.
 #define MENUTYPE_FKEYS 4 // returns GetKey value of a Fkey when one is pressed
-typedef struct {
-  char* statusText = NULL; // text to be shown on the status bar, may be empty
-  char* title = NULL; // title to be shown on the first line if not null
-  char* subtitle = NULL;
-  int titleColor=giac::_BLUE; //color of the title
-  char* nodatamsg; // message to show when there are no menu items to display
-  int startX=1; //X where to start drawing the menu. NOTE this is not absolute pixel coordinates but rather character coordinates
-  int startY=0; //Y where to start drawing the menu. NOTE this is not absolute pixel coordinates but rather character coordinates
-  int width=16; // NOTE this is not absolute pixel coordinates but rather character coordinates
-  int height=12; // NOTE this is not absolute pixel coordinates but rather character coordinates
-  int scrollbar=1; // 1 to show scrollbar, 0 to not show it.
-  int scrollout=0; // whether the scrollbar goes out of the menu area (1) or it overlaps some of the menu area (0)
-  int numitems; // number of items in menu
-  int type=MENUTYPE_NORMAL; // set to MENUTYPE_* .
-  int selection=1; // currently selected item. starts counting at 1
-  int scroll=0; // current scrolling position
-  int fkeypage=0; // for MULTISELECT menu if it should allow file selecting and show the fkey label
-  int numselitems=0; // number of selected items
-  int returnOnInfiniteScrolling=0; //whether the menu should return when user reaches the last item and presses the down key (or the first item and presses the up key)
-  int darken=0; // for dark theme on homeGUI menus
-  int miniMiniTitle=0; // if true, title will be drawn in minimini. for calendar week view
-  int pBaRtR=0; //preserve Background And Return To Redraw. Rarely used
-  MenuItem* items; // items in menu
-} Menu;
+  typedef struct {
+    char* statusText = NULL; // text to be shown on the status bar, may be empty
+    char* title = NULL; // title to be shown on the first line if not null
+    char* subtitle = NULL;
+    int titleColor=giac::_BLUE; //color of the title
+    char* nodatamsg; // message to show when there are no menu items to display
+    int startX=1; //X where to start drawing the menu. NOTE this is not absolute pixel coordinates but rather character coordinates
+    int startY=0; //Y where to start drawing the menu. NOTE this is not absolute pixel coordinates but rather character coordinates
+    int width=16; // NOTE this is not absolute pixel coordinates but rather character coordinates
+    int height=12; // NOTE this is not absolute pixel coordinates but rather character coordinates
+    int scrollbar=1; // 1 to show scrollbar, 0 to not show it.
+    int scrollout=0; // whether the scrollbar goes out of the menu area (1) or it overlaps some of the menu area (0)
+    int numitems; // number of items in menu
+    int type=MENUTYPE_NORMAL; // set to MENUTYPE_* .
+    int selection=1; // currently selected item. starts counting at 1
+    int scroll=0; // current scrolling position
+    int fkeypage=0; // for MULTISELECT menu if it should allow file selecting and show the fkey label
+    int numselitems=0; // number of selected items
+    int returnOnInfiniteScrolling=0; //whether the menu should return when user reaches the last item and presses the down key (or the first item and presses the up key)
+    int darken=0; // for dark theme on homeGUI menus
+    int miniMiniTitle=0; // if true, title will be drawn in minimini. for calendar week view
+    int pBaRtR=0; //preserve Background And Return To Redraw. Rarely used
+    MenuItem* items; // items in menu
+  } Menu;
 
 #define MENU_RETURN_EXIT 0
 #define MENU_RETURN_SELECTION 1
 #define MENU_RETURN_INSTANT 2
 #define MENU_RETURN_SCROLLING 3 //for returnOnInfiniteScrolling
 
-typedef struct {
-  const char* name;
-  const char* insert;
-  const char* desc;
-  const char * example;
-  const char * example2;
-  int category;
-} catalogFunc;
+  typedef struct {
+    const char* name;
+    const char* insert;
+    const char* desc;
+    const char * example;
+    const char * example2;
+    int category;
+  } catalogFunc;
 
-giac::gen select_var(const giac::context * contextptr);
-int showCatalog(char* insertText,int preselect,int menupos);
-int doMenu(Menu* menu, MenuItemIcon* icontable=NULL);
-void reset_alpha();
-// category=0 for CATALOG, 1 for OPTN
-// returns 0 on exit, 1 on success
-int doCatalogMenu(char* insertText, const char* title, int category);
-extern const char shortcuts_string[];
-extern const char apropos_string[];
-void init_locale();
+  giac::gen select_var(const giac::context * contextptr);
+  int showCatalog(char* insertText,int preselect,int menupos,const giac::context * contextptr);
+  int doMenu(Menu* menu, MenuItemIcon* icontable=NULL);
+  void reset_alpha();
+  // category=0 for CATALOG, 1 for OPTN
+  // returns 0 on exit, 1 on success
+  int doCatalogMenu(char* insertText, const char* title, int category,const giac::context * contextptr);
+  extern const char shortcuts_string[];
+  extern const char apropos_string[];
+  void init_locale();
 
-gen turtle_state(const giac::context * contextptr);
+  gen turtle_state(const giac::context * contextptr);
   int inputline(const char * msg1,const char * msg2,std::string & s,bool numeric,int ypos=65,const giac::context *contextptr=0);
-bool inputdouble(const char * msg1,double & d,const giac::context *contextptr);
+  bool inputdouble(const char * msg1,double & d,const giac::context *contextptr);
   bool do_confirm(const char * s);
   int confirm(const char * msg1,const char * msg2,bool acexit=false);
   bool confirm_overwrite();
   void invalid_varname();
+
+
 #ifndef NO_NAMESPACE_XCAS
 } // namespace giac
 #endif // ndef NO_NAMESPACE_XCAS

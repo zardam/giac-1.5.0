@@ -53,11 +53,8 @@ inline giac::gen _graph_charpoly(const giac::gen &g,const giac::context *){ retu
 #endif
 
 #ifdef NUMWORKS
+#include "kdisplay.h"
 const char * mp_hal_input(const char * prompt) ;
-void numworks_giac_set_pixel(int x,int y,int c);
-void numworks_giac_fill_rect(int x,int y,int w,int h,int c);
-int numworks_giac_get_pixel(int x,int y);
-void numworks_giac_draw_string(int x,int y,int c,int bg,const char * s);
 #endif
 
 #ifndef NO_NAMESPACE_GIAC
@@ -9318,6 +9315,42 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
   static const char _prediction95_s []="prediction95";
   static define_unary_function_eval (__prediction95,&_prediction95,_prediction95_s);
   define_unary_function_ptr5( at_prediction95 ,alias_at_prediction95,&__prediction95,0,true);
+
+  gen _log2(const gen & args,GIAC_CONTEXT){
+    return _logb(makesequence(args,2),contextptr);
+  }
+  static const char _log2_s []="log2";
+  static define_unary_function_eval (__log2,&_log2,_log2_s);
+  define_unary_function_ptr5( at_log2 ,alias_at_log2,&__log2,0,true);
+
+  gen _radians(const gen & args,GIAC_CONTEXT){
+    return M_PI/180*args;
+  }
+  static const char _radians_s []="radians";
+  static define_unary_function_eval (__radians,&_radians,_radians_s);
+  define_unary_function_ptr5( at_radians ,alias_at_radians,&__radians,0,true);
+
+  gen _degrees(const gen & args,GIAC_CONTEXT){
+    return 180/M_PI*args;
+  }
+  static const char _degrees_s []="degrees";
+  static define_unary_function_eval (__degrees,&_degrees,_degrees_s);
+  define_unary_function_ptr5( at_degrees ,alias_at_degrees,&__degrees,0,true);
+
+  gen _modf(const gen & args,GIAC_CONTEXT){
+    gen g=evalf_double(args,1,contextptr);
+    if (g.type!=_DOUBLE_)
+      return gensizeerr(contextptr);
+    double d=g._DOUBLE_val;
+    bool neg=d<0;
+    if (neg) d=-d;
+    double d1=std::floor(d),d2=d-d1;
+    if (neg){ d1=-d1; d2=-d2; }
+    return makesequence(d2,d1);
+  }
+  static const char _modf_s []="modf";
+  static define_unary_function_eval (__modf,&_modf,_modf_s);
+  define_unary_function_ptr5( at_modf ,alias_at_modf,&__modf,0,true);
 
 #ifdef EMCC
 #ifdef EMCC_FETCH
