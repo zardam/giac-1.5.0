@@ -6,6 +6,10 @@
 #include "giacPCH.h"
 #include "misc.h"
 
+int select_item(const char ** ptr,const char * title);
+const char * giac_read_file(const char * filename);
+bool giac_write_file(const char * filename,const char * s);
+int giac_filebrowser(char * filename,const char * extension,const char * title);
 void numworks_giac_set_pixel(int x,int y,int c);
 void numworks_giac_fill_rect(int x,int y,int w,int h,int c);
 inline void drawRectangle(int x,int y,int w,int h,int c){
@@ -218,6 +222,7 @@ extern   const int LCD_HEIGHT_PX;
 namespace xcas {
 #endif // ndef NO_NAMESPACE_XCAS
 
+  bool textedit(char * s,int bufsize,const giac::context * contextptr);
   // maximum "size" of symbolics displayed in an Equation (pretty print)
   extern unsigned max_prettyprint_equation;
   // matrix select
@@ -327,7 +332,7 @@ namespace xcas {
 #define TEXTAREA_RETURN_EXIT 0
 #define TEXTAREA_RETURN_EXE 1
 #define TEXTAREA_RETURN_F1 2
-  int doTextArea(textArea* text); //returns 0 when user EXITs, 1 when allowEXE is true and user presses EXE, 2 when allowF1 is true and user presses F1.
+  int doTextArea(textArea* text,const giac::context * contextptr); //returns 0 when user EXITs, 1 when allowEXE is true and user presses EXE, 2 when allowF1 is true and user presses F1.
   std::string merge_area(const std::vector<textElement> & v);
   void save_script(const char * filename,const std::string & s);
   void add(textArea *edptr,const std::string & s);
