@@ -29,7 +29,7 @@
 //giac::context * contextptr=0;
 int clip_ymin=0;
 int lang=1;
-bool xthetat=true;
+bool xthetat=false;
 int esc_flag=0;
 using namespace std;
 using namespace giac;
@@ -41,6 +41,7 @@ const int LCD_HEIGHT_PX=222;
 namespace giac {
 #endif // ndef NO_NAMESPACE_GIAC
   void DefineStatusMessage(const char * s,int a,int b,int c){
+    statuslinemsg(s);
   }
 
   void DisplayStatusArea(){
@@ -100,12 +101,12 @@ namespace giac {
 	numworks_draw_string(textX,textY+15,msg1);
     }
     textX=10;
-    textY+=35;
+    textY+=33;
     if (msg2){
       if (strlen(msg2)>=30)
 	numworks_draw_string_small(textX,textY,msg2);
       else      
-	numworks_draw_string(textX,textY,msg2);
+	textX=numworks_draw_string(textX,textY,msg2);
     }
     return textX;
   }
@@ -119,7 +120,7 @@ namespace giac {
   }
   
   bool do_confirm(const char * s){
-    return confirm(s,(lang?"F1: oui,    F6:annuler":"F1: yes,     F6: cancel"))==KEY_CTRL_F1;
+    return confirm(s,(lang?"OK: oui,  Back:annuler":"OK: yes,   Back: cancel"))==KEY_CTRL_F1;
   }
   
   int confirm(const char * msg1,const char * msg2,bool acexit){
@@ -139,11 +140,11 @@ namespace giac {
   }  
   
   bool confirm_overwrite(){
-    return do_confirm(lang?"F1: oui,    F6:annuler":"F1: yes,     F6: cancel")==KEY_CTRL_F1;
+    return do_confirm(lang?"OK: oui,  Back:annuler":"OK: yes,   Back: cancel")==KEY_CTRL_F1;
   }
   
   void invalid_varname(){
-    confirm(lang?"Nom de variable incorrect":"Invalid variable name", lang?"F1 ou F6: ok":"F1 or F6: ok");
+    confirm(lang?"Nom de variable incorrect":"Invalid variable name", lang?"OK: ok":"OK: ok");
   }
 
 
@@ -210,7 +211,7 @@ namespace giac {
 	menu->scroll = menu->selection -(menu->numitems>itemsHeight ? itemsHeight : menu->numitems);
       if (menu->selection-1 < menu->scroll)
 	menu->scroll = menu->selection -1;
-      //if(menu->statusText != NULL) DefineStatusMessage(menu->statusText, 1, 0, 0);
+      if(menu->statusText != NULL) DefineStatusMessage(menu->statusText, 1, 0, 0);
       // Clear the area of the screen we are going to draw on
       if(0 == menu->pBaRtR) {
 	int x=C18*(menu->startX-1),
@@ -455,7 +456,7 @@ namespace giac {
       case KEY_CTRL_AC:
 	if (strlen(keyword)){
 	  keyword[0]=0;
-	  //SetSetupSetting( (unsigned int)0x14, 0x88);	
+	  lock_alpha();//SetSetupSetting( (unsigned int)0x14, 0x88);	
 	  //DisplayStatusArea();
 	  break;
 	}
@@ -544,11 +545,6 @@ namespace giac {
     return MENU_RETURN_EXIT;
   }
 
-  void reset_alpha(){
-    SetSetupSetting( (unsigned int)0x14, 0);	
-    //DisplayStatusArea();
-  }
-
 #define CAT_CATEGORY_ALL 0
 #define CAT_CATEGORY_ALGEBRA 1
 #define CAT_CATEGORY_LINALG 2
@@ -596,11 +592,11 @@ namespace giac {
 				     {" edit list ", "list ", "Assistant creation de liste.", 0, 0, CAT_CATEGORY_LIST},
 				     {" edit matrix ", "matrix ", "Assistant creation de matrice.", 0, 0, CAT_CATEGORY_MATRIX},
 				     //{"fonction def Xcas", "fonction f(x) local y;   ffonction:;", "Definition de fonction.", "#fonction f(x) local y; y:=x^2; return y; ffonction:;", 0, CAT_CATEGORY_PROG},
-				     {"!", "!", "Non logique (prefixe) ou factorielle de n (suffixe). Raccourci shift F1", "#7!", "#!b", CAT_CATEGORY_PROGCMD},
+				     {"!", "!", "Non logique (prefixe) ou factorielle de n (suffixe).", "#7!", "#!b", CAT_CATEGORY_PROGCMD},
 				     {"#", "#", "Commentaire Python, en Xcas taper //. Raccourci ALPHA F2", 0, 0, CAT_CATEGORY_PROG},
 				     {"%", "%", "a % b signifie a modulo b", 0, 0, CAT_CATEGORY_ARIT | (CAT_CATEGORY_PROGCMD << 8)},
 				     {"&", "&", "Et logique ou +", "#1&2", 0, CAT_CATEGORY_PROGCMD},
-				     {":=", ":=", "Affectation vers la gauche (inverse de =>). Raccourci SHIFT F1", "#a:=3", 0, CAT_CATEGORY_PROGCMD|(CAT_CATEGORY_SOFUS<<8)},
+				     {":=", ":=", "Affectation vers la gauche (inverse de =>).", "#a:=3", 0, CAT_CATEGORY_PROGCMD|(CAT_CATEGORY_SOFUS<<8)},
 				     {"<", "<", "Inferieur strict. Raccourci SHIFT F2", 0, 0, CAT_CATEGORY_PROGCMD},
 				     {"=>", "=>", "Affectation vers la droite ou conversion en (touche ->). Par exemple 5=>a ou x^4-1=>* ou (x+1)^2=>+ ou sin(x)^2=>cos.", "#5=>a", 0, CAT_CATEGORY_PROGCMD},
 				     {">", ">", "Superieur strict. Raccourci F2.", 0, 0, CAT_CATEGORY_PROGCMD},
@@ -973,7 +969,7 @@ namespace giac {
       menu.numitems=curmi;
       if (isopt){ menu.selection=5; menu.scroll=4; }
       if (curmi>=100)
-	SetSetupSetting( (unsigned int)0x14, 0x88);	
+	lock_alpha(); //SetSetupSetting( (unsigned int)0x14, 0x88);	
       // DisplayStatusArea();
       menu.scrollout=1;
       menu.title = (char *) title;
@@ -987,7 +983,7 @@ namespace giac {
 	  break;
 	}
 	if(sres == MENU_RETURN_EXIT){
-	  reset_alpha();
+	  reset_kbd();
 	  return sres;
 	}
 	int index=menuitems[menu.selection-1].isfolder;
@@ -1155,7 +1151,7 @@ namespace giac {
 #endif
 	}
 	if (sres == KEY_CHAR_ANS || sres==KEY_CTRL_EXE) {
-	  reset_alpha();
+	  reset_kbd();
 	  if (index<allcmds && completeCat[index].example){
 	    std::string s(insert_string(index));
 	    const char * example=0;
@@ -1186,7 +1182,7 @@ namespace giac {
 	  sres=KEY_CTRL_F1;
 	}
 	if(sres == MENU_RETURN_SELECTION || sres == KEY_CTRL_OK) {
-	  reset_alpha();
+	  reset_kbd();
 	  strcpy(insertText,index<allcmds?insert_string(index).c_str():menuitems[menu.selection-1].text);
 	  return 1;
 	}
@@ -1417,7 +1413,7 @@ namespace giac {
   }
   
   int inputline(const char * msg1,const char * msg2,string & s,bool numeric,int ypos,GIAC_CONTEXT){
-    // s="";
+    //s=msg2;
     int pos=s.size(),beg=0;
     for (;;){
       int X1=print_msg12(msg1,msg2,ypos-30);
@@ -1428,12 +1424,14 @@ namespace giac {
       if (int(s.size())-beg<36)
 	beg=giac::giacmax(0,int(s.size())-36);
       textX=X1;
+#if 0
       numworks_draw_string(textX,textY,(s.substr(beg,pos-beg)+"|"+s.substr(pos,s.size()-pos)).c_str());
-      // numworks_draw_string_small(textX,textY,s.substr(beg,pos-beg).c_str());// PrintMini(&textX,&textY,(unsigned char *)s.substr(beg,pos-beg).c_str(),0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      // numworks_draw_string_small(textX,textY,s.substr(pos,s.size()-pos).c_str());// PrintMini(&textX,&textY,(unsigned char*)s.substr(pos,s.size()-pos).c_str(),0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      // int cursorpos=textX;
-      // drawRectangle(cursorpos,textY+24,3,18,COLOR_BLACK); // cursor
+#else
+      textX=numworks_draw_string(textX,textY+2,s.substr(beg,pos-beg).c_str());
+      numworks_draw_string(textX,textY+2,s.substr(pos,s.size()-pos).c_str());
+      drawRectangle(textX,textY+4,2,13,COLOR_BLACK); // cursor
       // PrintMini(0,58,"         |        |        |        |  A<>a  |       ",4);
+#endif
       int key;
       GetKey(&key);
       // if (!giac::freeze) set_xcas_status();    
@@ -5023,7 +5021,7 @@ namespace xcas {
 	numworks_giac_hide_graph();
 	if (edited && xcas::do_select(eq.data,true,value) && value.type==_EQW){
 	  //cout << "ok " << value._EQWptr->g << endl;
-	  //DefineStatusMessage((char*)lang?"resultat stocke dans last":"result stored in last", 1, 0, 0);
+	  DefineStatusMessage((lang?"resultat stocke dans last":"result stored in last"), 1, 0, 0);
 	  //DisplayStatusArea();
 	  giac::sto(value._EQWptr->g,giac::gen("last",contextptr),contextptr);
 	  return value._EQWptr->g;
@@ -5183,7 +5181,7 @@ namespace xcas {
       if (key==KEY_CTRL_EXE){
 	if (xcas::do_select(eq.data,true,value) && value.type==_EQW){
 	  //cout << "ok " << value._EQWptr->g << endl;
-	  //DefineStatusMessage((char*)lang?"resultat stocke dans last":"result stored in last", 1, 0, 0);
+	  DefineStatusMessage((lang?"resultat stocke dans last":"result stored in last"), 1, 0, 0);
 	  //DisplayStatusArea();
 	  giac::sto(value._EQWptr->g,giac::gen("last",contextptr),contextptr);
 	  return value._EQWptr->g;
@@ -5524,14 +5522,14 @@ namespace xcas {
 
   void warn_python(int mode,bool autochange){
     if (mode==0)
-      confirm(autochange?(lang?"Source en syntaxe Xcas detecte.":"Xcas syntax source code detected."):(lang?"Syntaxe Xcas.":"Xcas syntax."),"F1/F6: ok");
+      confirm(autochange?(lang?"Source en syntaxe Xcas detecte.":"Xcas syntax source code detected."):(lang?"Syntaxe Xcas.":"Xcas syntax."),"OK: ok");
     if (mode==1)
       if (autochange)
-	confirm(lang?"Source en syntaxe Python. Passage":"Python syntax source detected. Setting",lang?"en Python avec ^=**, F1/F6: ok":"Python mode with ^=**, F1/F6:ok");
+	confirm(lang?"Source en syntaxe Python. Passage":"Python syntax source detected. Setting",lang?"en Python avec ^=**, OK: ok":"Python mode with ^=**, OK:ok");
       else
-	confirm(lang?"Syntaxe Python avec ^==**, tapez":"Python syntax with ^==**, type",lang?"python_compat(2) pour xor. F1: ok":"python_compat(2) for xor. F1: ok");
+	confirm(lang?"Syntaxe Python avec ^==**, tapez":"Python syntax with ^==**, type",lang?"python_compat(2) pour xor. OK: ok":"python_compat(2) for xor. OK: ok");
     if (mode==2){
-      confirm(lang?"Syntaxe Python avec ^==xor":"Python syntax with ^==xor",lang?"python_compat(1) pour **. F1: ok":"python_compat(1) for **. F1: ok");
+      confirm(lang?"Syntaxe Python avec ^==xor":"Python syntax with ^==xor",lang?"python_compat(1) pour **. OK: ok":"python_compat(1) for **. OK: ok");
     }
   }
 
@@ -5645,8 +5643,16 @@ namespace xcas {
 
   void fix_newlines(textArea * edptr){
     edptr->elements[0].newLine=0;
-    for (size_t i=1;i<edptr->elements.size();++i)
+    for (size_t i=1;i<edptr->elements.size();++i){
       edptr->elements[i].newLine=1;
+    }
+  }
+
+  void fix_mini(textArea * edptr){
+    bool minimini=edptr->elements[0].minimini;
+    for (size_t i=1;i<edptr->elements.size();++i){
+      edptr->elements[i].minimini=minimini;
+    }
   }
 
   int end_do_then(const std::string & s){
@@ -5822,6 +5828,7 @@ namespace xcas {
     else 
       add_nl(text,S);
     pos = text->elements[text->line].s.size()-decal;
+    fix_mini(text);
   }
 
   std::string merge_area(const std::vector<textElement> & v){
@@ -5864,7 +5871,7 @@ namespace xcas {
       if (text->editable){
 	status += (xthetat?" t":" x");
 	status += text->python?(text->python==2?" Py ^xor ":" Py ^=** "):" Xcas ";
-	status += giac::remove_extension(text->filename.c_str()+7);
+	status += giac::remove_extension(text->filename.c_str());
 	status += text->changed?" * ":" - ";
 	status += giac::printint(text->line+1);
 	status += '/';
@@ -5914,16 +5921,15 @@ namespace xcas {
       if (text->changed){
 	// save or cancel?
 	std::string tmp=text->filename;
-	tmp=tmp.substr(7,tmp.size()-7);
 	if (strcmp(tmp.c_str(),"temp.py")==0){
-	  if (confirm(lang?"Les modifications seront perdues":"Changes will be lost",lang?"F1: annuler, F6: tant pis":"F1: cancel, F6: confirm")==KEY_CTRL_F1)
+	  if (confirm(lang?"Les modifications seront perdues":"Changes will be lost",lang?"OK: annuler, Back: tant pis":"OK: cancel, Back: confirm")==KEY_CTRL_F1)
 	    return 2;
 	  else {
 	    return 0;
 	  }
 	}
 	tmp += lang?" a ete modifie!":" was modified!";
-	if (confirm(tmp.c_str(),lang?"F1: sauvegarder, F6: tant pis":"F1: save, F6: discard changes")==KEY_CTRL_F1){
+	if (confirm(tmp.c_str(),lang?"OK: sauvegarder, Back: tant pis":"OK: save, Back: discard changes")==KEY_CTRL_F1){
 	  save_script(text->filename.c_str(),merge_area(text->elements));
 	  text->changed=false;
 	  return 1;
@@ -6591,6 +6597,7 @@ namespace xcas {
     ta.changed=false;
     ta.filename="temp.py";
     ta.y=0;
+    ta.python=true;
     ta.allowEXE=false;//true; // set back to true later
     bool str=s[0]=='"' && s[ss-1]=='"';
     if (str){
@@ -6625,38 +6632,25 @@ namespace xcas {
 
 
 #define MAX_FILENAME_SIZE 255
-#if 1
+#if 0
   int get_filename(char * filename,const char * extension){
     return 0;
   }
 #else
   int get_filename(char * filename,const char * extension){
     handle_f5();
-    ustl::string str;
+    string str;
     int res=inputline(lang?"EXIT ou chaine vide: annulation":"EXIT or empty string: cancel",lang?"Nom de fichier:":"Filename:",str,false);
     if (res==KEY_CTRL_EXIT || str.empty())
       return 0;
-    strcpy(filename,"\\\\fls0\\");
-    strcpy(filename+7,str.c_str());
+    strcpy(filename,str.c_str());
     int s=strlen(filename);
     if (strcmp(filename+s-3,extension))
       strcpy(filename+s,extension);
     // if file already exists, warn, otherwise create
-    unsigned short pFile[MAX_FILENAME_SIZE+1];
-    Bfile_StrToName_ncpy(pFile, (const unsigned char*)filename, strlen(filename)+1); 
-    int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
-    if(hFile < 0){
-      save_script(filename,"");
+    if (!file_exists(filename))
       return 1;
-      int size=1,BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
-      BCEres = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
-      //cout << "create " << filename << " " << BCEres << endl;
-      if (BCEres<0)
-	return 0;
-      return 1;
-    }
-    Bfile_CloseFile_OS(hFile);
-    if (confirm(lang?"     Le fichier existe!":"     File exists!",lang?"F1: ecraser,           F6: annuler":"F1:overwrite,           F6: cancel")==KEY_CTRL_F1)
+    if (confirm(lang?"  Le fichier existe!":"  File exists!",lang?"OK: ecraser,Back: annuler":"OK:overwrite, Back: cancel")==KEY_CTRL_F1)
       return 1;
     return 0;
   }
@@ -7096,7 +7090,7 @@ namespace xcas {
 	  smallmenuitems[10].text = (char *)aide_khicas_string;
 	  smallmenuitems[11].text = (char *) "A propos";
 	  int sres = doMenu(&smallmenu);
-	  if(sres == MENU_RETURN_SELECTION) {
+	  if(sres == MENU_RETURN_SELECTION || sres==KEY_CTRL_EXE) {
 	    sres=smallmenu.selection;
 	    if(sres >= 11) {
 	      textArea text;
@@ -7130,7 +7124,7 @@ namespace xcas {
 	      save_script(text->filename.c_str(),merge_area(v));
 	      text->changed=false;
 	      char status[256];
-	      sprintf(status,lang?"%s sauvegarde":"%s saved",text->filename.c_str()+7);
+	      sprintf(status,lang?"%s sauvegarde":"%s saved",text->filename.c_str());
 	      DefineStatusMessage(status, 1, 0, 0);
 	      DisplayStatusArea();    	    
 	    }

@@ -6,6 +6,9 @@
 #include "giacPCH.h"
 #include "misc.h"
 
+void statuslinemsg(const char * msg);
+void statusline(int mode);
+bool file_exists(const char * filename);
 int select_item(const char ** ptr,const char * title);
 const char * giac_read_file(const char * filename);
 bool giac_write_file(const char * filename,const char * s);
@@ -32,6 +35,8 @@ void numworks_giac_show_graph();
 void numworks_giac_hide_graph();
 bool isalphaactive();
 extern bool alphawasactive;
+void lock_alpha();
+void reset_kbd();
 #define COLOR_BLACK giac::_BLACK
 #define COLOR_RED giac::_RED
 #define COLOR_GREEN giac::_GREEN
