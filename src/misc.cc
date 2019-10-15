@@ -8566,7 +8566,9 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
   static define_unary_function_eval (__python_list,&_python_list,_python_list_s);
   define_unary_function_ptr5( at_python_list ,alias_at_python_list,&__python_list,0,true);
 
+  bool freeze=false;
   gen _set_pixel(const gen & a_,GIAC_CONTEXT){
+    freeze=true;
     gen a(a_);
     if (a.type==_STRNG && a.subtype==-1) return  a;
 #if defined GIAC_HAS_STO_38 || defined NUMWORKS
@@ -8814,6 +8816,7 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
   }
   
   gen _draw_polygon(const gen & a,GIAC_CONTEXT){
+    freeze=true;
     if (a.type==_STRNG && a.subtype==-1) return  a;
     if (a.type!=_VECT || a._VECTptr->size()<2)
       return gentypeerr(contextptr);
@@ -9033,6 +9036,7 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
   }
 
   gen _draw_arc(const gen & a_,bool arc,GIAC_CONTEXT){
+    freeze=true;
     gen a(a_);
     if (a.type==_STRNG && a.subtype==-1) return  a;
     if (a.type!=_VECT || a._VECTptr->size()<2)
@@ -9132,6 +9136,7 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
     //return _of(makesequence(PIXEL,a_),contextptr);
   }
   gen _draw_line(const gen & a_,GIAC_CONTEXT){
+    freeze=true;
     return draw_line_or_rectangle(a_,contextptr,0);
   }
   static const char _draw_line_s []="draw_line";
@@ -9139,6 +9144,7 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
   define_unary_function_ptr5( at_draw_line ,alias_at_draw_line,&__draw_line,0,true);
 
   gen _draw_rectangle(const gen & a_,GIAC_CONTEXT){
+    freeze=true;
     return draw_line_or_rectangle(a_,contextptr,1);
   }
   static const char _draw_rectangle_s []="draw_rectangle";
@@ -9153,6 +9159,7 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
   define_unary_function_ptr5( at_fill_rect ,alias_at_fill_rect,&__fill_rect,0,true);
 
   gen _draw_string(const gen & a_,GIAC_CONTEXT){
+    freeze=true;
 #ifdef GIAC_HAS_STO_38
     static gen PIXEL(identificateur("TEXTOUT_P"));
     return _of(makesequence(PIXEL,a_),contextptr);

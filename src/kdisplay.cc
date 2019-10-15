@@ -40,6 +40,14 @@ const int LCD_HEIGHT_PX=222;
 #ifndef NO_NAMESPACE_GIAC
 namespace giac {
 #endif // ndef NO_NAMESPACE_GIAC
+  void Bdisp_PutDisp_DD(){
+  }
+  void Bdisp_AllClr_VRAM(){
+    drawRectangle(0,0,LCD_WIDTH_PX,LCD_HEIGHT_PX,_WHITE);
+  }
+  void drawLine(int x1,int y1,int x2,int y2,int c){
+    draw_line(x1,y1,x2,y2,c,context0);
+  }
   void DefineStatusMessage(const char * s,int a,int b,int c){
     statuslinemsg(s);
   }
@@ -48,6 +56,7 @@ namespace giac {
   }
 
   void set_xcas_status(){
+    statusline(1);
   }
   int GetSetupSetting(int mode){
     return 0;
@@ -1345,12 +1354,12 @@ namespace giac {
     case KEY_CTRL_INS:
       return ":=";
     case KEY_CHAR_MAT:{
-      // const char * ptr=input_matrix(false); if (ptr) return ptr;
+      const char * ptr=xcas::input_matrix(false,contextptr); if (ptr) return ptr;
       if (showCatalog(text,17,contextptr)) return text;
       return "";
     }
     case KEY_CHAR_LIST: {
-      //const char * ptr=input_matrix(true); if (ptr) return ptr;
+      const char * ptr=xcas::input_matrix(true,contextptr); if (ptr) return ptr;
       if (showCatalog(text,16,contextptr)) return text;
       return "";
     }
@@ -5150,7 +5159,7 @@ namespace xcas {
       translate_fkey(key);
       if ( key==KEY_CTRL_F1 || key==KEY_CTRL_F2 ||
 	   (key>=KEY_CTRL_F7 && key<=KEY_CTRL_F14)){
-	adds=console_menu(key,1);//alph?"simplify":(keyflag==1?"factor":"partfrac");
+	adds=giac::console_menu(key,1);//alph?"simplify":(keyflag==1?"factor":"partfrac");
 	// workaround for infinitiy
 	if (strlen(adds)>=2 && adds[0]=='o' && adds[1]=='o')
 	  key=KEY_CTRL_F5;      
@@ -5504,6 +5513,106 @@ namespace xcas {
     //*logptr(contextptr) << eq.data << endl;
   }
 
+  void do_run(const char * s,gen & g,gen & ge,GIAC_CONTEXT){
+  if (!contextptr)
+    contextptr=new giac::context;
+  int S=strlen(s);
+  char buf[S+1];
+  buf[S]=0;
+  for (int i=0;i<S;++i){
+    char c=s[i];
+    if (c==0x1e || c==char(0x9c))
+      buf[i]='\n';
+    else {
+      if (c==0x0d)
+	buf[i]=' ';
+      else
+	buf[i]=c;
+    }
+  }
+  g=gen(buf,contextptr);
+  //Console_Output(g.print(contextptr).c_str()); return ;
+  giac::freeze=false;
+  // execution_in_progress = 1;
+  set_abort();
+  ge=eval(equaltosto(g,contextptr),1,contextptr);
+  clear_abort();
+  // execution_in_progress = 0;
+  if (esc_flag || ctrl_c){
+    while (confirm("Interrupted","F1/F6: ok",true)==-1)
+      ; // insure ON has been removed from keyboard buffer
+    ge=string2gen("Interrupted",false);
+  }
+  //Console_Output("Done"); return ;
+  esc_flag=0;
+  giac::ctrl_c=false;
+  giac::interrupted=false;
+}
+
+  bool islogo(const gen & g){
+    if (g.type!=_VECT || g._VECTptr->empty()) return false;
+    if (g.subtype==_LOGO__VECT) return true;
+    const vecteur & v=*g._VECTptr;
+    if (islogo(v.back()))
+      return true;
+    for (size_t i=0;i<v.size();++i){
+      if (v[i].type==_VECT && v[i].subtype==_LOGO__VECT)
+	return true;
+    }
+    return false;
+  }
+
+  
+  bool eqws(char * s,bool eval,GIAC_CONTEXT){ // s buffer must be at least 512 char
+  gen g,ge;
+  int dconsole_save=dconsole_mode;
+  int ss=strlen(s);
+  for (int i=0;i<ss;++i){
+    if (s[i]==char(0x9c))
+      s[i]='\n';
+  }
+  if (ss>=2 && (s[0]=='#' || s[0]=='"' ||
+		(s[0]=='/' && (s[1]=='/' || s[1]=='*'))
+		))
+    return textedit(s,giacmax(512,ss),contextptr);
+  dconsole_mode=0;
+  if (eval)
+    do_run(s,g,ge,contextptr);
+  else {
+    if (s[0]==0)
+      ge=0;
+    else
+      ge=gen(s,contextptr);
+  }
+  dconsole_mode=dconsole_save;
+  if (is_undef(ge))
+    return textedit(s,giacmax(512,ss),contextptr);
+  if (ge.type==giac::_SYMB || (ge.type==giac::_VECT && !ge._VECTptr->empty() && !is_numericv(*ge._VECTptr)) ){
+    if (islogo(ge)){
+      displaylogo();
+      return false;
+    }
+    if (ispnt(ge)){
+      displaygraph(ge,contextptr);
+      // aborttimer = Timer_Install(0, check_execution_abort, 100); if (aborttimer > 0) { Timer_Start(aborttimer); }
+      return false;
+    }
+    if (ge.is_symb_of_sommet(at_program))
+      return textedit(s,giacmax(ss,512),contextptr);
+    if (taille(ge,256)>=256)
+      return false; // sizeof(eqwdata)=44
+  }
+  gen tmp=eqw(ge,true,contextptr);
+  if (is_undef(tmp) || tmp==ge || taille(ge,64)>=64)
+    return false;
+  string S(tmp.print(contextptr));
+  if (S.size()>=512)
+    return false;
+  strcpy(s,S.c_str());
+  return true;
+}
+
+  
 #define GIAC_TEXTAREA 1
 #if GIAC_TEXTAREA
   textArea * edptr=0;
@@ -5533,20 +5642,6 @@ namespace xcas {
     }
   }
 
-  bool islogo(const gen & g){
-    if (g.type!=_VECT || g._VECTptr->empty()) return false;
-    if (g.subtype==_LOGO__VECT) return true;
-    const vecteur & v=*g._VECTptr;
-    if (islogo(v.back()))
-      return true;
-    for (size_t i=0;i<v.size();++i){
-      if (v[i].type==_VECT && v[i].subtype==_LOGO__VECT)
-	return true;
-    }
-    return false;
-  }
-
-  
   void check_do_graph(giac::gen & ge,int do_logo_graph_eqw,GIAC_CONTEXT) {
     if (ge.type==giac::_SYMB || (ge.type==giac::_VECT && !ge._VECTptr->empty() && !is_numericv(*ge._VECTptr)) ){
       if (islogo(ge)){
@@ -6631,7 +6726,6 @@ namespace xcas {
   }
 
 
-#define MAX_FILENAME_SIZE 255
 #if 0
   int get_filename(char * filename,const char * extension){
     return 0;
@@ -7250,6 +7344,2110 @@ namespace xcas {
       edptr->pos=0;
     }
   }  
+
+#if 1 // CONSOLE
+console_line * Line=0;//[_LINE_MAX];//={data_line};
+char menu_f1[8]={0},menu_f2[8]={0},menu_f3[8]={0},menu_f4[8]={0},menu_f5[8]={0},menu_f6[8];
+char session_filename[MAX_FILENAME_SIZE+1]="session";
+char * FMenu_entries_name[6]={menu_f1,menu_f2,menu_f3,menu_f4,menu_f5,menu_f6};
+location Cursor;
+char *Edit_Line=0;
+int Start_Line, Last_Line,editline_cursor;
+int Case;
+int console_changed=0; // 1 if something new in history
+int dconsole_mode=1; // 0 disables dConsole commands
+
+#define Current_Line (Start_Line + Cursor.y)
+#define Current_Col (Line[Cursor.y + Start_Line].start_col + Cursor.x)
+
+
+void menu_setup(GIAC_CONTEXT){
+  Menu smallmenu;
+  smallmenu.numitems=7;
+  MenuItem smallmenuitems[smallmenu.numitems];
+  smallmenu.items=smallmenuitems;
+  smallmenu.height=8;
+  smallmenu.scrollbar=1;
+  smallmenu.scrollout=1;
+  smallmenu.title = (char*)"Config";
+  smallmenuitems[0].type = MENUITEM_CHECKBOX;
+  smallmenuitems[0].text = (char*)"X,Theta,T=t";
+  smallmenuitems[1].type = MENUITEM_CHECKBOX;
+  smallmenuitems[1].text = (char*)"Python";
+  smallmenuitems[2].type = MENUITEM_CHECKBOX;
+  smallmenuitems[2].text = (char*)"Radians";
+  smallmenuitems[3].type = MENUITEM_CHECKBOX;
+  smallmenuitems[3].text = (char*)"Sqrt";
+  smallmenuitems[4].text = (char *) (lang?"Raccourcis":"Shortcuts");
+  smallmenuitems[5].text = (char*) (lang?"A propos":"About");
+  smallmenuitems[6].text = (char*) "Quit";
+  // smallmenuitems[2].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
+  while(1) {
+    smallmenuitems[0].value = xthetat;
+    smallmenuitems[1].value = giac::python_compat(contextptr);
+    smallmenuitems[2].value = giac::angle_radian(contextptr);
+    smallmenuitems[3].value = giac::withsqrt(contextptr);
+    int sres = doMenu(&smallmenu);
+    if (sres==MENU_RETURN_EXIT)
+      break;
+    if (sres == MENU_RETURN_SELECTION) {
+      if (smallmenu.selection == 7)
+	break;
+      if (smallmenu.selection == 1){
+	xthetat=1-xthetat;
+	continue;
+      }
+      if (smallmenu.selection == 2){
+	bool b=!giac::python_compat(contextptr);
+	giac::python_compat(b,contextptr);
+	warn_python(b,false);
+	if (edptr)
+	  edptr->python=b;
+	continue;
+      }
+      if (smallmenu.selection == 3){
+	giac::angle_radian(!giac::angle_radian(contextptr),contextptr);
+	continue;
+      }
+      if (smallmenu.selection == 4){
+	giac::withsqrt(!giac::withsqrt(contextptr),contextptr);
+	continue;
+      }
+      if(smallmenu.selection >= 5) {
+	textArea text;
+	text.editable=false;
+	text.clipline=-1;
+	text.title = smallmenuitems[smallmenu.selection-1].text;
+	add(&text,smallmenu.selection==5?shortcuts_string:apropos_string);
+	doTextArea(&text,contextptr);
+	continue;
+      } 
+    }	
+  }      
+}
+
+void * console_malloc(unsigned s){
+  return new char [s];
+  // return malloc(s);
+}
+
+void console_free(void * ptr){
+  delete [] (char *) ptr;
+  // free(ptr);
+}
+
+void cleanup(std::string & s){
+  for (size_t i=0;i<s.size();++i){
+    if (s[i]=='\n')
+      s[i]=' ';
+  }
+}
+
+const int max_lines_saved=50;
+
+  void run(const char * s,int do_logo_graph_eqw,GIAC_CONTEXT){
+  if (strlen(s)>=2 && (s[0]=='#' ||
+		       (s[0]=='/' && (s[1]=='/' || s[1]=='*'))
+		       ))
+    return;
+  gen g,ge;
+  do_run(s,g,ge,contextptr);
+  if (giac::freeze){
+    giac::freeze=false;
+    DefineStatusMessage((char*)(lang?"Ecran fige. Taper EXIT":"Screen freezed. Press EXIT."), 1, 0, 0);
+    DisplayStatusArea();
+    for (;;){
+      int key;
+      GetKey(&key);
+      if (key==KEY_CTRL_EXIT)
+	break;
+    }
+  }
+  int t=giac::taille(g,GIAC_HISTORY_MAX_TAILLE);  
+  int te=giac::taille(ge,GIAC_HISTORY_MAX_TAILLE);
+  bool do_tex=false;
+  if (t<GIAC_HISTORY_MAX_TAILLE && te<GIAC_HISTORY_MAX_TAILLE){
+    giac::vecteur &vin=history_in(contextptr);
+    giac::vecteur &vout=history_out(contextptr);
+    if (vin.size()>GIAC_HISTORY_SIZE)
+      vin.erase(vin.begin());
+    vin.push_back(g);
+    if (vout.size()>GIAC_HISTORY_SIZE)
+      vout.erase(vout.begin());
+    vout.push_back(ge);
+  }
+  check_do_graph(ge,do_logo_graph_eqw,contextptr);
+  string s_;
+  if (ge.type==giac::_STRNG)
+    s_='"'+*ge._STRNGptr+'"';
+  else {
+    if (te>256)
+      s_="Object too large";
+    else {
+      if (ge.is_symb_of_sommet(giac::at_pnt) || (ge.type==giac::_VECT && !ge._VECTptr->empty() && ge._VECTptr->back().is_symb_of_sommet(giac::at_pnt)))
+	s_="Graphic object";
+      else {
+	//do_tex=ge.type==giac::_SYMB && has_op(ge,*giac::at_inv);
+	// tex support has been disabled!
+	s_=ge.print(contextptr);
+	// translate to tex? set do_tex to true
+      }
+    }
+  }
+  if (s_.size()>512)
+    s_=s_.substr(0,509)+"...";
+  char* edit_line = (char*)Console_GetEditLine();
+  Console_Output((const char*)s_.c_str());
+  //return ge; 
+}
+
+  int run_session(int start,GIAC_CONTEXT){
+  std::vector<std::string> v;
+  for (int i=start;i<Last_Line;++i){
+    if (Line[i].type==LINE_TYPE_INPUT)
+      v.push_back((const char *)Line[i].str);
+    console_free(Line[i].str);
+    Line[i].str=0;
+    Line[i].readonly = 0;
+    Line[i].type = LINE_TYPE_INPUT;
+    Line[i].start_col = 0;
+    Line[i].disp_len = 0;
+  }
+  Line[Last_Line].str=0;
+  Last_Line=start;
+  Start_Line=Last_Line>LINE_DISP_MAX?Last_Line-LINE_DISP_MAX:0;
+  Cursor.x=0;
+  Cursor.y=start;
+  Line[start].str=Edit_Line;
+  Edit_Line[0]=0;
+  if (v.empty()) return 0;
+  //Console_Init();
+  for (int i=0;i<v.size();++i){
+    Console_Output((const char *)v[i].c_str());
+    //int j=Last_Line;
+    Console_NewLine(LINE_TYPE_INPUT, 1);
+    // Line[j].type=LINE_TYPE_INPUT;
+    run(v[i].c_str(),6,contextptr); /* show logo and graph but not eqw */
+    // j=Last_Line;
+    Console_NewLine(LINE_TYPE_OUTPUT, 1);    
+    // Line[j].type=LINE_TYPE_OUTPUT;
+    Console_Disp();
+    Bdisp_PutDisp_DD();
+  }
+  return 0;
+}
+
+#if 0 // CONSOLE_STATE
+void save_console_state_smem(const char * filename){
+  console_changed=0;
+  unsigned short pFile[MAX_FILENAME_SIZE+1];
+  Bfile_StrToName_ncpy(pFile, (const unsigned char *)filename, strlen(filename)+1);
+  string state(khicas_state());
+  int statesize=state.size();
+  string script;
+  if (edptr)
+    script=merge_area(edptr->elements);
+  int scriptsize=script.size();
+  // save format: line_size (2), start_col(2), line_type (1), readonly (1), line
+  int size=2*sizeof(int)+statesize+scriptsize;
+  int start_row=Last_Line-max_lines_saved; 
+  if (start_row<0) start_row=0;
+  for (int i=start_row;i<=Last_Line;++i){
+    size += 2*sizeof(short)+2*sizeof(char)+strlen((const char *)Line[i].str);
+  }
+  // there's no need to delete and create again, because there's no problem
+  // if there's junk at the end of the file.
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  if(hFile < 0) {
+    // could not open file. file might not exist yet, or the data folder might not exist at all.
+    // try creating both and try opening again
+    //create_data_folder();
+    Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size); // Bfile_CreateFile(pFile, size);
+    hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+    if(hFile < 0) return; // if it still fails, there's nothing we can do
+  }
+  // save variables and modes
+  Bfile_WriteFile_OS(hFile, &statesize, sizeof(statesize));
+  Bfile_WriteFile_OS(hFile, state.c_str(), statesize);
+  // save script
+  Bfile_WriteFile_OS(hFile, &scriptsize, sizeof(scriptsize));
+  Bfile_WriteFile_OS(hFile, script.c_str(), scriptsize);
+  // save console state
+  // save console state
+  for (int i=start_row;i<=Last_Line;++i){
+    console_line & cur=Line[i];
+    unsigned short l=strlen((const char *)cur.str);
+    Bfile_WriteFile_OS(hFile, &l, sizeof(l));
+    unsigned short s=cur.start_col;
+    Bfile_WriteFile_OS(hFile, &s, sizeof(s));
+    unsigned char c=cur.type;
+    Bfile_WriteFile_OS(hFile, &c, sizeof(c));
+    c=cur.readonly;
+    Bfile_WriteFile_OS(hFile, &c, sizeof(c));
+    unsigned char buf[l+1];
+    buf[l]=0;
+    strcpy((char *)buf,(const char*)cur.str); 
+    unsigned char *ptr=buf,*strend=ptr+l;
+    for (;ptr<strend;++ptr){
+      if (*ptr==0x9c)
+	*ptr='\n';
+    }
+    Bfile_WriteFile_OS(hFile, buf, l);
+  }
+  char BUF[2]={0,0};
+  Bfile_WriteFile_OS(hFile, BUF, sizeof(BUF));
+  Bfile_CloseFile_OS(hFile);
+}
+
+bool load_console_state_smem(const char * filename){
+  unsigned short pFile[MAX_FILENAME_SIZE+1];
+  Bfile_StrToName_ncpy(pFile, (const unsigned char *)filename, strlen(filename)+1);
+  int hf = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  // cout << hf << endl << "f:" << filename << endl; Console_Disp();
+  if (hf < 0) return false; // nothing to load
+  // int Bfile_ReadFile(int HANDLE,void *buf,int size,int readpos);
+  // read variables and modes
+  int L=0;
+  if (Bfile_ReadFile_OS(hf,&L,sizeof(L),-1)!=sizeof(L) || L==0){
+    Bfile_CloseFile_OS(hf);
+    return false;
+  }  
+  char BUF[L+1];
+  if (Bfile_ReadFile_OS(hf,BUF,L,-1)!=L){
+    Bfile_CloseFile_OS(hf);
+    return false;
+  }
+  BUF[L]=0;
+  giac::gen g,ge;
+  dconsole_mode=0;
+  do_run((char*)BUF,g,ge);
+  dconsole_mode=1;
+  // read script
+  if (Bfile_ReadFile_OS(hf,&L,sizeof(L),-1)!=sizeof(L)){
+    Bfile_CloseFile_OS(hf);
+    return false;
+  }
+  if (L>0){
+    char bufscript[L+1];
+    if (Bfile_ReadFile_OS(hf,bufscript,L,-1)!=L){
+      Bfile_CloseFile_OS(hf);
+      return false;
+    }
+    bufscript[L]=0;
+    if (edptr==0)
+      edptr=new textArea;
+    if (edptr){
+      edptr->elements.clear();
+      edptr->clipline=-1;
+      edptr->filename="\\\\fls0\\"+remove_path(giac::remove_extension(filename))+".py";
+      //cout << "script " << edptr->filename << endl;
+      edptr->editable=true;
+      edptr->changed=false;
+      edptr->python=python_compat(contextptr);
+      edptr->elements.clear();
+      edptr->y=0;
+      add(edptr,bufscript);
+      edptr->line=0;
+      //edptr->line=edptr->elements.size()-1;
+      edptr->pos=0;
+    }    
+  }
+  // read console state
+  // insure parse messages are cleared
+  Console_Init();
+  Console_Clear_EditLine();
+  for (int pos=0;;++pos){
+    unsigned short int l,curs;
+    unsigned char type,readonly;
+    if (Bfile_ReadFile_OS(hf,&l,sizeof(l),-1)!=sizeof(l) || l==0) break;
+    if (Bfile_ReadFile_OS(hf,&curs,sizeof(curs),-1)!=sizeof(curs)) break;
+    if (Bfile_ReadFile_OS(hf,&type,sizeof(type),-1)!=sizeof(type)) break;
+    if (Bfile_ReadFile_OS(hf,&readonly,sizeof(readonly),-1)!=sizeof(readonly)) break;
+    char buf[l+1];
+    buf[l]=0;
+    if (Bfile_ReadFile_OS(hf,buf,l,-1)!=l) break;
+    // ok line ready in buf
+    while (Line[Current_Line].readonly)
+      Console_MoveCursor(CURSOR_DOWN);
+    Console_Input((const unsigned char *)buf);
+    Console_NewLine(LINE_TYPE_INPUT, 1);
+#if 1
+    if (Current_Line>0){
+      console_line & cur=Line[Current_Line-1];
+      cur.type=type;
+      cur.readonly=readonly;
+      cur.start_col+=curs;
+    }
+#endif
+  }
+  Bfile_CloseFile_OS(hf);
+  console_changed=0;
+  return true;
+}
+#endif // CONSOLE_STATE
+
+/*
+
+  The following functions will be used to specify the location before deleting a string of n characters altogether. Among them, a wide character (2 bytes) will be counted as a character.
+	
+  For example, we have the following string str:
+	
+  Location  |  0  |  1  |  2  |  3  |  4  |  5  | 6 |
+  Character | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 0 |
+
+  After the call Console_DelStr (str, 3, 2), position 1 and 2 characters will be deleted, then the characters will be in advance.
+	
+  Results are as follows:
+
+  Location  |  0  |  1  |  2  |  3  | 4 |  5  | 6 |
+  Character | 'a' | 'd' | 'e' | 'f' | 0 | 'f' | 0 |
+
+  (Note: the extra positions will not be filled with '\ 0', but '\ 0' will be a copy of the original end of the string.)
+
+*/
+
+int Console_DelStr(char *str, int end_pos, int n)
+{
+  int str_len, actual_end_pos, start_pos, actual_start_pos, del_len, i;
+
+  str_len = strlen((const char *)str);
+  if ((start_pos = end_pos - n) < 0) return CONSOLE_ARG_ERR;
+
+  if ((actual_end_pos = Console_GetActualPos(str, end_pos)) == CONSOLE_ARG_ERR) return CONSOLE_ARG_ERR;
+  if ((actual_start_pos = Console_GetActualPos(str, start_pos)) == CONSOLE_ARG_ERR) return CONSOLE_ARG_ERR;
+
+  del_len = actual_end_pos - actual_start_pos;
+
+  for (i = actual_start_pos; i < str_len; i++)
+    {
+      str[i] = str[i + del_len];
+    }
+
+  return CONSOLE_SUCCEEDED;
+}
+
+/*
+
+  The following functions are used to specify the location of the insertion in the specified string.
+  (Note: This refers to the position of the printing position when, rather than the actual position.)
+*/
+
+int Console_InsStr(char *dest, const char *src, int disp_pos)
+{
+  int i, ins_len, str_len, actual_pos;
+
+  ins_len = strlen((const char *)src);
+  str_len = strlen((const char *)dest);
+
+  actual_pos = Console_GetActualPos(dest, disp_pos);
+
+  if (ins_len + str_len >= EDIT_LINE_MAX) return CONSOLE_MEM_ERR;
+  if (actual_pos > str_len) return CONSOLE_ARG_ERR;
+
+  for (i = str_len; i >= actual_pos; i--)
+    {
+      dest[i + ins_len] = dest[i];
+    }
+
+  for (i = 0; i < ins_len; i++)
+    {
+      char c=src[i];
+      if (c=='\n') c=0x9c;
+      dest[actual_pos + i] = (c==0x0a?' ':c);
+    }
+
+  return CONSOLE_SUCCEEDED;
+}
+
+/*
+
+  The following function is used to determine the true position of the string corresponding to the printing position.
+  For example, in the following this string str contains wide characters, the location of the print is as follows:
+
+  Location  | 00  |  01 |   02  |  03  | 04   | 05  | 06  |
+  Character | one | two | three | four | five | six | \ 0 |
+
+  The actual storage location is as follows:
+
+  Location | 	00  | 01   |  02  |  03  |  04  |  05  |  06  |  07  |  08  |  09  |  10  |  11  |
+  Value 	 | 0xD2 | 0xBB | 0xB6 | 0xFE | 0xC8 | 0xFD | 0xCB | 0xC4 | 0xCE | 0xE5 | 0xC1 | 0xF9 |
+
+  You can find the first four characters 'five' is actually stored in the eighth position.
+  So, when you call Console_GetActualPos (str, 4), it will return 8.
+*/
+
+int Console_GetActualPos(const char *str, int disp_pos)
+{
+  int actual_pos, count;
+
+  for (actual_pos = count = 0; count < disp_pos; count++)
+    {
+      if (str[actual_pos] == '\0') return CONSOLE_ARG_ERR;
+
+      if (is_wchar(str[actual_pos]))
+	{
+	  actual_pos += 2;
+	}
+      else
+	{
+	  actual_pos++;
+	}
+    }
+
+  return actual_pos;
+}
+
+/*
+  The following functions are used to obtain a string of print length, ie, a wide character (2 bytes) recorded as a character.
+*/
+
+int Console_GetDispLen(const char *str)
+{
+  int i, len;
+
+  for (i = len = 0; str[i]!='\0'; len++)
+    {
+      if (is_wchar(str[i]))
+	{
+	  i += 2;
+	}
+      else
+	{
+	  i++;
+	}
+    }
+
+  return len;
+}
+
+/*
+  The following functions are used to move the cursor.
+*/
+
+int Console_MoveCursor(int direction)
+{
+  switch (direction)
+    {
+    case CURSOR_UP:
+      if (Current_Line==Last_Line)
+	editline_cursor=Cursor.x;
+      //If you need to operate.
+      if ((Cursor.y > 0) || (Start_Line > 0)){
+	//If the current line is not read-only, then Edit_Line copy to the current line.
+	if (!Line[Current_Line].readonly){
+	  if ((Line[Current_Line].str = (char *)console_malloc(strlen((const char *)Edit_Line) + 1)) == NULL) return CONSOLE_MEM_ERR;
+	  strcpy((char *)Line[Current_Line].str, (const char *)Edit_Line);
+	  Line[Current_Line].disp_len = Console_GetDispLen(Line[Current_Line].str);
+	  Line[Current_Line].type = LINE_TYPE_INPUT;
+	}
+	//If the cursor does not move to the top of, directly move the cursor upward.
+	if (Cursor.y > 0)
+	  Cursor.y--;
+	//Otherwise, the number of rows, if the screen's first line is not the first line, then began to show minus one.
+	else {
+	  if (Start_Line > 0)
+	    Start_Line--;
+	}
+	//End if the horizontal position after moving the cursor over the line, then move the cursor to the end of the line.
+	if (Cursor.x > Line[Current_Line].disp_len){
+	  Cursor.x = Line[Current_Line].disp_len;
+	}
+	else {
+	  if (Line[Current_Line].disp_len - Line[Current_Line].start_col > COL_DISP_MAX){
+	    if (Cursor.x == COL_DISP_MAX)
+	      Cursor.x = COL_DISP_MAX - 1;
+	  }
+	}
+	//If you move the cursor to the line after the first, and the front of the line there is a character does not appear, then move the cursor to position 1.
+	if (Cursor.x == 0 && Line[Current_Line].start_col > 0)
+	  Cursor.x = 1;
+	//If the current cursor line is not read-only, then it is a string copy to Edit_Line for editing.
+	if (!Line[Current_Line].readonly){
+	  strcpy((char *)Edit_Line, (const char *)Line[Current_Line].str);
+	  console_free(Line[Current_Line].str);
+	  Line[Current_Line].str = Edit_Line;
+	}
+      }
+      break;
+    case CURSOR_ALPHA_UP:{
+      int pos1=Start_Line+Cursor.y;
+      Console_MoveCursor(CURSOR_UP);
+      int pos2=Start_Line+Cursor.y;
+      if (pos1<Last_Line && pos2<Last_Line && pos1!=pos2){
+	console_line curline=Line[pos1];
+	Line[pos1]=Line[pos2];
+	Line[pos2]=curline;
+      }
+      break;
+    }
+    case CURSOR_ALPHA_DOWN: {
+      int pos1=Start_Line+Cursor.y;
+      Console_MoveCursor(CURSOR_DOWN);
+      int pos2=Start_Line+Cursor.y;
+      if (pos1<Last_Line && pos2<Last_Line && pos1!=pos2){
+	console_line curline=Line[pos1];
+	Line[pos1]=Line[pos2];
+	Line[pos2]=curline;
+      }
+      break;
+    }
+    case CURSOR_DOWN:
+      if (Current_Line==Last_Line)
+	editline_cursor=Cursor.x;
+      //If you need to operate.
+      if ((Cursor.y < LINE_DISP_MAX - 1) && (Current_Line < Last_Line) || (Start_Line + LINE_DISP_MAX - 1 < Last_Line))
+	{
+	  //If the current line is not read-only, then Edit_Line copy to the current line.
+	  if (!Line[Current_Line].readonly)
+	    {
+	      if ((Line[Current_Line].str = (char *)console_malloc(strlen((const char *)Edit_Line) + 1)) == NULL) return CONSOLE_MEM_ERR;
+	      strcpy((char *)Line[Current_Line].str, (const char *)Edit_Line);
+	      Line[Current_Line].disp_len = Console_GetDispLen(Line[Current_Line].str);
+	      Line[Current_Line].type = LINE_TYPE_INPUT;
+	    }
+
+	  //If the cursor does not move to the bottom, the cursor moves down directly.
+	  if (Cursor.y < LINE_DISP_MAX - 1 && Current_Line < Last_Line)
+	    {
+	      Cursor.y++;
+	    }
+	  //The number of rows Otherwise, if the last line is not the last line on the screen, it will begin to show a plus.
+	  else if (Start_Line + LINE_DISP_MAX - 1 < Last_Line)
+	    {
+	      Start_Line++;
+	    }
+
+	  //If you move the cursor after the end of the horizontal position over the line, then move the cursor to the end of the line.
+	  if (Cursor.x > Line[Current_Line].disp_len)
+	    {
+	      Cursor.x = Line[Current_Line].disp_len;
+	    }
+	  else if (Line[Current_Line].disp_len - Line[Current_Line].start_col >= COL_DISP_MAX)
+	    {
+	      if (Cursor.x == COL_DISP_MAX) Cursor.x = COL_DISP_MAX - 1;
+	    }
+
+	  //If you move the cursor to the line after the first, and the front of the line there is a character does not appear, then move the cursor to position 1.
+	  if (Cursor.x == 0 && Line[Current_Line].start_col > 0) Cursor.x = 1;
+
+	  //If the current cursor line is not read-only, then it is a string copy to Edit_Line for editing.
+	  if (!Line[Current_Line].readonly)
+	    {
+	      strcpy((char *)Edit_Line, (const char *)Line[Current_Line].str);
+	      console_free(Line[Current_Line].str);
+	      Line[Current_Line].str = Edit_Line;
+	    }
+	}
+      break;
+    case CURSOR_LEFT:
+      if (Line[Current_Line].readonly){
+	if (Line[Current_Line].start_col > 0){
+	  Line[Current_Line].start_col--;
+	}
+	break;
+      }
+      else {
+	if (Line[Current_Line].start_col > 0){
+	  if (Cursor.x > 1)
+	    Cursor.x--;
+	  else
+	    Line[Current_Line].start_col--;
+	  break;
+	}
+	if (Cursor.x > 0){
+	  Cursor.x--;
+	  break;
+	}
+      }
+    case CURSOR_SHIFT_RIGHT:
+      if (!Line[Current_Line].readonly)
+	Cursor.x=giacmin(Line[Current_Line].disp_len,COL_DISP_MAX);
+      if (Line[Current_Line].disp_len > COL_DISP_MAX)
+	Line[Current_Line].start_col = Line[Current_Line].disp_len - COL_DISP_MAX;
+      break;
+    case CURSOR_RIGHT:
+      if (Line[Current_Line].readonly){
+	if (Line[Current_Line].disp_len - Line[Current_Line].start_col > COL_DISP_MAX){
+	  Line[Current_Line].start_col++;
+	}
+	break;
+      }
+      else {
+	if (Line[Current_Line].disp_len - Line[Current_Line].start_col > COL_DISP_MAX){
+	  if (Cursor.x < COL_DISP_MAX - 1)
+	    Cursor.x++;
+	  else
+	    Line[Current_Line].start_col++;
+	  break;	  
+	}
+	if (Cursor.x < Line[Current_Line].disp_len - Line[Current_Line].start_col){
+	  Cursor.x++;
+	  break;
+	}
+      }
+    case CURSOR_SHIFT_LEFT:
+      if (!Line[Current_Line].readonly)
+	Cursor.x=0;
+      Line[Current_Line].start_col=0;
+      break;
+    default:
+      return CONSOLE_ARG_ERR;
+      break;
+    }
+  return CONSOLE_SUCCEEDED;
+}
+
+/*
+  The following function is used for input.
+  String input to the cursor, the cursor will automatically move.
+*/
+
+int Console_Input(const char *str)
+{
+  console_changed=1;
+  int old_len,i,return_val;
+
+  if (!Line[Current_Line].readonly)
+    {
+      old_len = Line[Current_Line].disp_len;
+      return_val = Console_InsStr(Edit_Line, str, Current_Col);
+      if (return_val != CONSOLE_SUCCEEDED) return return_val;
+      if ((Line[Current_Line].disp_len = Console_GetDispLen(Edit_Line)) == CONSOLE_ARG_ERR) return CONSOLE_ARG_ERR;
+      for (i = 0; i < Line[Current_Line].disp_len - old_len; i++)
+	{
+	  Console_MoveCursor(CURSOR_RIGHT);
+	}
+      return CONSOLE_SUCCEEDED;
+    }
+  else
+    {
+      return CONSOLE_ARG_ERR;
+    }
+}
+
+/*
+  The following functions are used to output the string to the current line.
+*/
+
+int Console_Output(const char *str)
+{
+  console_changed=1;
+  int return_val, old_len, i;
+
+  if (!Line[Current_Line].readonly)
+    {
+      old_len = Line[Current_Line].disp_len;
+
+      return_val = Console_InsStr(Edit_Line, str, Current_Col);
+      if (return_val != CONSOLE_SUCCEEDED) return return_val;
+      if ((Line[Current_Line].disp_len = Console_GetDispLen(Edit_Line)) == CONSOLE_ARG_ERR) return CONSOLE_ARG_ERR;
+      Line[Current_Line].type = LINE_TYPE_OUTPUT;
+
+      for (i = 0; i < Line[Current_Line].disp_len - old_len; i++)
+	{
+	  Console_MoveCursor(CURSOR_RIGHT);
+	}
+      return CONSOLE_SUCCEEDED;
+    }
+  else
+    {
+      return CONSOLE_ARG_ERR;
+    }
+}
+
+void dConsolePut(const char * S){
+  if (!dconsole_mode)
+    return;
+  int l=strlen(S);
+  char s[l+1];
+  strcpy(s,S);
+  for (int i=0;i<l-1;++i){
+    if (s[i]=='\n' ||
+	s[i]==10)
+      s[i]=' ';
+  }
+  Console_Output((const char *)s);
+  if (l && S[l-1]=='\n')
+    Console_NewLine(LINE_TYPE_OUTPUT, 1);
+}
+
+void dPuts(const char * s){
+  dConsolePut(s);
+}
+
+#define PUTCHAR_LEN 35
+static char putchar_buf[PUTCHAR_LEN+2];
+static int putchar_pos=0;
+void dConsolePutChar(const char ch){
+  if (!dconsole_mode)
+    return;
+  if (putchar_pos==PUTCHAR_LEN)
+    dConsolePutChar('\n');
+  if (ch=='\n'){
+    putchar_buf[putchar_pos]='\n';
+    putchar_buf[putchar_pos+1]=0;
+    putchar_pos=0;
+    dConsolePut(putchar_buf);
+  }
+  else {
+    putchar_buf[putchar_pos]=ch;
+    ++putchar_pos;
+  }
+}
+
+/*
+  Clear the current output line
+*/
+
+void Console_Clear_EditLine()
+{
+  if(!Line[Current_Line].readonly) {
+    Edit_Line[0] = '\0';
+    Line[Current_Line].start_col = 0;
+    Line[Current_Line].disp_len = 0;
+    Cursor.x = 0;
+  }
+}
+
+/*
+
+  The following functions are used to create a new line.
+  Pre_line_type type parameter is used to specify the line, pre_line_readonly parameter is used to specify the line is read-only.
+  New_line_type parameter is used to specify the type of the next line, new_line_readonly parameter is used to specify the next line is read-only.
+*/
+
+int Console_NewLine(int pre_line_type, int pre_line_readonly)
+{
+  console_changed=1;
+  int i;
+
+  if (strlen((const char *)Edit_Line)||Line[Current_Line].type==LINE_TYPE_OUTPUT)
+    {
+      //Èç¹ûÒÑ¾­ÊÇËùÄÜ´æ´¢µÄ×îºóÒ»ÐÐ£¬ÔòÉ¾³ýµÚÒ»ÐÐ¡£
+      //If this is the last line we can store, delete the first line.
+      if (Last_Line == _LINE_MAX - 1)
+	{
+	  for (i = 0; i < Last_Line; i++)
+	    {
+	      Line[i].disp_len = Line[i + 1].disp_len;
+	      Line[i].readonly = Line[i + 1].readonly;
+	      Line[i].start_col = Line[i + 1].start_col;
+	      Line[i].str = Line[i + 1].str;
+	      Line[i].type = Line[i + 1].type;
+	    }
+	  Last_Line--;
+
+	  if (Start_Line > 0) Start_Line--;
+	}
+
+      if (Line[Last_Line].type == LINE_TYPE_OUTPUT && strlen((const char *)Edit_Line) == 0) Console_Output((const char *)"Done");
+
+      //Edit_Line copy the contents to the last line.
+
+      if ((Line[Last_Line].str = (char *)console_malloc(strlen((const char *)Edit_Line) + 1)) == NULL) return CONSOLE_MEM_ERR;
+      strcpy((char *)Line[Last_Line].str, (const char *)Edit_Line);
+
+      if ((Line[Last_Line].disp_len = Console_GetDispLen(Line[Last_Line].str)) == CONSOLE_ARG_ERR) return CONSOLE_ARG_ERR;
+      Line[Last_Line].type = pre_line_type;
+      Line[Last_Line].readonly = pre_line_readonly;
+      Line[Last_Line].start_col = 0;
+
+      Edit_Line[0] = '\0';
+
+      Last_Line++;
+
+      Cursor.x = 0;
+
+      if ((Last_Line - Start_Line) == LINE_DISP_MAX)
+	{
+	  Start_Line++;
+	}
+      else
+	{
+	  Cursor.y++;
+	}
+
+      Line[Last_Line].str = Edit_Line;
+      Line[Last_Line].readonly = 0;
+      Line[Last_Line].type = LINE_TYPE_INPUT;
+      Line[Last_Line].start_col = 0;
+      Line[Last_Line].disp_len = 0;
+
+      return CONSOLE_NEW_LINE_SET;
+    }
+  else
+    {
+      return CONSOLE_NO_EVENT;
+    }
+}
+
+void Console_Insert_Line(){
+  if (Last_Line>=_LINE_MAX-1)
+    return;
+  for (int i=Last_Line;i>=Current_Line;--i){
+    Line[i+1]=Line[i];
+  }
+  ++Last_Line;
+  int i=Current_Line;
+  console_line & l=Line[i];
+  l.str=(char *)console_malloc(2);
+  strcpy((char *)l.str,"0");
+  l.type=Line[i+1].type==LINE_TYPE_INPUT?LINE_TYPE_OUTPUT:LINE_TYPE_INPUT;
+  l.start_col=0;
+  l.readonly=1;
+  l.disp_len=Console_GetDispLen(l.str);
+}
+
+/*
+  The following function is used to delete a character before the cursor.
+*/
+
+int Console_Backspace()
+{
+  console_changed=1;
+  if (Last_Line>0 && Current_Line<Last_Line){
+    int i=Current_Line;
+    if (Edit_Line==Line[i].str)
+      Edit_Line=Line[i+1].str;
+    if (Line[i].str){
+      copy_clipboard((const char *)Line[i].str,true);
+      console_free(Line[i].str);
+    }
+    for (;i<Last_Line;++i){
+      Line[i]=Line[i+1];
+    }
+    Line[i].readonly = 0;
+    Line[i].type = LINE_TYPE_INPUT;
+    Line[i].start_col = 0;
+    Line[i].disp_len = 0;
+    Line[i].str=0;
+    --Last_Line;
+    if (Start_Line>0)
+      --Start_Line;
+    else {
+      if (Cursor.y>0)
+	--Cursor.y;
+    }
+#if 1
+    if (Last_Line==0 && Current_Line==0){ // workaround
+      char buf[strlen((const char*)Edit_Line)+1];
+      strcpy(buf,(const char*)Edit_Line);
+      Console_Init();
+      Console_Clear_EditLine();
+      if (buf[0])
+	Console_Input((const char *)buf);
+      //std::string status(giac::print_INT_(Last_Line)+" "+(giac::print_INT_(Current_Line)+" ")+giac::print_INT_(Line[Current_Line].str)+" "+(const char*)Line[Current_Line].str);
+      //DefineStatusMessage(status.c_str(),1,0,0);
+      //DisplayStatusArea();
+    }
+#endif
+    Console_Disp();
+    return CONSOLE_SUCCEEDED;
+  }
+  int return_val;
+  return_val = Console_DelStr(Edit_Line, Current_Col, 1);
+  if (return_val != CONSOLE_SUCCEEDED) return return_val;
+  Line[Current_Line].disp_len = Console_GetDispLen(Edit_Line);
+  return Console_MoveCursor(CURSOR_LEFT);
+}
+
+/*
+  The following functions are used to deal with the key.
+*/
+
+void translate_fkey(int & input_key){
+  if (input_key==KEY_CTRL_MIXEDFRAC) input_key=KEY_CTRL_F10;
+  if (input_key==KEY_CTRL_FRACCNVRT) input_key=KEY_CTRL_F7;
+  if (input_key==KEY_CHAR_LIST) input_key=KEY_CTRL_F9;
+  if (input_key==KEY_CHAR_MAT) input_key=KEY_CTRL_F8;
+  if (input_key==KEY_CTRL_PRGM) input_key=KEY_CTRL_F12;
+  if (input_key==KEY_CTRL_FD) input_key=KEY_CTRL_F11;
+  if (input_key==KEY_CHAR_ANGLE) input_key=KEY_CTRL_F13;
+  if (input_key==KEY_CHAR_FRAC) input_key=KEY_CTRL_F14;
+}
+
+void chk_clearscreen(){
+  drawRectangle(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24, COLOR_WHITE);
+  if (confirm(lang?"Effacer l'historique?":"Clear history?",lang?"F1: annuler,   F6: effacer":"F1: cancel,   F6: erase",true)==KEY_CTRL_F6){
+    Console_Init();
+    Console_Clear_EditLine();
+  }    
+  Console_Disp();
+}
+
+
+/*
+  int handle_f5(){
+  int keyflag = GetSetupSetting( (unsigned int)0x14);
+  if (keyflag == 0x04 || keyflag == 0x08 || keyflag == 0x84 || keyflag == 0x88) {
+  // ^only applies if some sort of alpha (not locked) is already on
+  if (keyflag == 0x08 || keyflag == 0x88) { //if lowercase
+  SetSetupSetting( (unsigned int)0x14, keyflag-0x04);
+  DisplayStatusArea();
+  return 1; //do not process the key, because otherwise we will leave alpha status
+  } else {
+  SetSetupSetting( (unsigned int)0x14, keyflag+0x04);
+  DisplayStatusArea();
+  return 1; //do not process the key, because otherwise we will leave alpha status
+  }
+  }
+  if (keyflag==0) {
+  SetSetupSetting( (unsigned int)0x14, 0x88);	
+  DisplayStatusArea();
+  }
+  return 0;
+  }
+*/
+
+int Console_Eval(const char * buf,GIAC_CONTEXT){
+  int start=Current_Line;
+  console_free(Line[start].str);
+  Line[start].str=(char *)console_malloc(strlen(buf)+1);
+  strcpy((char *)Line[start].str,buf);
+  run_session(start,contextptr);
+  int move_line = Last_Line - start;
+  for (int i = 0; i < move_line; i++)
+    Console_MoveCursor(CURSOR_UP);
+  return CONSOLE_SUCCEEDED;
+}
+
+
+void save(const char * fname){
+  clear_abort();
+#if 1 // FIXME
+  return;
+#else
+  string filename(remove_path(remove_extension(fname)));
+  save_console_state_smem(filename+".xw").c_str()); // call before save_khicas_symbols_smem(), because this calls create_data_folder if necessary!
+  // save_khicas_symbols_smem(("\\\\fls0\\"+filename+".xw").c_str());
+  if (edptr)
+    check_leave(edptr);
+#endif
+}
+
+int restore_session(const char * fname){
+#if 1
+  return 0;
+#else
+  // cout << "0" << fname << endl; Console_Disp(); GetKey(&key);
+  string filename(remove_path(remove_extension(fname)));
+  if (!load_console_state_smem(filename+string(".xw")).c_str())){
+    int x=0,y=120;
+    PrintMini(&x,&y,"KhiCAS 1.5 (c) 2019 B. Parisse et al",0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    x=0; y=138;
+    PrintMini(&x,&y,"  License GPL 2",0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    x=0; y=156;
+    PrintMini(&x,&y,"  Do not use if CAS is forbidden",0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    if (confirm("Syntax?","F1: Xcas, F6: Python")==KEY_CTRL_F6)
+      python_compat(true,contextptr);
+    Bdisp_AllClr_VRAM();  
+    //menu_about();
+    return 0;
+  }
+  return 1;
+#endif
+}
+
+string extract_name(const char * s){
+  int l=strlen(s),i,j;
+  for (i=l-1;i>=0;--i){
+    if (s[i]=='.')
+      break;
+  }
+  if (i<=0)
+    return "f";
+  for (j=i-1;j>=0;--j){
+    if (s[j]=='\\')
+      break;
+  }
+  if (j<0)
+    return "f";
+  return string(s+j+1).substr(0,i-j-1);
+}
+
+void erase_script(){
+  char filename[MAX_FILENAME_SIZE+1];
+  int res=giac_filebrowser(filename, "*.py", "Scripts");
+  if (res && do_confirm(lang?"Vraiment effacer":"Really erase?")){
+    // FIXME
+  }
+}
+
+int run_script(const char* filename,GIAC_CONTEXT) {
+#if 1 // FIXME
+  return 1;
+#else
+  // returns 1 if script was run, 0 otherwise
+  unsigned short pFile[MAX_FILENAME_SIZE+1];
+  Bfile_StrToName_ncpy(pFile, (const unsigned char *)filename, strlen(filename)+1); 
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  if(hFile < 0) 
+    return 0;
+  // Check for file existence
+  if(hFile >= 0) // Check if it opened
+  {
+    // Returned no error, file exists, open it
+    int size = Bfile_GetFileSize_OS(hFile);
+    // File exists and has size 'size'
+    // Read file into a buffer
+    if ((unsigned int)size > MAX_TEXTVIEWER_FILESIZE) {
+      Bfile_CloseFile_OS(hFile);
+      puts("Stop: script too big");
+      return 0; //file too big, return
+    }
+    unsigned char* asrc = (unsigned char*)alloca(size*sizeof(unsigned char)+5); // 5 more bytes to make sure it fits...
+    memset(asrc, 0, size+5); //alloca does not clear the allocated space. Make sure the string is null-terminated this way.
+    int rsize = Bfile_ReadFile_OS(hFile, asrc, size, 0);
+    Bfile_CloseFile_OS(hFile); //we got file contents, close it
+    asrc[rsize]='\0';
+    execution_in_progress = 1;
+    run((char*)asrc);
+    execution_in_progress = 0;
+    if (asrc[0]=='#' || (asrc[0]=='d' && asrc[1]=='e' && asrc[2]=='f' && asrc[3]==' '))
+      return 2;
+    if ( (asrc[0]=='/' && asrc[1]=='/') ||
+	 (rsize>8 && asrc[0]=='f' && (asrc[1]=='o' || asrc[1]=='u') && asrc[2]=='n' && asrc[3]=='c' && asrc[4]=='t' && asrc[5]=='i' && asrc[6]=='o' && asrc[7]=='n' && asrc[8]==' ')
+	 )
+      return 3;
+    return 1;
+  }
+  return 0;
+#endif
+}
+
+void edit_script(char * fname,GIAC_CONTEXT){
+  char fname_[MAX_FILENAME_SIZE+1];
+  char * filename=0;
+  int res=1;
+  if (fname)
+    filename=fname;
+  else {
+    res=giac_filebrowser(fname_, "*.py", "Scripts");
+    filename=fname_;
+  }
+  if(res) {
+    string s;
+    load_script(filename,s);
+    if (s.empty()){
+      s=python_compat(contextptr)?(lang?"Prog. Python, sinon taper":"Python prog., for Xcas"):(lang?"Prog. Xcas, sinon taper":"Xcas prog., for Python");
+      s += " AC F6 12";
+      int k=confirm(s.c_str(),"F1: Tortue, F6: Prog",true);
+      if (k==-1)
+	return;
+      if (k==KEY_CTRL_F1)
+	s="\nefface;\n ";
+      else
+	s=python_compat(contextptr)?"def "+extract_name(filename)+"(x):\n  \n  return x":"function "+extract_name(filename)+"(x)\nlocal j;\n  \n  return x;\nffunction";
+    }
+    // split s at newlines
+    if (edptr==0)
+      edptr=new textArea;
+    if (!edptr) return;
+    edptr->elements.clear();
+    edptr->clipline=-1;
+    edptr->filename=filename;
+    edptr->editable=true;
+    edptr->changed=false;
+    edptr->python=python_compat(contextptr);
+    edptr->elements.clear();
+    add(edptr,s);
+    s.clear();
+    edptr->line=0;
+    //edptr->line=edptr->elements.size()-1;
+    edptr->pos=0;
+    int res=doTextArea(edptr,contextptr);
+    if (res==-1)
+      python_compat(edptr->python,contextptr);
+    dConsolePutChar('\x1e');
+  }
+}
+
+void do_restart(GIAC_CONTEXT){
+  giac::_restart(gen(vecteur(0),_SEQ__VECT),contextptr);
+}
+
+void chk_restart(GIAC_CONTEXT){
+  drawRectangle(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24, COLOR_WHITE);
+  if (confirm(lang?"Conserver les variables?":"Keep variables?",lang?"F1: conserver,   F6: effacer":"F1: keep,   F6: erase")==KEY_CTRL_F6)
+    do_restart(contextptr);
+}
+
+int Console_GetKey(GIAC_CONTEXT){
+  int key;
+  unsigned int i, move_line, move_col;
+  char tmp_str[2];
+  char *tmp;
+  for (;;){
+    int keyflag = GetSetupSetting(0x14);
+    bool alph=keyflag==4||keyflag==0x84||keyflag==8||keyflag==0x88;
+    GetKey(&key);
+    if (key==KEY_PRGM_ACON)
+      Console_Disp();
+    if (key==KEY_CTRL_MENU)
+      return key;
+    translate_fkey(key);
+    if (key==KEY_CTRL_F5){
+      handle_f5();
+      Console_Disp();
+      continue;
+    }
+    if (key==KEY_CTRL_PASTE)
+      return Console_Input((const char*) paste_clipboard());
+    if ( (key >= '0' && key <= '9' ) || (key >= 'A' && key <= 'Z') || (key >= 'a' && key <= 'z')){
+      tmp_str[0] = key;
+      tmp_str[1] = '\0';
+      return Console_Input(tmp_str);
+    }
+    if ( (key==KEY_CHAR_PLUS || key==KEY_CHAR_MINUS || key==KEY_CHAR_MULT || key==KEY_CHAR_DIV) && Current_Line<Last_Line-1){
+      console_line * nxt=&Line[Current_Line];
+      if (strncmp((const char *)nxt->str,"parameter([",11)==0)
+	Console_MoveCursor(CURSOR_UP);
+      nxt=&Line[Current_Line+1];
+      if (strncmp((const char *)nxt->str,"parameter([",11)==0){
+	giac::gen g((const char *)nxt->str,contextptr);
+	if (g.is_symb_of_sommet(giac::at_parameter)){
+	  g=g._SYMBptr->feuille;
+	  if (g.type==giac::_VECT && g._VECTptr->size()>=5){
+	    giac::vecteur & v=*g._VECTptr;
+	    if (v[0].type==giac::_IDNT && v[1].type==giac::_DOUBLE_ && v[2].type==giac::_DOUBLE_ && v[3].type==giac::_DOUBLE_ && v[4].type==giac::_DOUBLE_){
+	      std::string s("assume(");
+	      s += v[0]._IDNTptr->id_name;
+	      s += "=[";
+	      int val=1;
+	      if (key==KEY_CHAR_MINUS) val=-1;
+	      if (key==KEY_CHAR_MULT) val=5;
+	      if (key==KEY_CHAR_DIV) val=-5;
+	      s += giac::print_DOUBLE_(v[3]._DOUBLE_val + val*v[4]._DOUBLE_val,3);
+	      s += ',';
+	      s += giac::print_DOUBLE_(v[1]._DOUBLE_val,3);
+	      s += ',';
+	      s += giac::print_DOUBLE_(v[2]._DOUBLE_val,3);
+	      s += ',';
+	      s += giac::print_DOUBLE_(v[4]._DOUBLE_val,3);
+	      s += "])";
+	      return Console_Eval(s.c_str(),contextptr);
+	    }
+	  }
+	}
+      }
+    }
+    if (key == KEY_CTRL_F3 || ( (key==KEY_CTRL_RIGHT || key==KEY_CTRL_LEFT) && Current_Line<Last_Line) ){
+      int l=Current_Line;
+      bool graph=strcmp((const char *)Line[l].str,"Graphic object")==0;
+      if (graph && l>0) --l;
+      char buf[giacmax(512,strlen((const char *)Line[l].str+1))];
+      strcpy(buf,(const char *)Line[l].str);
+      if ( (alph || key==KEY_CTRL_RIGHT) ?textedit(buf,512,contextptr):eqws(buf,graph,contextptr)){
+	if (Current_Line==Last_Line){
+	  Console_Clear_EditLine();
+	  return Console_Input((const char *)buf);
+	}
+	else {
+#if 1
+	  if (Line[l].type==LINE_TYPE_INPUT && l<Last_Line-1 && Line[l+1].type==LINE_TYPE_OUTPUT)
+	    return Console_Eval(buf,contextptr);
+	  else {
+	    console_free(Line[l].str);
+	    Line[l].str=(char*)console_malloc(strlen(buf)+1);
+	    Line[l].disp_len = Console_GetDispLen(Line[l].str);
+	    strcpy((char *)Line[l].str,buf);
+	  }
+#else
+	  int x=editline_cursor;
+ 	  move_line = Last_Line - Current_Line;
+	  for (i = 0; i <=move_line; i++) Console_MoveCursor(CURSOR_DOWN);
+	  Cursor.x=x;
+	  return Console_Input((const char *)buf);
+#endif
+	}	  
+      }
+      Console_Disp();
+      continue;
+    }
+    if (key==KEY_CTRL_F4){
+      char buf[512];
+      if (!showCatalog(buf,0,0))
+	buf[0]=0;
+      return Console_Input((const char*)buf);
+    }
+    if (key==KEY_CTRL_F6){
+#if 1
+      Menu smallmenu;
+      smallmenu.numitems=15;
+      MenuItem smallmenuitems[smallmenu.numitems];
+      
+      smallmenu.items=smallmenuitems;
+      smallmenu.height=8;
+      smallmenu.scrollbar=1;
+      smallmenu.scrollout=1;
+      //smallmenu.title = "KhiCAS";
+      smallmenuitems[0].text = (char *) (lang?"Enregistrer session":"Save session ");
+      smallmenuitems[1].text = (char *) (lang?"Enregistrer sous":"Save session as");
+      smallmenuitems[2].text = (char*) (lang?"Charger session":"Load session");
+      smallmenuitems[3].text = (char*)(lang?"Nouvelle session":"New session");
+      smallmenuitems[4].text = (char*)(lang?"Executer session":"Run session");
+      smallmenuitems[5].text = (char*)(lang?"Editeur script":"Script editor");
+      smallmenuitems[6].text = (char*)(lang?"Ouvrir script":"Open script");
+      smallmenuitems[7].text = (char*)(lang?"Executer script":"Run script");
+      smallmenuitems[8].text = (char*)(lang?"Effacer historique":"Clear history");
+      smallmenuitems[9].text = (char*)(lang?"Effacer script":"Clear script");
+      smallmenuitems[10].text = (char*)(lang?"Editer matrice":"Matrix editor");
+      smallmenuitems[11].text = (char*)"Parameter";
+      smallmenuitems[12].text = (char*)"Config shift-SETUP";
+      smallmenuitems[13].text = (char *) (lang?"Raccourcis":"Shortcuts");
+      smallmenuitems[14].text = (char*) (lang?"A propos":"About");
+      // smallmenuitems[2].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
+      while(1) {
+        int sres = doMenu(&smallmenu);
+        if(sres == MENU_RETURN_SELECTION) {
+	  const char * ptr=0;
+	  if (smallmenu.selection==1){
+	    if (strcmp(session_filename,"session")==0)
+	      smallmenu.selection=2;
+	    else {
+	      save(session_filename);
+	      break;
+	    }
+	  }
+	  if (smallmenu.selection==2){
+	    char buf[270];
+	    if (get_filename(buf,".xw")){
+	      save(buf);
+	      string fname(remove_path(giac::remove_extension(buf)));
+	      strcpy(session_filename,fname.c_str());
+	      if (edptr)
+		edptr->filename="\\\\fls0\\"+fname+".py";
+	    }
+	    break;
+	  }
+	  if (smallmenu.selection==3){
+	    char filename[MAX_FILENAME_SIZE+1];
+	    if (giac_filebrowser(filename, "*.xw", "Sessions")){
+	      if (console_changed==0 || strcmp(session_filename,"session")==0 || confirm(lang?"Session courante perdue?":"Current session will be lost",lang?"F1: annul, F6: ok":"F1: cancel, F6: ok")==KEY_CTRL_F6){
+		giac::_restart(giac::gen(giac::vecteur(0),giac::_SEQ__VECT),contextptr);
+		restore_session(filename);
+		clip_pasted=true;
+		strcpy(session_filename,remove_path(giac::remove_extension(filename)).c_str());
+		// reload_edptr(session_filename,edptr);
+	      }     
+	    }
+	    break;
+	  }
+	  if (0 && smallmenu.selection==3) {
+	    // FIXME: make a menu catalog?
+	    char buf[512];
+	    if (doCatalogMenu(buf,(char*)"CATALOG",0,contextptr))
+	      return Console_Input((const char *)buf);
+	    break;
+          }
+          if (smallmenu.selection==4) {
+	    char filename[MAX_FILENAME_SIZE+1];
+	    drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX, COLOR_WHITE);
+	    if (get_filename(filename,".xw")){
+	      if (console_changed==0 || strcmp(session_filename,"session")==0 || confirm(lang?"Session courante perdue?":"Current session will be lost",lang?"F1: annul, F6: ok":"F1: cancel, F6: ok")==KEY_CTRL_F6){
+		clip_pasted=true;
+		Console_Init();
+		Console_Clear_EditLine();
+		giac::_restart(giac::gen(giac::vecteur(0),giac::_SEQ__VECT),contextptr);
+		std::string s(remove_path(giac::remove_extension(filename)));
+		strcpy(session_filename,s.c_str());
+		reload_edptr(session_filename,edptr,contextptr);
+	      }
+	    }  
+            break;
+          }
+	  if (smallmenu.selection==5) {
+	    run_session(0,contextptr);
+            break;
+          }
+          if (smallmenu.selection==6) {
+	    if (!edptr || merge_area(edptr->elements).size()<2)
+	      edit_script((char *)(giac::remove_extension(session_filename)+".py").c_str(),contextptr);
+	    else
+	      doTextArea(edptr,contextptr);
+	    break;
+	  }
+	  if (smallmenu.selection==7) {
+	    char filename[MAX_FILENAME_SIZE+1];
+	    drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX-8, COLOR_WHITE);
+	    if (giac_filebrowser(filename, "*.py", "Scripts"))
+	      edit_script(filename,contextptr);
+            break;
+          }
+	  if (smallmenu.selection==8) {
+	    char filename[MAX_FILENAME_SIZE+1];
+	    drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX-8, COLOR_WHITE);
+	    if (giac_filebrowser(filename, "*.py", "Scripts"))
+	      run_script(filename,contextptr);
+	    break;
+	  }
+	  if(smallmenu.selection == 9) {
+	    chk_restart(contextptr);
+	    Console_Init();
+	    Console_Clear_EditLine();
+	    break;
+          }
+	  if (smallmenu.selection==10){
+	    erase_script();
+	    break;
+	  }
+          if (smallmenu.selection==11){
+	    drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX-8, COLOR_WHITE);
+	    if (ptr=input_matrix(false,contextptr)) {
+	      return Console_Input((const char *)ptr);
+	    }
+	    break;
+	  }
+	  if (smallmenu.selection == 12){
+	    Menu paramenu;
+	    paramenu.numitems=6;
+	    MenuItem paramenuitems[paramenu.numitems];
+	    paramenu.items=paramenuitems;
+	    paramenu.height=8;
+	    paramenu.title = (char *)"Parameter";
+	    char menu_xcur[32],menu_xmin[32],menu_xmax[32],menu_xstep[32],menu_name[16]="name a";
+	    static char curname='a';
+	    menu_name[5]=curname;
+	    ++curname;
+	    double pcur=0,pmin=-5,pmax=5,pstep=0.1;
+	    std::string s;
+	    bool doit;
+	    for (;;){
+	      s="cur "+giac::print_DOUBLE_(pcur,6);
+	      strcpy(menu_xcur,s.c_str());
+	      s="min "+giac::print_DOUBLE_(pmin,6);
+	      strcpy(menu_xmin,s.c_str());
+	      s="max "+giac::print_DOUBLE_(pmax,6);
+	      strcpy(menu_xmax,s.c_str());
+	      s="step "+giac::print_DOUBLE_(pstep,6);
+	      strcpy(menu_xstep,s.c_str());
+	      paramenuitems[0].text = (char *) "OK";
+	      paramenuitems[1].text = (char *) menu_name;
+	      paramenuitems[2].text = (char *) menu_xcur;
+	      paramenuitems[3].text = (char *) menu_xmin;
+	      paramenuitems[4].text = (char *) menu_xmax;
+	      paramenuitems[5].text = (char *) menu_xstep;
+	      int sres = doMenu(&paramenu);
+	      doit = sres==MENU_RETURN_SELECTION;
+	      if (doit) {
+		std::string s1; double d;
+		if (paramenu.selection==2){
+		  handle_f5();
+		  if (inputline(menu_name,lang?"Nouvelle valeur?":"New value?",s1,false)==KEY_CTRL_EXE && s1.size()>0 && isalpha(s1[0])){
+		    if (s1.size()>10)
+		      s1=s1.substr(0,10);
+		    strcpy(menu_name,("name "+s1).c_str());
+		  }
+		  continue;
+		}	
+		if (paramenu.selection==3){
+		  inputdouble(menu_xcur,pcur,contextptr);
+		  continue;
+		}
+		if (paramenu.selection==4){
+		  inputdouble(menu_xmin,pmin,contextptr);
+		  continue;
+		}
+		if (paramenu.selection==5){
+		  inputdouble(menu_xmax,pmax,contextptr);
+		  continue;
+		}
+		if (paramenu.selection==6){
+		  inputdouble(menu_xstep,pstep,contextptr);
+		  pstep=fabs(pstep);
+		  continue;
+		}
+		// if (paramenu.selection==6) break;
+	      } // end menu
+	      break;
+	    } // end for (;;)
+	    if (doit && pmin<pmax && pstep>0){
+	      s="assume(";
+	      s += (menu_name+5);
+	      s += "=[";
+	      s += (menu_xcur+4);
+	      s += ',';
+	      s += (menu_xmin+4);
+	      s += ',';
+	      s += (menu_xmax+4);
+	      s += ',';
+	      s += (menu_xstep+5);
+	      s += "])";
+	      return Console_Input((const char *)s.c_str());
+	    }
+	    continue;
+	  }
+	  if (smallmenu.selection == 13){
+	    menu_setup(contextptr);
+	    continue;
+	  }
+	  if(smallmenu.selection >= 14) {
+	    textArea text;
+	    text.editable=false;
+	    text.clipline=-1;
+	    text.title = smallmenuitems[smallmenu.selection-1].text;
+	    add(&text,smallmenu.selection==14?shortcuts_string:apropos_string);
+	    doTextArea(&text,contextptr);
+	    continue;
+          } 
+        }
+        break;
+      } // end while(1)
+      Console_Disp();
+      return CONSOLE_SUCCEEDED;
+#else
+      char filename[MAX_FILENAME_SIZE+1];
+      //drawRectangle(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24, COLOR_WHITE);
+      if (get_filename(filename))
+	edit_script(filename,contextptr);
+      //edit_script(0);
+      return CONSOLE_SUCCEEDED;
+#endif
+    }
+    if (keyflag==1){
+      if (key==KEY_CTRL_F1)
+	return Console_Input((const char *)"simplify(");
+      if (key==KEY_CTRL_F2)
+	return Console_Input((const char *)"limit(");
+      if (key==KEY_CTRL_F6)
+	return Console_Input((const char *)" % ");
+    }
+    if ( (key >= KEY_CTRL_F1 && key <= KEY_CTRL_F6) ||
+	 (key >= KEY_CTRL_F7 && key <= KEY_CTRL_F14) 
+	 ){
+      return Console_FMenu(key,contextptr);
+    }
+
+
+    if (key == KEY_CTRL_UP)	return Console_MoveCursor(alph?CURSOR_ALPHA_UP:CURSOR_UP);
+    if (key == KEY_CTRL_DOWN)	return Console_MoveCursor(alph?CURSOR_ALPHA_DOWN:CURSOR_DOWN);
+    //if (key == KEY_CTRL_PAGEUP)  return Console_MoveCursor(CURSOR_ALPHA_UP);
+    //if (key == KEY_CTRL_PAGEDOWN) return Console_MoveCursor(CURSOR_ALPHA_DOWN);
+    if (key == KEY_CTRL_LEFT)	return Console_MoveCursor(CURSOR_LEFT);
+    if (key == KEY_CTRL_RIGHT)	return Console_MoveCursor(CURSOR_RIGHT);
+    if (key == KEY_SHIFT_LEFT)	return Console_MoveCursor(CURSOR_SHIFT_LEFT);
+    if (key == KEY_SHIFT_RIGHT)	return Console_MoveCursor(CURSOR_SHIFT_RIGHT);
+
+    if (key == KEY_CTRL_EXIT){
+      if (Last_Line==Current_Line){
+	if (!edptr)
+	  edit_script((char *)("\\\\fls0\\"+giac::remove_extension(session_filename)+".py").c_str(),contextptr);
+	else {
+	  edptr->y=0;
+	  doTextArea(edptr,contextptr);
+	}
+	Console_Disp();
+      }
+      else {
+	move_line = Last_Line - Current_Line;
+	for (i = 0; i <= move_line; i++) Console_MoveCursor(CURSOR_DOWN);
+      }
+      return CONSOLE_SUCCEEDED;
+    }
+    if (key == KEY_CTRL_AC)
+      {
+	if (Line[Current_Line].readonly){
+	  move_line = Last_Line - Current_Line;
+	  for (i = 0; i <= move_line; i++) Console_MoveCursor(CURSOR_DOWN);
+	  return CONSOLE_SUCCEEDED;
+	}
+	if (Edit_Line[0]=='\0'){
+	  //return Console_Input((const char *)"restart");
+	  chk_clearscreen();
+	  continue;
+	}
+	Edit_Line[0] = '\0';
+	Line[Current_Line].start_col = 0;
+	Line[Current_Line].type = LINE_TYPE_INPUT;
+	Line[Current_Line].disp_len = 0;
+	Cursor.x = 0;
+	return CONSOLE_SUCCEEDED;
+      }
+
+    if (key == KEY_CTRL_INS) {
+      if (Current_Line<Last_Line){
+	Console_Insert_Line();
+	Console_Insert_Line();
+      }
+      else
+	Console_Input((const char*)":=");
+      Console_Disp();
+      continue;
+    }
+
+    if (key == KEY_CTRL_SETUP) {
+      menu_setup(contextptr);
+      Console_Disp();
+      continue;
+    }
+
+    if (key == KEY_CTRL_EXE || key==KEY_CTRL_OK){
+      if (Current_Line == Last_Line)
+	{
+	  return Console_NewLine(LINE_TYPE_INPUT, 1);
+	}
+    }
+    if (key == KEY_CTRL_DEL)
+      return Console_Backspace();
+
+    if (key == KEY_CTRL_CLIP){
+      copy_clipboard((const char *)Line[Current_Line].str,true);
+    }
+    if (key==KEY_CTRL_EXE){
+      tmp = Line[Current_Line].str;
+      
+#if 1
+      int x=editline_cursor;
+      move_line = Last_Line - Current_Line;
+      for (i = 0; i <= move_line; i++) Console_MoveCursor(CURSOR_DOWN);
+      Cursor.x=x;
+      if (Cursor.x>COL_DISP_MAX)
+	Line[Last_Line].start_col=Cursor.x-COL_DISP_MAX;
+#else
+      move_line = Last_Line - Current_Line;
+      for (i = 0; i <= move_line; i++) Console_MoveCursor(CURSOR_DOWN);
+      move_col = Line[Current_Line].disp_len - Current_Col;
+      for (i = 0; i <= move_col; i++) Console_MoveCursor(CURSOR_RIGHT);
+#endif
+      return Console_Input(tmp);
+    }
+    const char * ptr=keytostring(key,keyflag,0,contextptr);
+    if (ptr)
+      return Console_Input((const char *)ptr);
+    
+  }
+  return CONSOLE_NO_EVENT;
+}
+
+static char* original_cfg=0;
+
+int Console_FMenu(int key,GIAC_CONTEXT){
+  const char * s=console_menu(key,original_cfg,0),*ptr=0;
+  if (!s){
+    //cout << "console " << unsigned(s) << endl;
+    return CONSOLE_NO_EVENT;
+  }
+  if (strcmp("matrix(",s)==0 && (ptr=input_matrix(false,contextptr)) )
+    s=ptr;
+  if (strcmp("makelist(",s)==0 && (ptr=input_matrix(true,contextptr)) )
+    s=ptr;
+  return Console_Input((const char *)s);
+}
+
+const char * console_menu(int key,int active_app){
+  return console_menu(key,original_cfg,active_app);
+}
+
+const char * console_menu(int key,char* cfg_,int active_app){
+  char * cfg=cfg_;
+  if (key>=KEY_CTRL_F7 && key<=KEY_CTRL_F14)
+    key-=94;
+  int i, matched = 0;
+  const char * ret=0;
+  const int maxentry_size=64;
+  static char console_buf[maxentry_size];
+  char temp[maxentry_size],menu1[maxentry_size],menu2[maxentry_size],menu3[maxentry_size],menu4[maxentry_size],menu5[maxentry_size],menu6[maxentry_size],menu7[maxentry_size],menu8[maxentry_size];
+  char * tabmenu[8]={menu1,menu2,menu3,menu4,menu5,menu6,menu7,menu8};
+  struct FMenu entry = {0,tabmenu,0};
+  // char* cfg = (char *)memory_load((char *)"\\\\fls0\\FMENU.cfg");
+
+  while (*cfg) {
+    //Get each line
+    for(i=0; i<maxentry_size-1 && *cfg && *cfg!='\r' && *cfg!='\n'; i++, cfg++) {
+      temp[i] = *cfg;
+    }
+    temp[i]=0;
+    //If starting by 'F' followed by the right number, start filling the structure.
+    if (temp[0] == 'F' && temp[1]==(key-KEY_CTRL_F1)+'1'){
+      matched = 1;
+      continue;
+    }
+    if (temp[0] == 'F' && temp[1]!=(key-KEY_CTRL_F1)+'0'){
+      matched = 0;
+      continue;
+    }
+    //Fill the structure
+    if (matched && temp[0] && entry.count<8) {
+      strcpy(tabmenu[entry.count], temp);
+      entry.count++;
+    }
+    cfg++;
+  }
+  if(entry.count > 0) {
+    ret = Console_Draw_FMenu(key, &entry,cfg,active_app);
+    // cout << "console0 " << (unsigned) ret << endl;
+    if (!ret) return ret;
+    strcpy(console_buf,ret);
+    return console_buf;
+  }
+  return 0;
+}
+
+char *Console_Make_Entry(const char* str)
+{
+  char* entry = NULL;
+  entry = (char*)calloc((strlen((const char *)str)+1), sizeof(char*));
+  if(entry) memcpy(entry, (const char *)str, strlen((const char *)str)+1);
+
+  return entry;
+}
+
+void PrintMini(int x,int y,const char * s,int mode){
+  x *=3;
+  y *=3;
+  PrintMini(x,y,(char *)s,mode,COLOR_BLACK, COLOR_WHITE);
+}
+
+//Draws and runs the asked for menu.
+const char * Console_Draw_FMenu(int key, struct FMenu* menu,char * cfg,int active_app)
+{
+  int i, nb_entries = 0, selector = 0, position_number, position_x, ret, longest = 0;
+  int input_key;
+  char quick[] = "*: ";
+  int quick_len = 2;
+  char **entries;
+  DISPBOX box,box3;
+    
+  position_number = key - KEY_CTRL_F1;
+  if (position_number<0 || position_number>5)
+    position_number=4;
+    
+  entries  = menu->str;
+  nb_entries = menu->count;
+    
+  for(i=0; i<nb_entries; i++)
+    if(strlen(entries[i]) > longest) longest = strlen(entries[i]);
+
+  // screen resolution Graph90 384x(216-24), Graph35 128x64
+  // factor 3x3
+  position_x = 21*position_number;
+  if(position_x + longest*4 + quick_len*4 > 115) position_x = 115 - longest*4 - quick_len*4;
+    
+  box.left = position_x;
+  box.right = position_x + longest*4 + quick_len*4  + 6;
+  box.bottom = 63-7;
+  box.top = 63-7-nb_entries*7;
+  box3.left=3*box.left;
+  box3.right=3*box.right;
+  box3.bottom=3*box.bottom+24;
+  box3.top=3*box.top+24;
+  
+  drawRectangle(box3.left,box3.top,box3.right-box3.left,box3.bottom-box3.top,COLOR_WHITE);
+  drawLine(box3.left, box3.bottom, box3.left, box3.top,COLOR_BLACK);
+  drawLine(box3.right, box3.bottom, box3.right, box3.top,COLOR_BLACK);
+    
+  // Cursor_SetFlashOff();
+    
+  for (;;){
+    for(i=0; i<nb_entries; i++) {
+      quick[0] = '0'+(i+1);
+      PrintMini(3+position_x, box.bottom-7*(i+1), quick, 0);
+      PrintMini(3+position_x+quick_len*4, box.bottom-7*(i+1), entries[i], 0);
+    }
+    PrintMini(3+position_x+quick_len*4,box.bottom-7*(selector+1), entries[selector], 4);
+    GetKey(&input_key);
+    if (input_key == KEY_CTRL_EXIT || input_key==KEY_CTRL_AC) return 0;
+    if (input_key == KEY_CTRL_UP && selector < nb_entries-1) selector++;	
+    if (input_key == KEY_CTRL_DOWN && selector > 0) selector--;
+      
+    if (input_key == KEY_CTRL_EXE) return entries[selector];
+      
+    if (input_key >= KEY_CHAR_1 && input_key < KEY_CHAR_1 + nb_entries) return entries[input_key-KEY_CHAR_1];
+      
+    translate_fkey(input_key);
+      
+    if ( active_app==0 &&
+	 ((input_key >= KEY_CTRL_F1 && input_key <= KEY_CTRL_F6) ||
+	  (input_key >= KEY_CTRL_F7 && input_key <= KEY_CTRL_F12) )
+	 ){
+      Console_Disp();
+      key=input_key;
+      return console_menu(key,cfg,active_app);
+    }
+  } // end while input_key!=EXE/EXIT
+
+  return 0; // never reached
+}
+
+int Console_Init()
+{
+  console_changed=1;
+  int i;
+  if (!Line){
+    Line=new console_line[_LINE_MAX];
+    for (i = 0; i < _LINE_MAX; i++){
+      Line[i].str=0;
+    }
+  }
+  Start_Line = 0;
+  Last_Line = 0;
+
+  for (i = 0; i < _LINE_MAX; i++){
+    if (Line[i].str){
+      if (Line[i].str==Edit_Line)
+	Edit_Line=0;
+      console_free(Line[i].str);
+      Line[i].str=0;
+    }
+    Line[i].readonly = 0;
+    Line[i].type = LINE_TYPE_INPUT;
+    Line[i].start_col = 0;
+    Line[i].disp_len = 0;
+  }
+  if (Edit_Line)
+    console_free(Edit_Line);
+  if ((Edit_Line = (char *)console_malloc(EDIT_LINE_MAX + 1)) == NULL) return CONSOLE_MEM_ERR;
+  Edit_Line[0]=0;
+  Line[0].str = Edit_Line;
+
+  Cursor.x = 0;
+  Cursor.y = 0;
+
+  Case = LOWER_CASE;
+
+  /*for(i = 0; i < 6; i++) {
+    FMenu_entries[i].name = NULL;
+    FMenu_entries[i].count = 0;
+    }*/
+
+  Console_FMenu_Init();
+
+  return CONSOLE_SUCCEEDED;
+}
+
+const char conf_standard[] = "F1 algb\nsimplify(\nfactor(\npartfrac(\ntcollect(\ntexpand(\nsum(\noo\nproduct(\nF2 calc\n'\ndiff(\nintegrate(\nlimit(\nseries(\nsolve(\ndesolve(\nrsolve(\nF3  2d \nreserved\nF4 menu\nreserved\nF5 A<>a\nreserved\nF6 poly\nproot(\npcoeff(\nquo(\nrem(\ngcd(\negcd(\nresultant(\nF7 arit\n mod \nirem(\nifactor(\ngcd(\nisprime(\nnextprime(\npowmod(\niegcd(\nF8 lin\nmatrix(\ndet(\nmatpow(\nranm(\ncross(\ncurl(\negvl(\negv(\nF9 list\nmakelist(\nrange(\nseq(\nsize(\nappend(\nranv(\nsort(\napply(\nF: plot\nplot(\nplotseq(\nplotlist(\nplotparam(\nplotpolar(\nplotfield(\nhistogram(\nbarplot(\nF; real\nexact(\napprox(\nfloor(\nceil(\nround(\nsign(\nmax(\nmin(\nF< prog\n;\n:\n&\n#\n\\\nf(x):=\ndebug(\npython(\nF= cplx\nabs(\narg(\nre(\nim(\nconj(\ncsolve(\ncfactor(\ncpartfrac(\nF> misc\n<\n>\n_\n!\n % \nrand(\nbinomial(\nnormald(";
+
+// Loads the FMenus' data into memory, from a cfg file
+void Console_FMenu_Init()
+{
+  int i, number=0, key, handle;
+  char* tmp_realloc = NULL;
+  char temp[20] = {'\0'};
+  if (!original_cfg){
+    std::string cfg_s;
+    // Does the file exists ?
+    if (load_script((char*)"\\\\fls0\\FMENU.cfg",cfg_s)){
+      char * ptr=new char[cfg_s.size()+1];
+      strcpy(ptr,cfg_s.c_str());
+      original_cfg=(char *)ptr;
+    }
+    if(!original_cfg) {
+      save_script((const char *)"\\\\fls0\\FMENU.cfg",conf_standard);
+      original_cfg = (char *)conf_standard;
+    }
+  }
+
+  char* cfg=original_cfg;
+
+  while(*cfg) {
+    //Get each line
+    for(i=0; i<20, *cfg && *cfg!='\r' && *cfg!='\n'; i++, cfg++) {
+      temp[i] = *cfg;
+    }
+    temp[i]=0;
+    //If starting by 'F', adjust the number and eventually set the name of the menu
+    if(temp[0] == 'F' && temp[1]>='1' && temp[1]<='6') {
+      number = temp[1]-'0' - 1;
+      if(temp[3]) {
+	strcpy(FMenu_entries_name[number], (char*)temp+3);
+	//FMenu_entries[number].name[4] = '\0';
+      }
+    }
+
+    memset(temp, '\0', 20);
+    cfg++;
+  }
+  //free(original_cfg);
+}
+
+/*
+  The following functions are used to display all lines.
+  Note: After calling this function, the first clear the memory.
+*/
+
+#ifndef CURSOR
+int print_x=0,print_y=0,vfontsize=18,hfontsize=12;
+#endif
+
+void locate(int x,int y){
+#ifdef CURSOR
+  return locate_OS(x,y);
+#else
+  print_x=(x-1)*hfontsize;
+  print_y=(y-1)*vfontsize;
+#endif
+}
+
+void Cursor_SetPosition(int x,int y){
+  return locate(x+1,y+1);
+}
+
+void PrintRev(const char * s,int color=TEXT_COLOR_BLACK){
+#ifdef CURSOR
+  Print_OS((char *)s,TEXT_MODE_INVERT,0);
+#else
+  print(print_x,print_y,(const char *)s,color,true/* revert*/,false,false);
+#endif  
+}
+
+void Print(const char * s,int color=TEXT_COLOR_BLACK){
+#ifdef CURSOR
+  Print_OS((char *)s,TEXT_MODE_NORMAL,0);
+#else
+  print(print_x,print_y,(const char *)s,color,false,false,false);
+#endif
+}
+
+int Console_Disp()
+{
+  unsigned int* pBitmap;
+  int i, alpha_shift_status;
+  DISPBOX ficon;
+  int print_y = 0; //pixel y cursor
+  int print_y_locate;
+
+  Bdisp_AllClr_VRAM();
+
+  //GetFKeyIconPointer( 0x01BE, &ficon );
+  //DisplayFKeyIcon( i, ficon);
+
+  //Reading each "line" that will be printed
+  for (i = 0; (i < LINE_DISP_MAX) && (i + Start_Line <= Last_Line); i++){
+    console_line & curline=Line[i+Start_Line];
+    if (i == Cursor.y){
+      // cursor line
+      if (curline.type == LINE_TYPE_INPUT || curline.type == LINE_TYPE_OUTPUT && curline.disp_len >= COL_DISP_MAX){
+	locate(1, i + 1);
+	if (curline.readonly){
+#ifdef CURSOR
+	  Cursor_SetFlashOff();
+#endif
+	  PrintRev(curline.str + curline.start_col);
+	}
+	else 
+	  Print(curline.str+curline.start_col+(Cursor.x>COL_DISP_MAX-1?1:0));
+      }
+      else {
+	locate(COL_DISP_MAX - curline.disp_len + 1, i + 1);
+	if (curline.readonly){
+#ifdef CURSOR
+	  Cursor_SetFlashOff();
+#endif
+	  PrintRev(curline.str);
+	}
+	else 
+	  Print(curline.str);
+      }
+
+      if (curline.disp_len - curline.start_col > COL_DISP_MAX-1){
+#ifdef CURSOR
+	locate(COL_DISP_MAX, i + 1);
+#else
+	print_y=i*vfontsize;
+	print_x=LCD_WIDTH_PX-hfontsize;
+#endif
+	if (curline.readonly){
+	  if(curline.disp_len - curline.start_col != COL_DISP_MAX) {
+#ifdef CURSOR
+	    Cursor_SetFlashOff();
+#endif
+	    PrintRev((char *)"\xE6\x9B",COLOR_MAGENTA);
+	  }
+	}
+	else if (Cursor.x < COL_DISP_MAX-1){
+	  Print((char *)"\xE6\x9B",COLOR_MAGENTA);
+	}
+      }
+
+      if (curline.start_col > 0){
+	locate(1, i + 1);	
+	if (curline.readonly){
+#ifdef CURSOR
+	  Cursor_SetFlashOff();
+#endif		  
+	  PrintRev((char *)"\xE6\x9A",COLOR_MAGENTA);
+	}
+	else {
+	  Print((char *)"\xE6\x9A",COLOR_MAGENTA);
+	}
+      }
+
+      if (!curline.readonly){
+#ifdef CURSOR
+	switch(GetSetupSetting( (unsigned int)0x14)) {
+	case 0: 
+	  alpha_shift_status = 0;
+	  break;
+	case 1: //Shift enabled
+	  alpha_shift_status = 1;
+	  break;
+	case 4: case 0x84:	//Alpha enabled
+	  alpha_shift_status = 2;
+	  break;
+	case 8: case 0x88:
+	  alpha_shift_status = 4;
+	  break;
+	default: 
+	  alpha_shift_status = 0;
+	  break;
+	}
+	Cursor_SetPosition(Cursor.x, Cursor.y);
+	Cursor_SetFlashOn(alpha_shift_status);
+	//Cursor_SetFlashStyle(alpha_shift_status); //Potential 2.00 OS incompatibilty (cf Simon's doc)
+#else
+	//locate(Cursor.x+1,Cursor.y+1);
+	//DefineStatusMessage((giac::print_DOUBLE_(Cursor.y,6)+","+giac::print_DOUBLE_(print_y,6)).c_str(),1,0,0);
+	//DisplayStatusArea();
+	int fakestart=curline.start_col+(Cursor.x > COL_DISP_MAX-1?1:0);
+	string fakes=string((const char *)curline.str).substr(fakestart,Cursor.x);
+	int fakex=0,fakey=Cursor.y*vfontsize;
+	print(fakex,fakey,fakes.c_str(),TEXT_COLOR_BLACK,false,true/* fake*/,false);
+	drawRectangle(fakex,fakey,2,vfontsize,COLOR_BLACK);
+	//drawRectangle(Cursor.x*hfontsize,24+Cursor.y*vfontsize,2,vfontsize,COLOR_BLACK);
+#endif
+      }
+    } // end cursor line
+    else {
+      bool bigoutput = curline.type==LINE_TYPE_OUTPUT && curline.disp_len>=COL_DISP_MAX-3;
+      locate(bigoutput?3:1,i+1);
+      if (curline.type==LINE_TYPE_INPUT || bigoutput)
+	Print(curline.str + curline.start_col);
+      else {
+#ifdef CURSOR
+	locate(COL_DISP_MAX - Line[i + Start_Line].disp_len + 1, i + 1);
+#else
+	print(print_x,print_y,(const char *)curline.str,TEXT_COLOR_BLACK,false,true/*fake*/,false);
+	print_x=LCD_WIDTH_PX-print_x;
+#endif
+	Print(curline.str);
+      }
+      if (curline.disp_len - curline.start_col > COL_DISP_MAX){
+#ifdef CURSOR
+	locate(COL_DISP_MAX, i + 1);
+#else
+	print_x=LCD_WIDTH_PX-hfontsize;
+#endif
+	Print((char *)"\xE6\x9B",COLOR_BLUE);
+      }
+      if (curline.start_col > 0){
+#ifdef CURSOR
+	locate(1, i + 1);
+#else
+	print_x=0;
+#endif
+	Print((char *)"\xE6\x9A",COLOR_BLUE);
+      }      
+    } // end non cursor line
+  } // end loop on all lines
+
+#if 0
+  string menu(" ");
+  menu += string(menu_f1);
+  while (menu.size()<6)
+    menu += " ";
+  menu += "| ";
+  menu += string(menu_f2);
+  while (menu.size()<13)
+    menu += " ";
+  menu += lang?"| voir | cmds | A<>a | Fich.":"| view | cmds | A<>a | File ";
+  //drawRectangle(0,174,LCD_WIDTH_PX,24,COLOR_BLACK);
+  PrintMini(0,58,menu.c_str(),4);
+#endif
+  
+  // status, clock, 
+  set_xcas_status();
+  Bdisp_PutDisp_DD();
+  return CONSOLE_SUCCEEDED;
+}
+
+void dConsoleRedraw(){
+  Console_Disp();
+}
+
+char *Console_GetLine(GIAC_CONTEXT)
+{
+  int return_val;
+	
+  do
+    {
+      return_val = Console_GetKey(contextptr);
+      Console_Disp();
+      if (return_val == KEY_CTRL_MENU) return 0;
+      if (return_val == CONSOLE_MEM_ERR) return NULL;
+    } while (return_val != CONSOLE_NEW_LINE_SET);
+
+  return Line[Current_Line - 1].str;
+}
+
+/*
+  Simple accessor to the Edit_Line buffer.
+*/
+char* Console_GetEditLine()
+{
+  return Edit_Line;
+}
+
+void save_session(){
+  if (strcmp(session_filename,"session") && console_changed){
+    string tmp(session_filename);
+    tmp += lang?" a ete modifie!":" was modified!";
+    if (confirm(tmp.c_str(),lang?"F1: sauvegarder, F6: tant pis":"F1: save, F6: discard changes")==KEY_CTRL_F1){
+      save(session_filename);
+      console_changed=0;
+    }    
+  }
+  save("session");
+  // this is only called on exit, no need to reinstall the check_execution_abort timer.
+  if (edptr && edptr->changed && edptr->filename!="\\\\fls0\\session.py"){
+    if (!check_leave(edptr)){
+      save_script("lastprg.py",merge_area(edptr->elements));
+    }
+  }
+}
+
+int console_main(GIAC_CONTEXT){
+  // SetQuitHandler(save_session); // automatically save session when exiting
+  if (!turtleptr){
+    turtle();
+    _efface_logo(vecteur(0),contextptr);
+  }
+  int key;
+  Console_Init();
+  Bdisp_AllClr_VRAM();
+  rand_seed(millis(),contextptr);
+  restore_session("session");
+  //GetKey(&key);
+  Console_Disp();
+  // GetKey(&key);
+  char *expr=0;
+  while(1){
+    if ((expr=Console_GetLine(contextptr))==NULL)
+      return 0;
+    if (strcmp((const char *)expr,"restart")==0){
+      if (confirm(lang?"Effacer variables?":"Clear variables?",lang?"F1: annul,  F6: confirmer":"F1: cancel,  F6: confirm")!=KEY_CTRL_F6){
+	Console_Output(" cancelled");
+	Console_NewLine(LINE_TYPE_OUTPUT,1);
+	//GetKey(&key);
+	Console_Disp();
+	continue;
+      }
+    }
+    // should save in another file
+    if (strcmp((const char *)expr,"=>")==0 || strcmp((const char *)expr,"=>\n")==0){
+      save_session();
+      Console_Output("Session saved");
+    }
+    else 
+      run(expr,7,contextptr);
+    //print_mem_info();
+    Console_NewLine(LINE_TYPE_OUTPUT,1);
+    //GetKey(&key);
+    Console_Disp();
+  }
+  return 0;
+}
+
+#endif // CONSOLE
 
 #endif
 
