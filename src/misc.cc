@@ -2481,7 +2481,13 @@ namespace giac {
   gen _input(const gen & args,GIAC_CONTEXT){
 #ifdef NUMWORKS
     const char * s=mp_hal_input("?") ;
-    return string2gen(s,false);
+    if (s)
+      return string2gen(s,false);
+    std::string S;
+    const char * prompt = args.type==_STRNG?args._STRNGptr->c_str():"?";
+    inputline(prompt,0,S,false,194,contextptr);
+    *logptr(contextptr) << prompt << S << '\n';
+    return string2gen(S,false);
 #else
     if (interactive_op_tab && interactive_op_tab[0])
       return interactive_op_tab[0](args,contextptr);

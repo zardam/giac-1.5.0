@@ -151,8 +151,9 @@ namespace xcas {
     const char* title = NULL;
     std::string filename;
     int scrollbar=1;
-    bool allowEXE=0; //whether to allow EXE to exit the screen
-    bool allowF1=0; //whether to allow F1 to exit the screen
+    bool allowEXE=false; //whether to allow EXE to exit the screen
+    bool allowF1=false; //whether to allow F1 to exit the screen
+    bool OKparse=true;
     bool editable=false;
     bool changed=false;
     int python=0;
@@ -218,7 +219,7 @@ enum CONSOLE_LINE_TYPE{
 
   enum CONSOLE_SCREEN_SPEC {
 			    _LINE_MAX = 48,
-			    LINE_DISP_MAX = 12,
+			    LINE_DISP_MAX = 11,
 			    COL_DISP_MAX = 26,//32
 			    EDIT_LINE_MAX = 2048
   };
