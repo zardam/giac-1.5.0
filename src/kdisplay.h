@@ -15,8 +15,9 @@ extern   const int LCD_HEIGHT_PX;
 // access to Numworks OS, defined in port.cpp (or modkandinsky.cpp)
 double millis();
 bool file_exists(const char * filename);
+bool erase_file(const char * filename);
 const char * giac_read_file(const char * filename);
-bool giac_write_file(const char * filename,const char * s);
+bool giac_write_file(const char * filename,const char * s,size_t len=0);
 int giac_filebrowser(char * filename,const char * extension,const char * title);
 void numworks_giac_set_pixel(int x,int y,int c);
 void numworks_giac_fill_rect(int x,int y,int w,int h,int c);
@@ -174,8 +175,8 @@ namespace xcas {
 
 #if 1
 #define MAX_FILENAME_SIZE 270
-  void save_console_state_smem(const char * filename);
-  bool load_console_state_smem(const char * filename);
+  void save_console_state_smem(const char * filename,const giac::context *);
+  bool load_console_state_smem(const char * filename,const giac::context *);
 
 struct DISPBOX {
   int     left;
@@ -498,7 +499,7 @@ namespace giac {
 #define KEY_CTRL_NOP        30202
 #define KEY_CTRL_EXE        30201
 #define KEY_CTRL_DEL        30025
-#define KEY_CTRL_AC         30015
+#define KEY_CTRL_AC         30070
 #define KEY_CTRL_FD         30046
 #define KEY_CTRL_UNDO	    30045	
 #define KEY_CTRL_XTT        30001

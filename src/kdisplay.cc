@@ -341,6 +341,10 @@ namespace giac {
       if(menu->type == MENUTYPE_NO_KEY_HANDLING) return MENU_RETURN_INSTANT; // we don't want to handle keys
       int key;
       GetKey(&key);
+      if (key==KEY_CTRL_MENU){
+	menu->selection=menu->numitems;
+	return MENU_RETURN_SELECTION;
+      }
       if (key<256 && isalpha(key)){
 	key=tolower(key);
 	int pos=strlen(keyword);
@@ -846,7 +850,7 @@ namespace giac {
 
   const char aide_khicas_string[]="Aide Khicas";
   const char shortcuts_string[]="Pour mettre a l'heure l'horloge, tapez heure,minute puis touche STO puis , par exemple 13,10=>,\n\nRaccourcis clavier (shell et editeur)\nF1-F3: selon legendes\nF4: catalogue\nF5: blocage en minuscule ou bascule minuscule/majuscule\nF6: menu fichier, configuration\nshift-PRGM: caracteres pour programmer et commande debug\nshift-FRAC: graphiques plot...\n\nOPTN: options\nshift-QUIT: tortue\nshift-Lst: listes\nshift-Mtr: matrices\nVARS: liste des variables (shell) ou dessin tortue (editeur)\n=>+: partfrac\n=>*: factor\n=>sin/cos/tan\n=>=>: solve\nHistorique calculs:\nF3 Editeur 2d ou graphique ou texte selon objet\nshift-F3: editeur texte\n+ ou - modifie un parametre\n\nEditeur d'expressions\npave directionnel: deplace la selection dans l'arborescence de l'expression\nshift-droit/gauche echange selection avec argument a droite ou a gauche\nALPHA-droit/gauche dans une somme ou un produit: augmente la selection avec argument droit ou gauche\nF3: Editer selection, shift-F3: taille police + grande, ALPHA-F3: taille plus petite\nF4: catalogue\nF5: minuscule/majuscule\nF6: Evaluer la selection, shift-F6: valeur approchee, ALPHA-F6: commande regroup\nDEL: supprime l'operateur racine de la selection\n\nEditeur de scripts\nshift-CLIP: marque le debut de la selection, deplacer le curseur vers la fin puis DEL pour effacer ou shift-CLIP pour copier sans effacer. shift-PASTE pour coller.\nF6-6 recherche seule: entrer un mot puis EXE puis EXIT. Taper EXE pour l'occurence suivante, AC pour annuler.\nF6-6 remplacer: entrer un mot puis EXE puis le remplacement et EXE. Taper EXE ou EXIT pour remplacer ou non et passer a l'occurence suivante, AC pour annuler\nshift-Ans: tester syntaxe\n\nRaccourcis Graphes:\n+ - zoom\n(-): zoomout selon y\n*: autoscale\n/: orthonormalisation\nOPTN: axes on/off";
-  const char apropos_string[]="Khicas 1.5.0, (c) 2019 B. Parisse et al. www-fourier.univ-grenoble-alpes.fr/~parisse.\nLicense GPL version 2.\nInterface adaptee d'Eigenmath pour Casio, G. Maia (http://gbl08ma.com), Mike Smith, Nemhardy, LePhenixNoir, ...";
+  const char apropos_string[]="Khicas 1.5.0, (c) 2019 B. Parisse et R. De Graeve, www-fourier.univ-grenoble-alpes.fr/~parisse.\nLicense GPL version 2.\nPortage Numworks avec l'aide de Damien Nicolet et Jean-Baptiste Boric\nInterface adaptee d'Eigenmath pour Casio, G. Maia (http://gbl08ma.com), Mike Smith, Nemhardy, LePhenixNoir, ...\nRemerciements au site tiplanet, en particulier Xavier Andreani, Adrien Bertrand, Lionel Debroux";
 
   int CAT_COMPLETE_COUNT=sizeof(completeCat)/sizeof(catalogFunc);
 
@@ -6672,7 +6676,8 @@ namespace xcas {
   }
 
   int load_script(const char * filename,std::string & s){
-    s=giac_read_file(filename);
+    const char * ch =giac_read_file(filename);
+    s=ch?ch:"";
     return 1;
   }
 
@@ -7160,7 +7165,8 @@ namespace xcas {
       case KEY_CTRL_F1:
 	if(text->allowF1) return KEY_CTRL_F1;
 	break;
-      case KEY_CHAR_ANS:	
+      case KEY_CTRL_MENU:
+	  // case KEY_CHAR_ANS:	
 	if (clipline<0 && text->editable && text->filename.size()){
 	  Menu smallmenu;
 	  smallmenu.numitems=12;
@@ -7179,23 +7185,29 @@ namespace xcas {
 	  smallmenuitems[7].type = MENUITEM_CHECKBOX;
 	  smallmenuitems[7].text = (char*)"Python";
 	  smallmenuitems[7].value = text->python;
-	  smallmenuitems[8].text = (char*)(lang?"Quitter":"Quit");
-	  smallmenuitems[9].text = (char *) "Changer taille caracteres";
-	  smallmenuitems[10].text = (char *)aide_khicas_string;
-	  smallmenuitems[11].text = (char *) "A propos";
+	  smallmenuitems[8].text = (char *) "Changer taille caracteres";
+	  smallmenuitems[9].text = (char *)aide_khicas_string;
+	  smallmenuitems[10].text = (char *) "A propos";
+	  smallmenuitems[11].text = (char*)(lang?"Quitter":"Quit");
 	  int sres = doMenu(&smallmenu);
 	  if(sres == MENU_RETURN_SELECTION || sres==KEY_CTRL_EXE) {
 	    sres=smallmenu.selection;
-	    if(sres >= 11) {
+	    if (sres==12){
+	      int res=check_leave(text);
+	      if (res==2)
+		continue;
+	      return TEXTAREA_RETURN_EXIT;
+	    }
+	    if(sres >= 10) {
 	      textArea text;
 	      text.editable=false;
 	      text.clipline=-1;
 	      text.title = smallmenuitems[sres-1].text;
-	      add(&text,smallmenu.selection==11?shortcuts_string:apropos_string);
+	      add(&text,smallmenu.selection==10?shortcuts_string:apropos_string);
 	      doTextArea(&text,contextptr);
 	      continue;
 	    }
-	    if (sres==10 && editable){
+	    if (sres==9 && editable){
 	      bool minimini=!v[0].minimini;
 	      for (int i=0;i<v.size();++i)
 		v[i].minimini=minimini;
@@ -7225,7 +7237,7 @@ namespace xcas {
 	    if (sres==4){
 	      char filename[MAX_FILENAME_SIZE+1];
 	      std::string ins;
-	      if (giac_filebrowser(filename, (char*)"*.py", "Scripts") && load_script(filename,ins))
+	      if (giac_filebrowser(filename, "py", "Scripts") && load_script(filename,ins))
 		insert(text,ins.c_str(),false);//add_nl(text,ins);
 	    }
 	    if (sres==5){
@@ -7269,12 +7281,6 @@ namespace xcas {
 	      python_compat(text->python,contextptr);
 	      warn_python(text->python,false);
 	      PrintMini(0,58," tests | loops | misc | cmds | A<>a |File ",4);
-	    }
-	    if (sres==9){
-	      int res=check_leave(text);
-	      if (res==2)
-		continue;
-	      return TEXTAREA_RETURN_EXIT;
 	    }
 	  }
 	}
@@ -7537,12 +7543,65 @@ const int max_lines_saved=50;
   return 0;
 }
 
-#if 0 // CONSOLE_STATE
-void save_console_state_smem(const char * filename){
+
+string khicas_state(GIAC_CONTEXT){
+  giac::gen g(giac::_VARS(-1,contextptr)); 
+  int b=python_compat(contextptr);
+  python_compat(0,contextptr);
+#if 1
+  char buf[6144]="";
+  if (g.type==giac::_VECT){
+    for (int i=0;i<g._VECTptr->size();++i){
+      string s((*g._VECTptr)[i].print(contextptr));
+      if (strlen(buf)+s.size()+128<sizeof(buf)){
+	strcat(buf,s.c_str());
+	strcat(buf,":;");
+      }
+    }
+  }
+  python_compat(b,contextptr);
+  if (strlen(buf)+128<sizeof(buf)){
+    strcat(buf,"python_compat(");
+    strcat(buf,giac::print_INT_(b).c_str());
+    strcat(buf,");angle_radian(");
+    strcat(buf,angle_radian(contextptr)?"1":"0");
+    strcat(buf,");with_sqrt(");
+    strcat(buf,withsqrt(contextptr)?"1":"0");
+    strcat(buf,");");
+  }
+  return buf;
+#else
+  string s(g.print(contextptr));
+  python_compat(b,contextptr);
+  s += "; python_compat(";
+  s +=  giac::print_INT_(b);
+  s += ");angle_radian(";
+  s += angle_radian(contextptr)?'1':'0';
+  s += ");with_sqrt(";
+  s += withsqrt(contextptr)?'1':'0';
+  s += ");";
+  return s;
+#endif
+}
+void Bfile_WriteFile_OS(char * & buf,const void * ptr,size_t len){
+  memcpy(buf,ptr,len);
+  buf += len;
+}
+void Bfile_WriteFile_OS4(char * & buf,size_t n){
+  buf[0]= n>>24;
+  buf[1]= (n>>16) & 0xff;
+  buf[2]= (n & 0xffff)>>8;
+  buf[3]= n & 0xff;
+  buf += 4;
+}
+void Bfile_WriteFile_OS2(char * & buf,unsigned short n){
+  buf[0]= n>>8;
+  buf[1]= n & 0xff;
+  buf += 2;
+}
+void save_console_state_smem(const char * filename,GIAC_CONTEXT){
   console_changed=0;
-  unsigned short pFile[MAX_FILENAME_SIZE+1];
-  Bfile_StrToName_ncpy(pFile, (const unsigned char *)filename, strlen(filename)+1);
-  string state(khicas_state());
+  string state(khicas_state(contextptr));
   int statesize=state.size();
   string script;
   if (edptr)
@@ -7555,31 +7614,23 @@ void save_console_state_smem(const char * filename){
   for (int i=start_row;i<=Last_Line;++i){
     size += 2*sizeof(short)+2*sizeof(char)+strlen((const char *)Line[i].str);
   }
-  // there's no need to delete and create again, because there's no problem
-  // if there's junk at the end of the file.
-  int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
-  if(hFile < 0) {
-    // could not open file. file might not exist yet, or the data folder might not exist at all.
-    // try creating both and try opening again
-    //create_data_folder();
-    Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size); // Bfile_CreateFile(pFile, size);
-    hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
-    if(hFile < 0) return; // if it still fails, there's nothing we can do
-  }
+  char savebuf[size+4];
+  savebuf[0]=1; 
+  char * hFile=savebuf+1;
   // save variables and modes
-  Bfile_WriteFile_OS(hFile, &statesize, sizeof(statesize));
+  Bfile_WriteFile_OS4(hFile, statesize);
   Bfile_WriteFile_OS(hFile, state.c_str(), statesize);
   // save script
-  Bfile_WriteFile_OS(hFile, &scriptsize, sizeof(scriptsize));
+  Bfile_WriteFile_OS4(hFile, scriptsize);
   Bfile_WriteFile_OS(hFile, script.c_str(), scriptsize);
   // save console state
   // save console state
   for (int i=start_row;i<=Last_Line;++i){
     console_line & cur=Line[i];
     unsigned short l=strlen((const char *)cur.str);
-    Bfile_WriteFile_OS(hFile, &l, sizeof(l));
+    Bfile_WriteFile_OS2(hFile, l);
     unsigned short s=cur.start_col;
-    Bfile_WriteFile_OS(hFile, &s, sizeof(s));
+    Bfile_WriteFile_OS2(hFile, s);
     unsigned char c=cur.type;
     Bfile_WriteFile_OS(hFile, &c, sizeof(c));
     c=cur.readonly;
@@ -7596,50 +7647,49 @@ void save_console_state_smem(const char * filename){
   }
   char BUF[2]={0,0};
   Bfile_WriteFile_OS(hFile, BUF, sizeof(BUF));
-  Bfile_CloseFile_OS(hFile);
+  giac_write_file(filename,savebuf,hFile-savebuf);
 }
 
-bool load_console_state_smem(const char * filename){
-  unsigned short pFile[MAX_FILENAME_SIZE+1];
-  Bfile_StrToName_ncpy(pFile, (const unsigned char *)filename, strlen(filename)+1);
-  int hf = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
-  // cout << hf << endl << "f:" << filename << endl; Console_Disp();
-  if (hf < 0) return false; // nothing to load
-  // int Bfile_ReadFile(int HANDLE,void *buf,int size,int readpos);
-  // read variables and modes
-  int L=0;
-  if (Bfile_ReadFile_OS(hf,&L,sizeof(L),-1)!=sizeof(L) || L==0){
-    Bfile_CloseFile_OS(hf);
-    return false;
-  }  
+size_t Bfile_ReadFile_OS4(const char * & hf){
+  size_t n=(((((hf[0]<<8)+hf[1])<<8)+hf[2])<<8)+hf[3];
+  hf += 4;
+  return n;
+}
+
+size_t Bfile_ReadFile_OS2(const char * & hf){
+  size_t n=(hf[0]<<8)+hf[1];
+  hf += 2;
+  return n;
+}
+
+void Bfile_ReadFile_OS(const char * &hf,char * dest,size_t len){
+  memcpy(dest,hf,len);
+  hf += len;
+}
+
+bool load_console_state_smem(const char * filename,GIAC_CONTEXT){
+  const char * hf=giac_read_file(filename);
+  if (!hf) return false;
+  size_t L=Bfile_ReadFile_OS4(hf);
   char BUF[L+1];
-  if (Bfile_ReadFile_OS(hf,BUF,L,-1)!=L){
-    Bfile_CloseFile_OS(hf);
-    return false;
-  }
+  Bfile_ReadFile_OS(hf,BUF,L);
   BUF[L]=0;
   giac::gen g,ge;
   dconsole_mode=0;
-  do_run((char*)BUF,g,ge);
+  do_run((char*)BUF,g,ge,contextptr);
   dconsole_mode=1;
   // read script
-  if (Bfile_ReadFile_OS(hf,&L,sizeof(L),-1)!=sizeof(L)){
-    Bfile_CloseFile_OS(hf);
-    return false;
-  }
+  L=Bfile_ReadFile_OS4(hf);
   if (L>0){
     char bufscript[L+1];
-    if (Bfile_ReadFile_OS(hf,bufscript,L,-1)!=L){
-      Bfile_CloseFile_OS(hf);
-      return false;
-    }
+    Bfile_ReadFile_OS(hf,bufscript,L);
     bufscript[L]=0;
     if (edptr==0)
       edptr=new textArea;
     if (edptr){
       edptr->elements.clear();
       edptr->clipline=-1;
-      edptr->filename="\\\\fls0\\"+remove_path(giac::remove_extension(filename))+".py";
+      edptr->filename=remove_path(giac::remove_extension(filename))+".py";
       //cout << "script " << edptr->filename << endl;
       edptr->editable=true;
       edptr->changed=false;
@@ -7659,17 +7709,17 @@ bool load_console_state_smem(const char * filename){
   for (int pos=0;;++pos){
     unsigned short int l,curs;
     unsigned char type,readonly;
-    if (Bfile_ReadFile_OS(hf,&l,sizeof(l),-1)!=sizeof(l) || l==0) break;
-    if (Bfile_ReadFile_OS(hf,&curs,sizeof(curs),-1)!=sizeof(curs)) break;
-    if (Bfile_ReadFile_OS(hf,&type,sizeof(type),-1)!=sizeof(type)) break;
-    if (Bfile_ReadFile_OS(hf,&readonly,sizeof(readonly),-1)!=sizeof(readonly)) break;
+    if ( (l=Bfile_ReadFile_OS2(hf))==0) break;
+    curs=Bfile_ReadFile_OS2(hf);
+    type = *hf; ++hf;
+    readonly=*hf; ++hf;
     char buf[l+1];
+    Bfile_ReadFile_OS(hf,buf,l);
     buf[l]=0;
-    if (Bfile_ReadFile_OS(hf,buf,l,-1)!=l) break;
     // ok line ready in buf
     while (Line[Current_Line].readonly)
       Console_MoveCursor(CURSOR_DOWN);
-    Console_Input((const unsigned char *)buf);
+    Console_Input(buf);
     Console_NewLine(LINE_TYPE_INPUT, 1);
 #if 1
     if (Current_Line>0){
@@ -7680,11 +7730,9 @@ bool load_console_state_smem(const char * filename){
     }
 #endif
   }
-  Bfile_CloseFile_OS(hf);
   console_changed=0;
   return true;
 }
-#endif // CONSOLE_STATE
 
 /*
 
@@ -8312,33 +8360,33 @@ int Console_Eval(const char * buf,GIAC_CONTEXT){
 }
 
 
-void save(const char * fname){
+void save(const char * fname,GIAC_CONTEXT){
   clear_abort();
-#if 1 // FIXME
+#if 0
   return;
 #else
   string filename(remove_path(remove_extension(fname)));
-  save_console_state_smem(filename+".xw").c_str()); // call before save_khicas_symbols_smem(), because this calls create_data_folder if necessary!
+  save_console_state_smem((filename+".xw").c_str(),contextptr); // call before save_khicas_symbols_smem(), because this calls create_data_folder if necessary!
   // save_khicas_symbols_smem(("\\\\fls0\\"+filename+".xw").c_str());
   if (edptr)
     check_leave(edptr);
 #endif
 }
 
-int restore_session(const char * fname){
-#if 1
+int restore_session(const char * fname,GIAC_CONTEXT){
+#if 0
   return 0;
 #else
   // cout << "0" << fname << endl; Console_Disp(); GetKey(&key);
   string filename(remove_path(remove_extension(fname)));
-  if (!load_console_state_smem(filename+string(".xw")).c_str())){
+  if (!load_console_state_smem((filename+string(".xw")).c_str(),contextptr)){
     int x=0,y=120;
-    PrintMini(&x,&y,"KhiCAS 1.5 (c) 2019 B. Parisse et al",0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    PrintMini(x,y,"KhiCAS 1.5 (c) 2019 B. Parisse et al", COLOR_BLACK, COLOR_WHITE);
     x=0; y=138;
-    PrintMini(&x,&y,"  License GPL 2",0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    PrintMini(x,y,"  License GPL 2",COLOR_BLACK, COLOR_WHITE);
     x=0; y=156;
-    PrintMini(&x,&y,"  Do not use if CAS is forbidden",0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-    if (confirm("Syntax?","F1: Xcas, F6: Python")==KEY_CTRL_F6)
+    PrintMini(x,y,lang?"Quittez Xcas si le CAS est interdit!":"  Do not use if CAS is forbidden", COLOR_RED, COLOR_WHITE);
+    if (confirm("Syntax?","OK: Xcas, Back: Python")==KEY_CTRL_F6)
       python_compat(true,contextptr);
     Bdisp_AllClr_VRAM();  
     //menu_about();
@@ -8367,9 +8415,10 @@ string extract_name(const char * s){
 
 void erase_script(){
   char filename[MAX_FILENAME_SIZE+1];
-  int res=giac_filebrowser(filename, "*.py", "Scripts");
+  int res=giac_filebrowser(filename, "py", "Scripts");
   if (res && do_confirm(lang?"Vraiment effacer":"Really erase?")){
     // FIXME
+    erase_file(filename);
   }
 }
 
@@ -8422,7 +8471,7 @@ void edit_script(char * fname,GIAC_CONTEXT){
   if (fname)
     filename=fname;
   else {
-    res=giac_filebrowser(fname_, "*.py", "Scripts");
+    res=giac_filebrowser(fname_, "py", "Scripts");
     filename=fname_;
   }
   if(res) {
@@ -8483,8 +8532,6 @@ int Console_GetKey(GIAC_CONTEXT){
     GetKey(&key);
     if (key==KEY_PRGM_ACON)
       Console_Disp();
-    if (key==KEY_CTRL_MENU)
-      return key;
     translate_fkey(key);
     if (key==KEY_CTRL_F5){
       handle_f5();
@@ -8570,14 +8617,14 @@ int Console_GetKey(GIAC_CONTEXT){
 	buf[0]=0;
       return Console_Input((const char*)buf);
     }
-    if (key==KEY_CTRL_F6){
+    if (key==KEY_CTRL_F6 || key==KEY_CTRL_MENU){
 #if 1
       Menu smallmenu;
-      smallmenu.numitems=15;
+      smallmenu.numitems=16;
       MenuItem smallmenuitems[smallmenu.numitems];
       
       smallmenu.items=smallmenuitems;
-      smallmenu.height=8;
+      smallmenu.height=12;
       smallmenu.scrollbar=1;
       smallmenu.scrollout=1;
       //smallmenu.title = "KhiCAS";
@@ -8596,23 +8643,27 @@ int Console_GetKey(GIAC_CONTEXT){
       smallmenuitems[12].text = (char*)"Config shift-SETUP";
       smallmenuitems[13].text = (char *) (lang?"Raccourcis":"Shortcuts");
       smallmenuitems[14].text = (char*) (lang?"A propos":"About");
+      smallmenuitems[15].text = (char*) (lang?"Quitter":"Quit");
       // smallmenuitems[2].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
       while(1) {
         int sres = doMenu(&smallmenu);
         if(sres == MENU_RETURN_SELECTION) {
+	  if (smallmenu.selection==smallmenu.numitems){
+	    return KEY_CTRL_MENU;
+	  }
 	  const char * ptr=0;
 	  if (smallmenu.selection==1){
 	    if (strcmp(session_filename,"session")==0)
 	      smallmenu.selection=2;
 	    else {
-	      save(session_filename);
+	      save(session_filename,contextptr);
 	      break;
 	    }
 	  }
 	  if (smallmenu.selection==2){
 	    char buf[270];
 	    if (get_filename(buf,".xw")){
-	      save(buf);
+	      save(buf,contextptr);
 	      string fname(remove_path(giac::remove_extension(buf)));
 	      strcpy(session_filename,fname.c_str());
 	      if (edptr)
@@ -8622,10 +8673,10 @@ int Console_GetKey(GIAC_CONTEXT){
 	  }
 	  if (smallmenu.selection==3){
 	    char filename[MAX_FILENAME_SIZE+1];
-	    if (giac_filebrowser(filename, "*.xw", "Sessions")){
+	    if (giac_filebrowser(filename, "xw", "Sessions")){
 	      if (console_changed==0 || strcmp(session_filename,"session")==0 || confirm(lang?"Session courante perdue?":"Current session will be lost",lang?"F1: annul, F6: ok":"F1: cancel, F6: ok")==KEY_CTRL_F6){
 		giac::_restart(giac::gen(giac::vecteur(0),giac::_SEQ__VECT),contextptr);
-		restore_session(filename);
+		restore_session(filename,contextptr);
 		clip_pasted=true;
 		strcpy(session_filename,remove_path(giac::remove_extension(filename)).c_str());
 		// reload_edptr(session_filename,edptr);
@@ -8670,14 +8721,14 @@ int Console_GetKey(GIAC_CONTEXT){
 	  if (smallmenu.selection==7) {
 	    char filename[MAX_FILENAME_SIZE+1];
 	    drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX-8, COLOR_WHITE);
-	    if (giac_filebrowser(filename, "*.py", "Scripts"))
+	    if (giac_filebrowser(filename, "py", "Scripts"))
 	      edit_script(filename,contextptr);
             break;
           }
 	  if (smallmenu.selection==8) {
 	    char filename[MAX_FILENAME_SIZE+1];
 	    drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX-8, COLOR_WHITE);
-	    if (giac_filebrowser(filename, "*.py", "Scripts"))
+	    if (giac_filebrowser(filename, "py", "Scripts"))
 	      run_script(filename,contextptr);
 	    break;
 	  }
@@ -8703,7 +8754,7 @@ int Console_GetKey(GIAC_CONTEXT){
 	    paramenu.numitems=6;
 	    MenuItem paramenuitems[paramenu.numitems];
 	    paramenu.items=paramenuitems;
-	    paramenu.height=8;
+	    paramenu.height=12;
 	    paramenu.title = (char *)"Parameter";
 	    char menu_xcur[32],menu_xmin[32],menu_xmax[32],menu_xstep[32],menu_name[16]="name a";
 	    static char curname='a';
@@ -8893,7 +8944,7 @@ int Console_GetKey(GIAC_CONTEXT){
     if (key == KEY_CTRL_CLIP){
       copy_clipboard((const char *)Line[Current_Line].str,true);
     }
-    if (key==KEY_CTRL_EXE){
+    if (key==KEY_CTRL_EXE || key==KEY_CTRL_OK){
       tmp = Line[Current_Line].str;
       
 #if 1
@@ -9387,16 +9438,16 @@ char* Console_GetEditLine()
   return Edit_Line;
 }
 
-void save_session(){
+void save_session(GIAC_CONTEXT){
   if (strcmp(session_filename,"session") && console_changed){
     string tmp(session_filename);
     tmp += lang?" a ete modifie!":" was modified!";
-    if (confirm(tmp.c_str(),lang?"F1: sauvegarder, F6: tant pis":"F1: save, F6: discard changes")==KEY_CTRL_F1){
-      save(session_filename);
+    if (confirm(tmp.c_str(),lang?"OK: sauve, Back: tant pis":"OK: save, Back: discard changes")==KEY_CTRL_F1){
+      save(session_filename,contextptr);
       console_changed=0;
     }    
   }
-  save("session");
+  save("session",contextptr);
   // this is only called on exit, no need to reinstall the check_execution_abort timer.
   if (edptr && edptr->changed && edptr->filename!="\\\\fls0\\session.py"){
     if (!check_leave(edptr)){
@@ -9415,16 +9466,18 @@ int console_main(GIAC_CONTEXT){
   Console_Init();
   Bdisp_AllClr_VRAM();
   rand_seed(millis(),contextptr);
-  restore_session("session");
+  restore_session("session",contextptr);
   //GetKey(&key);
   Console_Disp();
   // GetKey(&key);
   char *expr=0;
   while(1){
-    if ((expr=Console_GetLine(contextptr))==NULL)
+    if ((expr=Console_GetLine(contextptr))==NULL){
+      save_session(contextptr);
       return 0;
+    }
     if (strcmp((const char *)expr,"restart")==0){
-      if (confirm(lang?"Effacer variables?":"Clear variables?",lang?"F1: annul,  F6: confirmer":"F1: cancel,  F6: confirm")!=KEY_CTRL_F6){
+      if (confirm(lang?"Effacer variables?":"Clear variables?",lang?"OK: annul,  Back: confirmer":"OK: cancel,  Back: confirm")!=KEY_CTRL_F6){
 	Console_Output(" cancelled");
 	Console_NewLine(LINE_TYPE_OUTPUT,1);
 	//GetKey(&key);
@@ -9434,7 +9487,7 @@ int console_main(GIAC_CONTEXT){
     }
     // should save in another file
     if (strcmp((const char *)expr,"=>")==0 || strcmp((const char *)expr,"=>\n")==0){
-      save_session();
+      save_session(contextptr);
       Console_Output("Session saved");
     }
     else 
