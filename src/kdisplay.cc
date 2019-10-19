@@ -276,7 +276,7 @@ namespace giac {
 	    // deal with menu items of type MENUITEM_CHECKBOX
 	    if(menu->items[curitem].type == MENUITEM_CHECKBOX) {
 	      PrintXY(C6*(menu->startX+menu->width-1),C18*(curitem+itemsStartY-menu->scroll),
-		      (menu->items[curitem].value == MENUITEM_VALUE_CHECKED ? "\xe6\xa9" : "\xe6\xa5"),
+		      (menu->items[curitem].value == MENUITEM_VALUE_CHECKED ? " [+]" : " [-]"),
 		      (menu->selection == curitem+1 ? TEXT_MODE_INVERT : (menu->pBaRtR == 1? TEXT_MODE_NORMAL : TEXT_MODE_NORMAL)));
 	    }
 	    // deal with multiselect menus
@@ -497,41 +497,65 @@ namespace giac {
 	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
 	}
 	break;
-      case KEY_CTRL_XTT:
+      case KEY_CHAR_EXPN:
 	if(menu->numitems>=11) {
 	  menu->selection = 11;
 	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
 	}
 	break;
-      case KEY_CHAR_LOG:
+      case KEY_CHAR_LN:
 	if(menu->numitems>=12) {
 	  menu->selection = 12;
 	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
 	}
 	break;
-      case KEY_CHAR_LN:
+      case KEY_CHAR_LOG:
 	if(menu->numitems>=13) {
 	  menu->selection = 13;
+	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
+	}
+	break;
+      case KEY_CHAR_IMGNRY:
+	if(menu->numitems>=14) {
+	  menu->selection = 14;
+	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
+	}
+	break;
+      case KEY_CHAR_COMMA:
+	if(menu->numitems>=15) {
+	  menu->selection = 15;
+	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
+	}
+	break;
+      case KEY_CHAR_POW:
+	if(menu->numitems>=16) {
+	  menu->selection = 16;
 	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
 	}
 	break;
       case KEY_CHAR_SIN:
       case KEY_CHAR_COS:
       case KEY_CHAR_TAN:
-	if(menu->numitems>=(key-115)) {
-	  menu->selection = (key-115);
+	if(menu->numitems>=(key-112)) {
+	  menu->selection = (key-112);
 	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
 	}
 	break;
-      case KEY_CHAR_FRAC:
-	if(menu->numitems>=17) {
-	  menu->selection = 17;
+      case KEY_CHAR_PI:
+	if(menu->numitems>=20) {
+	  menu->selection = 20;
 	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
 	}
 	break;
-      case KEY_CTRL_FD:
-	if(menu->numitems>=18) {
-	  menu->selection = 18;
+      case KEY_CHAR_ROOT:
+	if(menu->numitems>=21) {
+	  menu->selection = 21;
+	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
+	}
+	break;
+      case KEY_CHAR_SQUARE:
+	if(menu->numitems>=22) {
+	  menu->selection = 22;
 	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
 	}
 	break;
@@ -539,18 +563,6 @@ namespace giac {
       case KEY_CHAR_RPAR:
 	if(menu->numitems>=(key-21)) {
 	  menu->selection = (key-21);
-	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
-	}
-	break;
-      case KEY_CHAR_COMMA:
-	if(menu->numitems>=21) {
-	  menu->selection = 21;
-	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
-	}
-	break;
-      case KEY_CHAR_STORE:
-	if(menu->numitems>=22) {
-	  menu->selection = 22;
 	  if (menu->type != MENUTYPE_FKEYS)  return MENU_RETURN_SELECTION;
 	}
 	break;
@@ -4800,7 +4812,7 @@ namespace xcas {
 	smallmenuitems[10].text = (char*) (lang?"Cacher axes":"Hide axes");
 	smallmenuitems[11].text = (char*)(lang?"Quitter":"Quit");
 	int sres = doMenu(&smallmenu);
-	if(sres == MENU_RETURN_SELECTION) {
+	if(sres == MENU_RETURN_SELECTION || sres==KEY_CTRL_EXE) {
 	  const char * ptr=0;
 	  string s1; double d;
 	  if (smallmenu.selection==1){
@@ -5016,7 +5028,7 @@ namespace xcas {
       menu += string(menu_f1);
       menu += "|2 ";
       menu += string(menu_f2);
-      menu += "|3 +- |4 cmds|5 oo|6 approx";
+      menu += "|3 oo|4 cmds|5 +-|6 approx";
       PrintMiniMini(0,210,menu.c_str(),4,22222,giac::_BLACK);
 #endif
       //draw_menu(2);
@@ -5138,7 +5150,7 @@ namespace xcas {
 	  }
 	}
       }
-      if (key=='\\' || key==KEY_CTRL_F3){
+      if (key=='\\' || key==KEY_CTRL_F5){
 	xcas::do_select(eq.data,true,value);
 	if (value.type==_EQW)
 	  geq=value._EQWptr->g;
@@ -5161,10 +5173,11 @@ namespace xcas {
 	   (key>=KEY_CTRL_F7 && key<=KEY_CTRL_F14)){
 	adds=console_menu(key,original_cfg,1);//alph?"simplify":(keyflag==1?"factor":"partfrac");
 	// workaround for infinitiy
+	if (!adds) continue;
 	if (strlen(adds)>=2 && adds[0]=='o' && adds[1]=='o')
-	  key=KEY_CTRL_F5;      
+	  key=KEY_CTRL_F3;      
       }
-      if (key==KEY_CTRL_F5)
+      if (key==KEY_CTRL_F3)
 	adds="oo";
       if (key==KEY_CTRL_F6 || key==KEY_CTRL_EXE){
 	adds= (key==KEY_CTRL_F6?"evalf":"eval");
@@ -5199,7 +5212,7 @@ namespace xcas {
 	return geq;
       }
       if ( key!=KEY_CHAR_MINUS && key!=KEY_CHAR_EQUAL &&
-	   (ins || key==KEY_CHAR_PI || key==KEY_CTRL_VARS || key==KEY_CTRL_F5 || (addssize==1 && (isalphanum(adds[0])|| adds[0]=='.' || adds[0]=='-') ) )
+	   (ins || key==KEY_CHAR_PI || key==KEY_CTRL_VARS || key==KEY_CTRL_F3 || (addssize==1 && (isalphanum(adds[0])|| adds[0]=='.' || adds[0]=='-') ) )
 	   ){
 	edited=true;
 	if (line>=0 && xcas::eqw_select(eq.data,line,col,true,value)){
@@ -6607,12 +6620,12 @@ namespace xcas {
     } // end main draw loop
     isFirstDraw=0;
     if(showtitle) {
-      clearLine(1,1);
+      drawRectangle(0, 0, LCD_WIDTH_PX, 24, _WHITE);
       drawScreenTitle((char*)text->title);
     }
     //if (editable)
     if (editable){
-      PrintMiniMini(0,210,"shift-1 tests|2 loops|3 misc|4 cmds|        ",4,44444,giac::_BLACK);
+      PrintMiniMini(0,210,"shift-1 tests|2 loops|3 misc|4 cmds|5 +- |      ",4,44444,giac::_BLACK);
       //draw_menu(1);
     }
 #ifdef SCROLLBAR
@@ -6941,7 +6954,10 @@ namespace xcas {
 	  continue;
 	}
 	if (key==KEY_CTRL_F5){
-	  handle_f5();
+	  bool minimini=!v[0].minimini;
+	  for (int i=0;i<v.size();++i)
+	    v[i].minimini=minimini;
+	  text->lineHeight=minimini?13:17;
 	  continue;
 	}
 	if (clipline<0){
@@ -7173,7 +7189,7 @@ namespace xcas {
       case KEY_CTRL_F1:
 	if(text->allowF1) return KEY_CTRL_F1;
 	break;
-      case KEY_CTRL_MENU:
+      case KEY_CTRL_MENU: case KEY_CTRL_F6:
 	// case KEY_CHAR_ANS:	
 	if (clipline<0 && text->editable && text->filename.size()){
 	  Menu smallmenu;
@@ -7288,7 +7304,7 @@ namespace xcas {
 	      show_status(text,search,replace);
 	      python_compat(text->python,contextptr);
 	      warn_python(text->python,false);
-	      PrintMiniMini(0,210,"shift-1 tests|2 loops|3 misc|4 cmds|        ",4,44444,giac::_BLACK);
+	      PrintMiniMini(0,210,"shift-1 tests|2 loops|3 misc|4 cmds|5 +- |      ",4,44444,giac::_BLACK);
 	    }
 	  }
 	}
@@ -7379,12 +7395,12 @@ namespace xcas {
     smallmenu.numitems=7;
     MenuItem smallmenuitems[smallmenu.numitems];
     smallmenu.items=smallmenuitems;
-    smallmenu.height=8;
+    smallmenu.height=12;
     smallmenu.scrollbar=1;
     smallmenu.scrollout=1;
     smallmenu.title = (char*)"Config";
     smallmenuitems[0].type = MENUITEM_CHECKBOX;
-    smallmenuitems[0].text = (char*)"X,Theta,T=t";
+    smallmenuitems[0].text = (char*)"x,n,t -> t";
     smallmenuitems[1].type = MENUITEM_CHECKBOX;
     smallmenuitems[1].text = (char*)"Python";
     smallmenuitems[2].type = MENUITEM_CHECKBOX;
@@ -7403,7 +7419,7 @@ namespace xcas {
       int sres = doMenu(&smallmenu);
       if (sres==MENU_RETURN_EXIT)
 	break;
-      if (sres == MENU_RETURN_SELECTION) {
+      if (sres == MENU_RETURN_SELECTION  || sres==KEY_CTRL_EXE) {
 	if (smallmenu.selection == 7)
 	  break;
 	if (smallmenu.selection == 1){
@@ -8552,6 +8568,8 @@ namespace xcas {
 	    g=g._SYMBptr->feuille;
 	    if (g.type==giac::_VECT && g._VECTptr->size()>=5){
 	      giac::vecteur & v=*g._VECTptr;
+	      for (int i=1;i<v.size();++i)
+		v[i]=evalf_double(v[i],1,contextptr);
 	      if (v[0].type==giac::_IDNT && v[1].type==giac::_DOUBLE_ && v[2].type==giac::_DOUBLE_ && v[3].type==giac::_DOUBLE_ && v[4].type==giac::_DOUBLE_){
 		std::string s("assume(");
 		s += v[0]._IDNTptr->id_name;
@@ -8643,7 +8661,7 @@ namespace xcas {
 	// smallmenuitems[2].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
 	while(1) {
 	  int sres = doMenu(&smallmenu);
-	  if(sres == MENU_RETURN_SELECTION) {
+	  if(sres == MENU_RETURN_SELECTION || sres==KEY_CTRL_EXE) {
 	    if (smallmenu.selection==smallmenu.numitems){
 	      return KEY_CTRL_MENU;
 	    }
@@ -8775,7 +8793,7 @@ namespace xcas {
 		paramenuitems[4].text = (char *) menu_xmax;
 		paramenuitems[5].text = (char *) menu_xstep;
 		int sres = doMenu(&paramenu);
-		doit = sres==MENU_RETURN_SELECTION;
+		doit = sres==MENU_RETURN_SELECTION  || sres==KEY_CTRL_EXE;
 		if (doit) {
 		  std::string s1; double d;
 		  if (paramenu.selection==2){
