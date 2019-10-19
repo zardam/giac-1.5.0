@@ -16,20 +16,20 @@ extern   const int LCD_HEIGHT_PX;
 double millis();
 bool file_exists(const char * filename);
 bool erase_file(const char * filename);
-const char * giac_read_file(const char * filename);
-bool giac_write_file(const char * filename,const char * s,size_t len=0);
+const char * read_file(const char * filename);
+bool write_file(const char * filename,const char * s,size_t len=0);
 int giac_filebrowser(char * filename,const char * extension,const char * title);
-void numworks_giac_set_pixel(int x,int y,int c);
-void numworks_giac_fill_rect(int x,int y,int w,int h,int c);
+void numworks_set_pixel(int x,int y,int c);
+void numworks_fill_rect(int x,int y,int w,int h,int c);
 inline void drawRectangle(int x,int y,int w,int h,int c){
-  numworks_giac_fill_rect(x,y,w,h,c);
+  numworks_fill_rect(x,y,w,h,c);
 }
-int numworks_giac_get_pixel(int x,int y);
+int numworks_get_pixel(int x,int y);
 /* returns new x position */
-int numworks_giac_draw_string(int x,int y,int c,int bg,const char * s,bool fake=false);
-inline int numworks_draw_string(int x,int y,const char * s){ return numworks_giac_draw_string(x,y,giac::_BLACK,giac::_WHITE,s);}
-int numworks_giac_draw_string_small(int x,int y,int c,int bg,const char * s,bool fake=false);
-inline int numworks_draw_string_small(int x,int y,const char * s){ return numworks_giac_draw_string_small(x,y,giac::_BLACK,giac::_WHITE,s);}
+int numworks_draw_string(int x,int y,int c,int bg,const char * s,bool fake=false);
+inline int numworks_draw_string(int x,int y,const char * s){ return numworks_draw_string(x,y,giac::_BLACK,giac::_WHITE,s);}
+int numworks_draw_string_small(int x,int y,int c,int bg,const char * s,bool fake=false);
+inline int numworks_draw_string_small(int x,int y,const char * s){ return numworks_draw_string_small(x,y,giac::_BLACK,giac::_WHITE,s);}
 void GetKey(int * key);
 int getkey_raw(bool allow_suspend); // Numworks scan code
 int getkey(bool allow_suspend); // transformed
@@ -37,8 +37,8 @@ void enable_back_interrupt();
 inline void set_abort(){  enable_back_interrupt(); }
 void disable_back_interrupt();
 inline void clear_abort(){  disable_back_interrupt(); }
-void numworks_giac_show_graph();
-void numworks_giac_hide_graph();
+void numworks_show_graph();
+void numworks_hide_graph();
 bool isalphaactive();
 extern bool alphawasactive;
 void lock_alpha();

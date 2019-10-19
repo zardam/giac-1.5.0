@@ -8591,7 +8591,7 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
 	y=int(y._DOUBLE_val+.5);
       if (x.type==_INT_ &&  y.type==_INT_ ){
 #ifdef NUMWORKS
-	numworks_giac_set_pixel(x.val,y.val,vs==2?0:v[2].val);
+	numworks_set_pixel(x.val,y.val,vs==2?0:v[2].val);
 #else
 	aspen_set_pixel(x.val,y.val,vs==2?0:v[2].val);
 #endif // NUMWORKS
@@ -8628,10 +8628,10 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
   }
 #ifdef NUMWORKS
   void set_pixel(int x,int y,int c,GIAC_CONTEXT){
-    numworks_giac_set_pixel(x,y,c);
+    numworks_set_pixel(x,y,c);
   }
   void set_pixel(double x,double y,int c,GIAC_CONTEXT){
-    numworks_giac_set_pixel(int(x+.5),int(y+.5),c);
+    numworks_set_pixel(int(x+.5),int(y+.5),c);
   }
 #else  
   void set_pixel(int x,int y,int c,GIAC_CONTEXT){
@@ -8853,7 +8853,7 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
     if (y<0){ height+=y; y=0;}
     if (width<0 || height<0) return;
 #ifdef NUMWORKS
-    numworks_giac_fill_rect(x,y,width,height,color);
+    numworks_fill_rect(x,y,width,height,color);
 #else
     for (int j=0;j<=height;++j){
       for (int i=0;i<width;++i)
@@ -9158,6 +9158,7 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
   define_unary_function_ptr5( at_draw_rectangle ,alias_at_draw_rectangle,&__draw_rectangle,0,true);
 
   gen _fill_rect(const gen & a_,GIAC_CONTEXT){
+    freeze=true;
     return draw_line_or_rectangle(a_,contextptr,2);
   }
   static const char _fill_rect_s []="fill_rect";
@@ -9181,7 +9182,7 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
       return gensizeerr(contextptr);
     gen s=v[0];
 #ifdef NUMWORKS
-    numworks_giac_draw_string(v[1].val,v[2].val,v.size()>3?v[3].val:_BLACK,v.size()>4?v[4].val:_WHITE,s._STRNGptr->c_str());
+    numworks_draw_string(v[1].val,v[2].val,v.size()>3?v[3].val:_BLACK,v.size()>4?v[4].val:_WHITE,s._STRNGptr->c_str());
     return 1;
 #else
     v.erase(v.begin());
@@ -9207,7 +9208,7 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
     gen x=a._VECTptr->front(),y=a._VECTptr->back();
     if (x.type==_INT_ && x.val>=0 && x.val<pixel_cols && y.type==_INT_ && y.val>=0 && y.val<pixel_lines){
 #ifdef NUMWORKS
-      return numworks_giac_get_pixel(x.val,y.val);
+      return numworks_get_pixel(x.val,y.val);
 #else      
       return pixel_buffer[y.val][x.val];
 #endif

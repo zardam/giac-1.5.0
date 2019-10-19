@@ -25,6 +25,9 @@ using namespace std;
 #else
 #include <strstream>
 #endif
+#if !defined GIAC_HAS_STO_38 && !defined NSPIRE && !defined FXCG && !defined POCKETCAS
+#include <fstream>
+#endif
 #include "global.h"
 // #include <time.h>
 #if !defined BESTA_OS && !defined FXCG
@@ -102,7 +105,7 @@ bool back_key_pressed();
 #endif
 
 #ifdef NUMWORKS
-const char * giac_read_file(const char * filename);
+const char * read_file(const char * filename);
 #endif
 
 int my_sprintf(char * s, const char * format, ...){
@@ -2691,7 +2694,7 @@ extern "C" void Sleep(unsigned int miliSecond);
 #endif
   
   void read_config(const string & name,GIAC_CONTEXT,bool verbose){
-#if !defined NSPIRE && !defined FXCG
+#if !defined NSPIRE && !defined FXCG && !defined GIAC_HAS_STO_38
 #if !defined __MINGW_H 
     if (access(name.c_str(),R_OK)) {
       if (verbose)
@@ -5431,8 +5434,10 @@ unsigned int ConvertUTF8toUTF162 (
   // moved from input_lexer.ll for easier debug
   const char invalid_name[]="Invalid name";
 
-#ifdef USTL    
-  // void update_lexer_localization(const std::vector<int> & v,ustl::map<std::string,std::string> &lexer_map,ustl::multimap<std::string,localized_string> &back_lexer_map){}
+#if defined USTL || defined GIAC_HAS_STO_38
+#if defined GIAC_HAS_STO_38
+void update_lexer_localization(const std::vector<int> & v,std::map<std::string,std::string> &lexer_map,std::multimap<std::string,localized_string> &back_lexer_map,GIAC_CONTEXT){}
+#endif
 #else
   vecteur * keywords_vecteur_ptr(){
     static vecteur v;
@@ -6384,7 +6389,7 @@ unsigned int ConvertUTF8toUTF162 (
 		){
 	      string filename=cur.substr(pos+5,posi-pos-5)+".py";
 	      // CERR << "import " << filename << endl;
-	      const char * ptr=giac_read_file(filename.c_str());
+	      const char * ptr=read_file(filename.c_str());
 	      if (ptr)
 		s += python2xcas(ptr,contextptr); // recursive call
 	      cur ="";

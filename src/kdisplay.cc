@@ -140,7 +140,7 @@ namespace giac {
       GetKey(&key);
       if (key==KEY_CTRL_EXE || key==KEY_CTRL_OK)
 	key=KEY_CTRL_F1;
-      if (key==KEY_CTRL_AC || key==KEY_CTRL_EXIT){
+      if (key==KEY_CTRL_AC || key==KEY_CTRL_EXIT || key==KEY_CTRL_MENU){
 	if (acexit) return -1;
 	key=KEY_CTRL_F6;
       }
@@ -173,23 +173,23 @@ namespace giac {
 
   void PrintXY(int x,int y,const char * s,int mode,int c=giac::_BLACK,int bg=giac::_WHITE){
     if (mode==TEXT_MODE_NORMAL)
-      numworks_giac_draw_string(x,y,c,bg,s);
+      numworks_draw_string(x,y,c,bg,s);
     else
-      numworks_giac_draw_string(x,y,bg,c,s);
+      numworks_draw_string(x,y,bg,c,s);
   }
 
   int PrintMiniMini(int x,int y,const char * s,int mode,int c=giac::_BLACK,int bg=giac::_WHITE,bool fake=false){
     if (mode==TEXT_MODE_NORMAL)
-      return numworks_giac_draw_string_small(x,y,c,bg,s,fake);
+      return numworks_draw_string_small(x,y,c,bg,s,fake);
     else
-      return numworks_giac_draw_string_small(x,y,bg,c,s,fake);
+      return numworks_draw_string_small(x,y,bg,c,s,fake);
   }
   
   int PrintMini(int x,int y,const char * s,int mode,int c=giac::_BLACK,int bg=giac::_WHITE,bool fake=false){
     if (mode==TEXT_MODE_NORMAL)
-      return numworks_giac_draw_string(x,y,c,bg,s,fake);
+      return numworks_draw_string(x,y,c,bg,s,fake);
     else
-      return numworks_giac_draw_string(x,y,bg,c,s,fake);
+      return numworks_draw_string(x,y,bg,c,s,fake);
   }
   
   void printCentered(const char* text, int y) {
@@ -863,7 +863,7 @@ namespace giac {
 
   const char aide_khicas_string[]="Aide Khicas";
   const char shortcuts_string[]="Pour mettre a l'heure l'horloge, tapez heure,minute puis touche STO puis , par exemple 13,10=>,\n\nRaccourcis clavier (shell et editeur)\nF1-F3: selon legendes\nF4: catalogue\nF5: blocage en minuscule ou bascule minuscule/majuscule\nF6: menu fichier, configuration\nshift-PRGM: caracteres pour programmer et commande debug\nshift-FRAC: graphiques plot...\n\nOPTN: options\nshift-QUIT: tortue\nshift-Lst: listes\nshift-Mtr: matrices\nVARS: liste des variables (shell) ou dessin tortue (editeur)\n=>+: partfrac\n=>*: factor\n=>sin/cos/tan\n=>=>: solve\nHistorique calculs:\nF3 Editeur 2d ou graphique ou texte selon objet\nshift-F3: editeur texte\n+ ou - modifie un parametre\n\nEditeur d'expressions\npave directionnel: deplace la selection dans l'arborescence de l'expression\nshift-droit/gauche echange selection avec argument a droite ou a gauche\nALPHA-droit/gauche dans une somme ou un produit: augmente la selection avec argument droit ou gauche\nF3: Editer selection, shift-F3: taille police + grande, ALPHA-F3: taille plus petite\nF4: catalogue\nF5: minuscule/majuscule\nF6: Evaluer la selection, shift-F6: valeur approchee, ALPHA-F6: commande regroup\nDEL: supprime l'operateur racine de la selection\n\nEditeur de scripts\nshift-CLIP: marque le debut de la selection, deplacer le curseur vers la fin puis DEL pour effacer ou shift-CLIP pour copier sans effacer. shift-PASTE pour coller.\nF6-6 recherche seule: entrer un mot puis EXE puis EXIT. Taper EXE pour l'occurence suivante, AC pour annuler.\nF6-6 remplacer: entrer un mot puis EXE puis le remplacement et EXE. Taper EXE ou EXIT pour remplacer ou non et passer a l'occurence suivante, AC pour annuler\nshift-Ans: tester syntaxe\n\nRaccourcis Graphes:\n+ - zoom\n(-): zoomout selon y\n*: autoscale\n/: orthonormalisation\nOPTN: axes on/off";
-  const char apropos_string[]="Khicas 1.5.0, (c) 2019 B. Parisse et R. De Graeve, www-fourier.univ-grenoble-alpes.fr/~parisse.\nLicense GPL version 2.\nPortage Numworks avec l'aide de Damien Nicolet et Jean-Baptiste Boric\nInterface adaptee d'Eigenmath pour Casio, G. Maia (http://gbl08ma.com), Mike Smith, Nemhardy, LePhenixNoir, ...\nRemerciements au site tiplanet, en particulier Xavier Andreani, Adrien Bertrand, Lionel Debroux";
+  const char apropos_string[]="Khicas 1.5.0, (c) 2019 B. Parisse et R. De Graeve, www-fourier.univ-grenoble-alpes.fr/~parisse.\nLicense GPL version 2.\nPortage Numworks avec l'aide de Damien Nicolet et Jean-Baptiste Boric et M4x1m3\nInterface adaptee d'Eigenmath pour Casio, G. Maia (http://gbl08ma.com), Mike Smith, Nemhardy, LePhenixNoir, ...\nRemerciements au site tiplanet, en particulier Xavier Andreani, Adrien Bertrand, Lionel Debroux";
 
   int CAT_COMPLETE_COUNT=sizeof(completeCat)/sizeof(catalogFunc);
 
@@ -1220,8 +1220,10 @@ namespace giac {
 
   gen select_var(GIAC_CONTEXT){
     gen g(_VARS(0,contextptr));
-    if (g.type!=_VECT || g._VECTptr->empty())
+    if (g.type!=_VECT || g._VECTptr->empty()){
+      confirm("Pas de variables. Exemples pour en creer","a=1 ou f(x):=sin(x^2)",true);
       return undef;
+    }
     vecteur & v=*g._VECTptr;
     MenuItem smallmenuitems[v.size()+3];
     vector<std::string> vs(v.size()+1);
@@ -2539,12 +2541,12 @@ namespace xcas {
       fontsize=18;
     if (fontsize>=18){
       y -= 16;// status area shift
-      numworks_giac_draw_string(x,y,mode==4?bg:c,mode==4?c:bg,s);
+      numworks_draw_string(x,y,mode==4?bg:c,mode==4?c:bg,s);
       // PrintMini(&x,&y,(unsigned char *)s,mode,0xffffffff,0,0,c,bg,1,0);
       return;
     }
     y -= 12;
-    x=numworks_giac_draw_string_small(x,y,mode==4?bg:c,mode==4?c:bg,s);// PrintMiniMini( &x, &y, (unsigned char *)s, mode,c, 0 );
+    x=numworks_draw_string_small(x,y,mode==4?bg:c,mode==4?c:bg,s);// PrintMiniMini( &x, &y, (unsigned char *)s, mode,c, 0 );
     return;
   }
   
@@ -3940,7 +3942,7 @@ namespace xcas {
 
   inline void check_fl_point(int i0,int j0,int imin,int jmin,int di,int dj,int delta_i,int delta_j,int c){
     /* if (i0>=imin && i0<=imin+di && j0>=jmin && j0<=jmin+dj) */
-    numworks_giac_set_pixel(i0+delta_i,j0+delta_j,c);
+    numworks_set_pixel(i0+delta_i,j0+delta_j,c);
   }
 
   inline void fl_line(int x0,int y0,int x1,int y1,int c){
@@ -4859,7 +4861,7 @@ namespace xcas {
       }
 #endif
       if (key==KEY_CTRL_EXIT || key==KEY_CTRL_OK){
-	numworks_giac_hide_graph();
+	numworks_hide_graph();
 	break;
       }
       if (key==KEY_CTRL_UP){ gr.up((gr.window_ymax-gr.window_ymin)/5); }
@@ -4921,7 +4923,7 @@ namespace xcas {
       if (key==KEY_CHAR_PLUS) { t.turtlezoom *= 2;}
       if (key==KEY_CHAR_MINUS){ t.turtlezoom /= 2;  }
     }
-    numworks_giac_hide_graph();
+    numworks_hide_graph();
   }
 
   bool ispnt(const gen & g){
@@ -5043,8 +5045,8 @@ namespace xcas {
       //cout << eq.data << endl;
       GetKey(&key);
       bool alph=alphawasactive;
-      if (key==KEY_CTRL_OK){
-	numworks_giac_hide_graph();
+      if (key==KEY_CTRL_OK || key==KEY_CTRL_MENU){
+	numworks_hide_graph();
 	if (edited && xcas::do_select(eq.data,true,value) && value.type==_EQW){
 	  //cout << "ok " << value._EQWptr->g << endl;
 	  DefineStatusMessage((lang?"resultat stocke dans last":"result stored in last"), 1, 0, 0);
@@ -5057,11 +5059,11 @@ namespace xcas {
       }
       if (key==KEY_CTRL_EXIT || key==KEY_CTRL_AC ){
 	if (!edited){
-	  numworks_giac_hide_graph();
+	  numworks_hide_graph();
 	  return geq;
 	}
 	if (confirm(lang?"Vraiment abandonner?":"Really leave",lang?"Back: editeur,  OK: confirmer":"Back: editor,  OK: confirm")==KEY_CTRL_F1){
-	  numworks_giac_hide_graph();
+	  numworks_hide_graph();
 	  return geq;
 	}
       }
@@ -6405,7 +6407,7 @@ namespace xcas {
       if (editable){
 	char line_s[16];
 	sprint_int(line_s,cur+1);
-	numworks_giac_draw_string_small(textX,textY,COLOR_MAGENTA,_WHITE,line_s);
+	numworks_draw_string_small(textX,textY,COLOR_MAGENTA,_WHITE,line_s);
       }
       textX=text->x+deltax;
       int tlen = v[cur].s.size();
@@ -6687,7 +6689,7 @@ namespace xcas {
   }
 
   int load_script(const char * filename,std::string & s){
-    const char * ch =giac_read_file(filename);
+    const char * ch =read_file(filename);
     s=ch?ch:"";
     return 1;
   }
@@ -6696,7 +6698,7 @@ namespace xcas {
     char buf[s.size()+2];
     buf[0]=1;
     strcpy(buf+1,s.c_str());
-    giac_write_file(filename,buf);
+    write_file(filename,buf);
   }
 
   bool textedit(char * s,int bufsize,bool OKparse,const giac::context * contextptr){
@@ -6729,7 +6731,7 @@ namespace xcas {
     ta.pos=ta.elements[ta.line].s.size();
     int res=doTextArea(&ta,contextptr);
     drawRectangle(0,0,LCD_WIDTH_PX,LCD_HEIGHT_PX,_WHITE);
-    numworks_giac_hide_graph();
+    numworks_hide_graph();
     if (res==TEXTAREA_RETURN_EXIT)
       return false;
     string S(merge_area(ta.elements));
@@ -7674,7 +7676,7 @@ namespace xcas {
     Bfile_WriteFile_OS(hFile, BUF, sizeof(BUF));
     savebuf[0]=1;
     int len=hFile-savebuf;
-    giac_write_file(filename,savebuf,len);
+    write_file(filename,savebuf,len);
   }
 
   size_t Bfile_ReadFile_OS4(const char * & hf){
@@ -7695,7 +7697,7 @@ namespace xcas {
   }
 
   bool load_console_state_smem(const char * filename,GIAC_CONTEXT){
-    const char * hf=giac_read_file(filename);
+    const char * hf=read_file(filename);
     if (!hf) return false;
     size_t L=Bfile_ReadFile_OS4(hf);
     char BUF[L+1];
@@ -8398,14 +8400,18 @@ namespace xcas {
     // cout << "0" << fname << endl; Console_Disp(); GetKey(&key);
     string filename(remove_path(remove_extension(fname)));
     if (!load_console_state_smem((filename+string(".xw")).c_str(),contextptr)){
-      int x=0,y=120;
+      int x=0,y=112;
       PrintMini(x,y,"KhiCAS 1.5 (c) 2019 B. Parisse",TEXT_MODE_NORMAL, COLOR_BLACK, COLOR_WHITE);
-      x=0; y=138;
+      y +=18;
       PrintMini(x,y,"et al, License GPL 2",TEXT_MODE_NORMAL,COLOR_BLACK, COLOR_WHITE);
-      x=0; y=156;
-      PrintMini(x,y,lang?"Quittez Khicas maintenant si":"Leave Khicas now",TEXT_MODE_NORMAL, COLOR_RED, COLOR_WHITE);
       y += 18;
-      PrintMini(x,y,lang?"le calcul formel est interdit":"if CAS is forbidden!",TEXT_MODE_NORMAL, COLOR_RED, COLOR_WHITE);
+      PrintMini(x,y,"Taper HOME plusieurs fois",TEXT_MODE_NORMAL,COLOR_BLACK, COLOR_WHITE);
+      y += 18;
+      PrintMini(x,y,"pour quitter Khicas.",TEXT_MODE_NORMAL,COLOR_BLACK, COLOR_WHITE);
+      y += 18;
+      PrintMini(x,y,lang?"Si le calcul formel est interdit":"If CAS is forbidden!",TEXT_MODE_NORMAL, COLOR_RED, COLOR_WHITE);
+      y += 18;
+      PrintMini(x,y,lang?"quittez Khicas (HOME HOME HOME)":"Leave Khicas (OK HOME HOME)",TEXT_MODE_NORMAL, COLOR_RED, COLOR_WHITE);
       if (confirm("Syntax?","OK: Xcas, Back: Python")==KEY_CTRL_F6)
 	python_compat(true,contextptr);
       Bdisp_AllClr_VRAM();  
@@ -8437,50 +8443,28 @@ namespace xcas {
     char filename[MAX_FILENAME_SIZE+1];
     int res=giac_filebrowser(filename, "py", "Scripts");
     if (res && do_confirm(lang?"Vraiment effacer":"Really erase?")){
-      // FIXME
       erase_file(filename);
     }
   }
 
   int run_script(const char* filename,GIAC_CONTEXT) {
-#if 1 // FIXME
+#if 0
     return 1;
 #else
-    // returns 1 if script was run, 0 otherwise
-    unsigned short pFile[MAX_FILENAME_SIZE+1];
-    Bfile_StrToName_ncpy(pFile, (const unsigned char *)filename, strlen(filename)+1); 
-    int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
-    if(hFile < 0) 
-      return 0;
-    // Check for file existence
-    if(hFile >= 0) // Check if it opened
-      {
-	// Returned no error, file exists, open it
-	int size = Bfile_GetFileSize_OS(hFile);
-	// File exists and has size 'size'
-	// Read file into a buffer
-	if ((unsigned int)size > MAX_TEXTVIEWER_FILESIZE) {
-	  Bfile_CloseFile_OS(hFile);
-	  puts("Stop: script too big");
-	  return 0; //file too big, return
-	}
-	unsigned char* asrc = (unsigned char*)alloca(size*sizeof(unsigned char)+5); // 5 more bytes to make sure it fits...
-	memset(asrc, 0, size+5); //alloca does not clear the allocated space. Make sure the string is null-terminated this way.
-	int rsize = Bfile_ReadFile_OS(hFile, asrc, size, 0);
-	Bfile_CloseFile_OS(hFile); //we got file contents, close it
-	asrc[rsize]='\0';
-	execution_in_progress = 1;
-	run((char*)asrc);
-	execution_in_progress = 0;
-	if (asrc[0]=='#' || (asrc[0]=='d' && asrc[1]=='e' && asrc[2]=='f' && asrc[3]==' '))
-	  return 2;
-	if ( (asrc[0]=='/' && asrc[1]=='/') ||
-	     (rsize>8 && asrc[0]=='f' && (asrc[1]=='o' || asrc[1]=='u') && asrc[2]=='n' && asrc[3]=='c' && asrc[4]=='t' && asrc[5]=='i' && asrc[6]=='o' && asrc[7]=='n' && asrc[8]==' ')
-	     )
-	  return 3;
-	return 1;
-      }
-    return 0;
+    string s;
+    load_script(filename,s);
+    // execution_in_progress = 1;
+    run(s.c_str(),7,contextptr);
+    // execution_in_progress = 0;
+    if (s.size()>=4){
+      if (s[0]=='#' || (s[0]=='d' && s[1]=='e' && s[2]=='f' && s[3]==' '))
+	return 2;
+      if ( (s[0]=='/' && s[1]=='/') ||
+	   (s.size()>8 && s[0]=='f' && (s[1]=='o' || s[1]=='u') && s[2]=='n' && s[3]=='c' && s[4]=='t' && s[5]=='i' && s[6]=='o' && s[7]=='n' && s[8]==' ')
+	   )
+	return 3;
+    }
+    return 1;
 #endif
   }
 
@@ -8537,7 +8521,7 @@ namespace xcas {
 
   void chk_restart(GIAC_CONTEXT){
     drawRectangle(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24, COLOR_WHITE);
-    if (confirm(lang?"Conserver les variables?":"Keep variables?",lang?"F1: conserver,   F6: effacer":"F1: keep,   F6: erase")==KEY_CTRL_F6)
+    if (confirm(lang?"Conserver les variables?":"Keep variables?",lang?"OK: conserver, Back: effacer":"OK: keep, Back: erase")==KEY_CTRL_F6)
       do_restart(contextptr);
   }
 
@@ -8712,7 +8696,7 @@ namespace xcas {
 	      char filename[MAX_FILENAME_SIZE+1];
 	      drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX, COLOR_WHITE);
 	      if (get_filename(filename,".xw")){
-		if (console_changed==0 || strcmp(session_filename,"session")==0 || confirm(lang?"Session courante perdue?":"Current session will be lost",lang?"F1: annul, F6: ok":"F1: cancel, F6: ok")==KEY_CTRL_F6){
+		if (console_changed==0 || strcmp(session_filename,"session")==0 || confirm(lang?"Session courante perdue?":"Current session will be lost",lang?"OK: annul, Back: ok":"OK: cancel, Back: ok")==KEY_CTRL_F6){
 		  clip_pasted=true;
 		  Console_Init();
 		  Console_Clear_EditLine();
@@ -8747,6 +8731,7 @@ namespace xcas {
 	      drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX-8, COLOR_WHITE);
 	      if (giac_filebrowser(filename, "py", "Scripts"))
 		run_script(filename,contextptr);
+	      Console_Clear_EditLine();
 	      break;
 	    }
 	    if(smallmenu.selection == 9) {
