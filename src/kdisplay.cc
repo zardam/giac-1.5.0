@@ -1000,10 +1000,10 @@ namespace giac {
       menu.scrollout=1;
       menu.title = (char *) title;
       menu.type = MENUTYPE_FKEYS;
-      menu.height = 12;
+      menu.height = 11;
       while(1) {
-	drawRectangle(0,56,LCD_WIDTH_PX,8,COLOR_BLACK);
-	// PrintMini(0,57,(category==CAT_CATEGORY_ALL?"input| ex1 | ex2 |     |    | help":"input| ex1 | ex2 |cmds |    |help"),MINI_REV);
+	drawRectangle(0,200,LCD_WIDTH_PX,22,giac::_WHITE);
+	PrintMini(0,200,(category==CAT_CATEGORY_ALL?"Toolbox help | Ans ex1 | EXE  ex2":"Toolbox help | Ans ex1 | EXE ex2"),4,33333,giac::_WHITE);
 	int sres = doMenu(&menu);
 	if (sres==KEY_CTRL_F4 && category!=CAT_CATEGORY_ALL){
 	  break;
@@ -1016,15 +1016,15 @@ namespace giac {
 	if(sres == KEY_CTRL_CATALOG) {
 	  const char * example=index<allcmds?completeCat[index].example:0;
 	  const char * example2=index<allcmds?completeCat[index].example2:0;
-#if 0
-	  textArea text;
+#if 1
+	  xcas::textArea text;
 	  text.editable=false;
 	  text.clipline=-1;
 	  text.title = (char*)"Aide sur la commande";
 	  text.allowF1=true;
 	  text.python=python_compat(contextptr);
-	  std::vector<textElement> & elem=text.elements;
-	  elem = std::vector<textElement> (example2?4:3);
+	  std::vector<xcas::textElement> & elem=text.elements;
+	  elem = std::vector<xcas::textElement> (example2?4:3);
 	  elem[0].s = index<allcmds?completeCat[index].name:menuitems[menu.selection-1].text;
 	  elem[0].newLine = 0;
 	  //elem[0].color = COLOR_BLUE;
@@ -1061,7 +1061,7 @@ namespace giac {
 		elem[1].s=elem[0].s+"(args)";
 	    }
 	  }
-	  std::string ex("F2: ");
+	  std::string ex("Ans: ");
 	  elem[2].newLine = 1;
 	  elem[2].lineSpacing = 0;
 	  //elem[2].minimini=1;
@@ -1075,7 +1075,7 @@ namespace giac {
 	    }
 	    elem[2].s = ex;
 	    if (example2){
-	      string ex2="F3: ";
+	      string ex2="EXE: ";
 	      if (example2[0]=='#')
 		ex2 += example2+1;
 	      else {
@@ -4785,13 +4785,13 @@ namespace xcas {
       if (key==KEY_CTRL_CATALOG){
 	char menu_xmin[32],menu_xmax[32],menu_ymin[32],menu_ymax[32];
 	string s;
-	s="xmin "+print_DOUBLE_(gr.window_xmin,6);
+	s="xmin "+print_DOUBLE_(gr.window_xmin,contextptr);
 	strcpy(menu_xmin,s.c_str());
-	s="xmax "+print_DOUBLE_(gr.window_xmax,6);
+	s="xmax "+print_DOUBLE_(gr.window_xmax,contextptr);
 	strcpy(menu_xmax,s.c_str());
-	s="ymin "+print_DOUBLE_(gr.window_ymin,6);
+	s="ymin "+print_DOUBLE_(gr.window_ymin,contextptr);
 	strcpy(menu_ymin,s.c_str());
-	s="ymax "+print_DOUBLE_(gr.window_ymax,6);
+	s="ymax "+print_DOUBLE_(gr.window_ymax,contextptr);
 	strcpy(menu_ymax,s.c_str());
 	Menu smallmenu;
 	smallmenu.numitems=12;
@@ -5029,7 +5029,8 @@ namespace xcas {
       menu += "|2 ";
       menu += string(menu_f2);
       menu += "|3 oo|4 cmds|5 +-|6 approx";
-      PrintMiniMini(0,210,menu.c_str(),4,22222,giac::_BLACK);
+      drawRectangle(0,205,LCD_WIDTH_PX,17,22222);
+      PrintMiniMini(0,205,menu.c_str(),4,22222,giac::_BLACK);
 #endif
       //draw_menu(2);
       clip_ymin=save_clip_ymin;
@@ -6625,7 +6626,8 @@ namespace xcas {
     }
     //if (editable)
     if (editable){
-      PrintMiniMini(0,210,"shift-1 tests|2 loops|3 misc|4 cmds|5 +- |      ",4,44444,giac::_BLACK);
+      drawRectangle(0,205,LCD_WIDTH_PX,17,44444);
+      PrintMiniMini(0,205,"shift-1 tests|2 loops|3 misc|4 cmds|5 +- |      ",4,44444,giac::_BLACK);
       //draw_menu(1);
     }
 #ifdef SCROLLBAR
@@ -6907,7 +6909,7 @@ namespace xcas {
       int & clippos=text->clippos;
       int & textline=text->line;
       int & textpos=text->pos;
-      if (!editable && key>=KEY_CTRL_F1 && key<=KEY_CTRL_F3)
+      if (!editable && (key==KEY_CHAR_ANS || key==KEY_CTRL_EXE))
 	return key;
       if (editable){
 	if (key==KEY_CHAR_FRAC && clipline<0){
@@ -7304,7 +7306,8 @@ namespace xcas {
 	      show_status(text,search,replace);
 	      python_compat(text->python,contextptr);
 	      warn_python(text->python,false);
-	      PrintMiniMini(0,210,"shift-1 tests|2 loops|3 misc|4 cmds|5 +- |      ",4,44444,giac::_BLACK);
+	      drawRectangle(0,205,LCD_WIDTH_PX,17,44444);
+	      PrintMiniMini(0,205,"shift-1 tests|2 loops|3 misc|4 cmds|5 +- |      ",4,44444,giac::_BLACK);
 	    }
 	  }
 	}
@@ -8578,13 +8581,13 @@ namespace xcas {
 		if (key==KEY_CHAR_MINUS) val=-1;
 		if (key==KEY_CHAR_MULT) val=5;
 		if (key==KEY_CHAR_DIV) val=-5;
-		s += giac::print_DOUBLE_(v[3]._DOUBLE_val + val*v[4]._DOUBLE_val,3);
+		s += giac::print_DOUBLE_(v[3]._DOUBLE_val + val*v[4]._DOUBLE_val,contextptr);
 		s += ',';
-		s += giac::print_DOUBLE_(v[1]._DOUBLE_val,3);
+		s += giac::print_DOUBLE_(v[1]._DOUBLE_val,contextptr);
 		s += ',';
-		s += giac::print_DOUBLE_(v[2]._DOUBLE_val,3);
+		s += giac::print_DOUBLE_(v[2]._DOUBLE_val,contextptr);
 		s += ',';
-		s += giac::print_DOUBLE_(v[4]._DOUBLE_val,3);
+		s += giac::print_DOUBLE_(v[4]._DOUBLE_val,contextptr);
 		s += "])";
 		return Console_Eval(s.c_str(),contextptr);
 	      }
@@ -8778,13 +8781,13 @@ namespace xcas {
 	      std::string s;
 	      bool doit;
 	      for (;;){
-		s="cur "+giac::print_DOUBLE_(pcur,6);
+		s="cur "+giac::print_DOUBLE_(pcur,contextptr);
 		strcpy(menu_xcur,s.c_str());
-		s="min "+giac::print_DOUBLE_(pmin,6);
+		s="min "+giac::print_DOUBLE_(pmin,contextptr);
 		strcpy(menu_xmin,s.c_str());
-		s="max "+giac::print_DOUBLE_(pmax,6);
+		s="max "+giac::print_DOUBLE_(pmax,contextptr);
 		strcpy(menu_xmax,s.c_str());
-		s="step "+giac::print_DOUBLE_(pstep,6);
+		s="step "+giac::print_DOUBLE_(pstep,contextptr);
 		strcpy(menu_xstep,s.c_str());
 		paramenuitems[0].text = (char *) "OK";
 		paramenuitems[1].text = (char *) menu_name;
@@ -9062,7 +9065,7 @@ namespace xcas {
     DISPBOX box,box3;
     
     position_number = key - KEY_CTRL_F1;
-    if (position_number<0 || position_number>5)
+    if (position_number<0 || position_number>=5)
       position_number=4;
     
     entries  = menu->str;
@@ -9073,7 +9076,7 @@ namespace xcas {
 
     // screen resolution Graph90 384x(216-24), Graph35 128x64
     // factor 3x3
-    position_x = 21*position_number;
+    position_x = 17*position_number;
     if(position_x + longest*4 + quick_len*4 > 115) position_x = 115 - longest*4 - quick_len*4;
     
     box.left = position_x;
@@ -9406,8 +9409,8 @@ namespace xcas {
     menu += "|3 ";
     menu += string(menu_f3);
     menu += "|4 cmds|5 2d |6 edit";
-    //drawRectangle(0,174,LCD_WIDTH_PX,24,COLOR_BLACK);
-    PrintMiniMini(0,210,menu.c_str(),4);
+    drawRectangle(0,205,LCD_WIDTH_PX,17,_BLACK);
+    PrintMiniMini(0,205,menu.c_str(),4);
 #endif
   
     // status, clock, 
