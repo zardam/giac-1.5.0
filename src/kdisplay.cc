@@ -81,7 +81,7 @@ namespace giac {
   }
   
   void copy_clipboard(const string & s,bool status){
-    if (clip_pasted)
+    if (1 || clip_pasted) // adding to clipboard is sometimes annoying
       *clipboard()=s;
     else
       *clipboard()+=s;
@@ -133,9 +133,9 @@ namespace giac {
     return confirm(s,(lang?"OK: oui,  Back:annuler":"OK: yes,   Back: cancel"))==KEY_CTRL_F1;
   }
   
-  int confirm(const char * msg1,const char * msg2,bool acexit){
+  int confirm(const char * msg1,const char * msg2,bool acexit,int y){
     int key=0;
-    print_msg12(msg1,msg2);
+    print_msg12(msg1,msg2,y);
     while (key!=KEY_CTRL_F1 && key!=KEY_CTRL_F6){
       GetKey(&key);
       if (key==KEY_CTRL_EXE || key==KEY_CTRL_OK)
@@ -782,7 +782,7 @@ namespace giac {
 				     {"polygon(list)", 0, "Polygone ferme.", "1-i,2+i,3", 0, CAT_CATEGORY_PROGCMD},
 				     {"polygonscatterplot(Xlist,Ylist)", 0, "Nuage de points relies.", "[1,2,3,4,5],[0,1,3,4,4]", 0, CAT_CATEGORY_STATS},
 				     {"polynomial_regression(Xlist,Ylist,n)", 0, "Regression polynomiale de degre <= n.", "[1,2,3,4,5],[0,1,3,4,4],2", 0, CAT_CATEGORY_STATS},
-				     {"pour (boucle Xcas)", "pour  de  jusque  faire  fpour;", "Boucle definie.","#pour j de 1 jusque 10 faire print(j,j^2); fpour;", 0, CAT_CATEGORY_PROG},
+				     {"pour (boucle Xcas)", "pour  de  to  faire  fpour;", "Boucle definie.","#pour j de 1 to 10 faire print(j,j^2); fpour;", 0, CAT_CATEGORY_PROG},
 				     {"power_regression(Xlist,Ylist,n)", 0, "Regression puissance.", "[1,2,3,4,5],[0,1,3,4,4]", 0, CAT_CATEGORY_STATS},
 				     {"powmod(a,n,p[,P,x])", 0, "Renvoie a^n mod p, ou a^n mod un entier p et un polynome P en x.","123,456,789", "x+1,452,19,x^4+x+1,x", CAT_CATEGORY_ARIT},
 				     {"print(expr)", 0, "Afficher dans la console", 0, 0, CAT_CATEGORY_PROG},
@@ -820,7 +820,7 @@ namespace giac {
 				     {"scatterplot(Xlist,Ylist)", 0, "Nuage de points.", "[1,2,3,4,5],[0,1,3,4,4]", 0, CAT_CATEGORY_STATS},
 				     {"segment(A,B)", 0, "Segment", "1,2+i", 0, CAT_CATEGORY_PROGCMD},
 				     {"seq(expr,var,a,b[,pas])", 0, "Liste de terme general donne.","j^2,j,1,10", "j^2,j,1,10,2", CAT_CATEGORY_LIST},
-				     {"si (test Xcas)", "si  alors  sinon  fsi;", "Test.", "#f(x):=si x>0 alors x; sinon -x; fsi;// valeur absolue", 0, CAT_CATEGORY_PROG},
+				     {"si (test Xcas)", "si  alors  sinon  fsi;", "Test.", "#f(x):=si x>0 alors x; sinon -x; fsi;", 0, CAT_CATEGORY_PROG},
 				     {"sign(x)", 0, "Renvoie -1 si x est negatif, 0 si x est nul et 1 si x est positif.", 0, 0, CAT_CATEGORY_REAL},
 				     {"simplify(expr)", 0, "Renvoie en general expr sous forme simplifiee. Raccourci expr=>/", "sin(3x)/sin(x)", "ln(4)-ln(2)", CAT_CATEGORY_ALGEBRA},
 				     {"solve(equation,x)", 0, "Resolution exacte d'une equation en x (ou d'un systeme polynomial). Utiliser csolve pour les solutions complexes, linsolve pour un systeme lineaire. Raccourci SHIFT XthetaT", "x^2-x-1=0,x", "[x^2-y^2=0,x^2-z^2=0],[x,y,z]", CAT_CATEGORY_SOLVE},
@@ -832,7 +832,7 @@ namespace giac {
 				     {"sum(f,k,m,M)", 0, "Somme de l'expression f dependant de k pour k variant de m a M. Exemple sum(k^2,k,1,n)=>*. Raccourci ALPHA F3", "k,k,1,n", "k^2,k", CAT_CATEGORY_CALCULUS},
 				     {"svd(A)", 0, "Singular Value Decomposition, renvoie U orthogonale, S vecteur des valeurs singulières, Q orthogonale tels que A=U*diag(S)*tran(Q).", "[[1,2],[3,4]]", 0, CAT_CATEGORY_MATRIX},
 				     {"tabvar(f,[x=a..b])", 0, "Tableau de variations de l'expression f, avec arguments optionnels la variable x dans l'intervalle a..b.", "sqrt(x^2+x+1)", "[cos(t),sin(3t)],t", CAT_CATEGORY_CALCULUS},
-				     {"tantque (boucle Xcas)", "tantque  faire  ftantque;", "Boucle indefinie.", "#j:=13; tantque j!=1 faire j:=when(even(j),j/2,3j+1); print(j); ftantque;", 0, CAT_CATEGORY_PROG},
+				     {"tantque (boucle Xcas)", "tantque  faire  ftantque;", "Boucle indefinie.", "#j:=13; tantque j!=1 faire j:=ifte(even(j),j/2,3j+1); print(j); ftantque;", 0, CAT_CATEGORY_PROG},
 				     {"taylor(f,x=a,n,[polynom])", 0, "Developpement de Taylor de l'expression f en x=a a l'ordre n, ajouter le parametre polynom pour enlever le terme de reste.","sin(x),x=0,5", "sin(x),x=0,5,polynom", CAT_CATEGORY_CALCULUS},
 				     {"tchebyshev1(n)", 0, "Polynome de Tchebyshev de 1ere espece: cos(n*x)=T_n(cos(x))", "10", 0, CAT_CATEGORY_POLYNOMIAL},
 				     {"tchebyshev2(n)", 0, "Polynome de Tchebyshev de 2eme espece: sin((n+1)*x)=sin(x)*U_n(cos(x))", "10", 0, CAT_CATEGORY_POLYNOMIAL},
@@ -862,7 +862,7 @@ namespace giac {
   };
 
   const char aide_khicas_string[]="Aide Khicas";
-  const char shortcuts_string[]="Pour mettre a l'heure l'horloge, tapez heure,minute puis touche STO puis , par exemple 13,10=>,\n\nRaccourcis clavier (shell et editeur)\nF1-F3: selon legendes\nF4: catalogue\nF5: blocage en minuscule ou bascule minuscule/majuscule\nF6: menu fichier, configuration\nshift-PRGM: caracteres pour programmer et commande debug\nshift-FRAC: graphiques plot...\n\nOPTN: options\nshift-QUIT: tortue\nshift-Lst: listes\nshift-Mtr: matrices\nVARS: liste des variables (shell) ou dessin tortue (editeur)\n=>+: partfrac\n=>*: factor\n=>sin/cos/tan\n=>=>: solve\nHistorique calculs:\nF3 Editeur 2d ou graphique ou texte selon objet\nshift-F3: editeur texte\n+ ou - modifie un parametre\n\nEditeur d'expressions\npave directionnel: deplace la selection dans l'arborescence de l'expression\nshift-droit/gauche echange selection avec argument a droite ou a gauche\nALPHA-droit/gauche dans une somme ou un produit: augmente la selection avec argument droit ou gauche\nF3: Editer selection, shift-F3: taille police + grande, ALPHA-F3: taille plus petite\nF4: catalogue\nF5: minuscule/majuscule\nF6: Evaluer la selection, shift-F6: valeur approchee, ALPHA-F6: commande regroup\nDEL: supprime l'operateur racine de la selection\n\nEditeur de scripts\nshift-CLIP: marque le debut de la selection, deplacer le curseur vers la fin puis DEL pour effacer ou shift-CLIP pour copier sans effacer. shift-PASTE pour coller.\nF6-6 recherche seule: entrer un mot puis EXE puis EXIT. Taper EXE pour l'occurence suivante, AC pour annuler.\nF6-6 remplacer: entrer un mot puis EXE puis le remplacement et EXE. Taper EXE ou EXIT pour remplacer ou non et passer a l'occurence suivante, AC pour annuler\nshift-Ans: tester syntaxe\n\nRaccourcis Graphes:\n+ - zoom\n(-): zoomout selon y\n*: autoscale\n/: orthonormalisation\nOPTN: axes on/off";
+  const char shortcuts_string[]="Raccourcis clavier (shell et editeur)\nshift-/: %\nalpha shift \": '\nshift--: \\\nshift-*: factor\nshift-+: normal\nshift-1 a 6: selon bandeau en bas\nshift-7: matrices\nshift-8: listes\nshift-9:arithmetique\nshift-0: polynomes\nshift-.: reels\nshift-10^: programme\nvar: liste des variables (shell) ou dessin tortue (editeur)\n\nshift-x^y (sto) renvoie =>\n=>+: partfrac\n=>*: factor\n=>sin/cos/tan\n=>=>: solve\n\nShell:\nshift-5: Editeur 2d ou graphique ou texte selon objet\nshift-6: editeur texte\n+ ou - modifie un parametre en surbrillance\n\nEditeur d'expressions\nshift-cut: defaire/refaire (1 fois)\npave directionnel: deplace la selection dans l'arborescence de l'expression\nshift-droit/gauche echange selection avec argument a droite ou a gauche\nalpha-droit/gauche dans une somme ou un produit: augmente la selection avec argument droit ou gauche\nshift-4: Editer selection, shift-5: taille police + ou - grande\nEXE: evaluer la selection\nshift-6: valeur approchee\nBackspace: supprime l'operateur racine de la selection\n\nEditeur de scripts\nEXE: passage a la ligne\nshift-CUT: defaire/refaire (1 fois)\nshift-COPY: marque le debut de la selection, deplacer le curseur vers la fin puis Backspace pour effacer ou shift-COPY pour copier sans effacer. shift-PASTE pour coller.\nHome-6 recherche seule: entrer un mot puis EXE puis EXE. Taper EXE pour l'occurence suivante, Back pour annuler.\nHome-6 remplacer: entrer un mot puis EXE puis le remplacement et EXE. Taper EXE ou Back pour remplacer ou non et passer a l'occurence suivante, AC pour annuler\nOK: tester syntaxe\n\nRaccourcis Graphes:\n+ - zoom\n(-): zoomout selon y\n*: autoscale\n/: orthonormalisation\nOPTN: axes on/off";
   const char apropos_string[]="Khicas 1.5.0, (c) 2019 B. Parisse et R. De Graeve, www-fourier.univ-grenoble-alpes.fr/~parisse.\nLicense GPL version 2.\nPortage Numworks avec l'aide de Damien Nicolet et Jean-Baptiste Boric et M4x1m3\nInterface adaptee d'Eigenmath pour Casio, G. Maia (http://gbl08ma.com), Mike Smith, Nemhardy, LePhenixNoir, ...\nRemerciements au site tiplanet, en particulier Xavier Andreani, Adrien Bertrand, Lionel Debroux";
 
   int CAT_COMPLETE_COUNT=sizeof(completeCat)/sizeof(catalogFunc);
@@ -889,20 +889,20 @@ namespace giac {
     menuitems[CAT_CATEGORY_CALCULUS].text = (char*)"Analyse";
     menuitems[CAT_CATEGORY_ARIT].text = (char*)"Arithmetic, crypto";
     menuitems[CAT_CATEGORY_COMPLEXNUM].text = (char*)"Complexes";
-    menuitems[CAT_CATEGORY_PLOT].text = (char*)"Graphes";
+    menuitems[CAT_CATEGORY_PLOT].text = (char*)"Courbes";
     menuitems[CAT_CATEGORY_POLYNOMIAL].text = (char*)"Polynomes";
     menuitems[CAT_CATEGORY_PROBA].text = (char*)"Probabilites";
-    menuitems[CAT_CATEGORY_PROG].text = (char*)"Programmes";
-    menuitems[CAT_CATEGORY_PROGCMD].text = (char*)"Programmes cmds";
-    menuitems[CAT_CATEGORY_REAL].text = (char*)"Reels";
-    menuitems[CAT_CATEGORY_SOLVE].text = (char*)"Resoudre";
-    menuitems[CAT_CATEGORY_STATS].text = (char*)"Statistiques";
-    menuitems[CAT_CATEGORY_TRIG].text = (char*)"Trigonometrie";
-    menuitems[CAT_CATEGORY_OPTIONS].text = (char*)"Options";
-    menuitems[CAT_CATEGORY_LIST].text = (char*)"Listes";
-    menuitems[CAT_CATEGORY_MATRIX].text = (char*)"Matrices";
-    menuitems[CAT_CATEGORY_SOFUS].text = (char*)"Modifier des variables";
-    menuitems[CAT_CATEGORY_LOGO].text = (char*)"Tortue";
+    menuitems[CAT_CATEGORY_PROGCMD].text = (char*)"Programmes cmds (0)";
+    menuitems[CAT_CATEGORY_REAL].text = (char*)"Reels (e^)";
+    menuitems[CAT_CATEGORY_SOLVE].text = (char*)"Resoudre (ln)";
+    menuitems[CAT_CATEGORY_STATS].text = (char*)"Statistiques (log)";
+    menuitems[CAT_CATEGORY_TRIG].text = (char*)"Trigonometrie (i)";
+    menuitems[CAT_CATEGORY_OPTIONS].text = (char*)"Options (,)";
+    menuitems[CAT_CATEGORY_LIST].text = (char*)"Listes (x^y)";
+    menuitems[CAT_CATEGORY_MATRIX].text = (char*)"Matrices (sin)";
+    menuitems[CAT_CATEGORY_PROG].text = (char*)"Programmes (cos)";
+    menuitems[CAT_CATEGORY_SOFUS].text = (char*)"Modifier variables (tan)";
+    menuitems[CAT_CATEGORY_LOGO].text = (char*)"Tortue (pi)";
   
     Menu menu;
     menu.items=menuitems;
@@ -1178,7 +1178,7 @@ namespace giac {
 	}
 	if (sres == KEY_CHAR_ANS || sres==KEY_CTRL_EXE) {
 	  reset_kbd();
-	  if (index<allcmds && completeCat[index].example){
+	  if (index<allcmds ){
 	    std::string s(insert_string(index));
 	    const char * example=0;
 	    if (sres==KEY_CHAR_ANS)
@@ -1415,6 +1415,10 @@ namespace giac {
       return paste_clipboard();
     case KEY_CHAR_DQUATE:
       return "\"";
+    case KEY_CHAR_FACTOR:
+      return "factor(";
+    case KEY_CHAR_NORMAL:
+      return "normal(";
     }
     return 0;
   }
@@ -5030,7 +5034,7 @@ namespace xcas {
       menu += string(menu_f1);
       menu += "|2 ";
       menu += string(menu_f2);
-      menu += "|3 oo|4 cmds|5 +-|6 approx";
+      menu += "|3 oo|4 edit|5 +-|6 approx";
       drawRectangle(0,205,LCD_WIDTH_PX,17,22222);
       PrintMiniMini(0,205,menu.c_str(),4,22222,giac::_BLACK);
 #endif
@@ -5072,7 +5076,7 @@ namespace xcas {
 	continue;
       }
       int redo=0;
-      bool ins=key==KEY_CHAR_STORE  || key==KEY_CHAR_RPAR || key==KEY_CHAR_LPAR || key==KEY_CHAR_COMMA || key==KEY_CTRL_PASTE;
+      bool ins=key==KEY_CHAR_STORE  || key==KEY_CHAR_RPAR || key==KEY_CHAR_LPAR || key==KEY_CHAR_COMMA || key==KEY_CTRL_PASTE || key==KEY_CTRL_F4;
       int xleft,ytop,xright,ybottom,gselpos; gen * gsel=0,*gselparent=0;
       if (key==KEY_CTRL_CLIP){
 	xcas::Equation_adjust_xy(eq.data,xleft,ytop,xright,ybottom,gsel,gselparent,gselpos,0);
@@ -5166,7 +5170,7 @@ namespace xcas {
       if (key==KEY_CHAR_IMGNRY)
 	key='i';
       const char keybuf[2]={(key==KEY_CHAR_PMINUS?'-':char(key)),0};
-      const char * adds=(key==KEY_CHAR_PMINUS ||
+      const char * adds=(key==KEY_CTRL_F4 || key==KEY_CHAR_PMINUS ||
 			 (key==char(key) && (isalphanum(key)|| key=='.' ))
 			 )?keybuf:keytostring(key,keyflag,contextptr);
       if (adds && !strcmp(adds,"VARS()"))
@@ -5960,19 +5964,20 @@ namespace xcas {
   }
 
   void search_msg(){
-    DefineStatusMessage((char *)(lang?"EXE: suivant, AC: annuler":"EXE: next, AC: cancel"),1,0,0);
+    DefineStatusMessage((char *)(lang?"EXE: suivant, DEL: annuler":"EXE: next, DEL: cancel"),1,0,0);
     DisplayStatusArea();    	    
   }  
 
 
   void show_status(textArea * text,const std::string & search,const std::string & replace){
     if (text->editable && text->clipline>=0)
-      DefineStatusMessage((char *)"PAD: select, CLIP: copy, AC: cancel",1,0,0);
+      DefineStatusMessage((char *)"PAD: select, COPY: copy, DEL: cancel",1,0,0);
     else {
       std::string status;
-#if 0
-      int heure,minute;
-      giac::get_time(heure,minute);
+#ifdef GIAC_SHOWTIME
+      int d=(int(millis()/60000) +time_shift) % (24*60); // minutes
+      int heure=d/60;
+      int minute=d%60;
       status += char('0'+heure/10);
       status += char('0'+(heure%10));
       status += ':';
@@ -6020,7 +6025,7 @@ namespace xcas {
 	search_msg();
 	return true;
       }
-      if (key==KEY_CTRL_AC){
+      if (key==KEY_CTRL_DEL){
 	show_status(text,search,replace);
 	return false;
       }
@@ -6629,7 +6634,7 @@ namespace xcas {
     //if (editable)
     if (editable){
       drawRectangle(0,205,LCD_WIDTH_PX,17,44444);
-      PrintMiniMini(0,205,"shift-1 tests|2 loops|3 misc|4 cmds|5 +- |      ",4,44444,giac::_BLACK);
+      PrintMiniMini(0,205,"shift-1 tests|2 loops|3 misc|4 tortue|5 +- |      ",4,44444,giac::_BLACK);
       //draw_menu(1);
     }
 #ifdef SCROLLBAR
@@ -6967,11 +6972,11 @@ namespace xcas {
 	if (clipline<0){
 	  const char * adds;
 #if 1
-	  if ( (key>=KEY_CTRL_F1 && key<=KEY_CTRL_F3) ||
-	       (key >= KEY_CTRL_F7 && key <= KEY_CTRL_F14)
+	  if ( (key>=KEY_CTRL_F1 && key<=KEY_CTRL_F4) ||
+	       (key >= KEY_CTRL_F6 && key <= KEY_CTRL_F14)
 	       ){
 	    string le_menu=text->python?"F1 test\nif \nelse \n<\n>\n==\n!=\n&&\n||\nF2 loop\nfor \nfor in\nrange(\nwhile \nbreak\ndef\nreturn \n#\nF3 misc\n:\n;\n_\n!\n%\n&\nprint(\ninput(\n":"F1 test\nif \nelse \n<\n>\n==\n!=\nand\nor\nF2 loop\nfor \nfor in\nrange(\nwhile \nbreak\nf(x):=\nreturn \nlocal\nF3 misc\n;\n:\n_\n!\n%\n&\nprint(\ninput(\n";
-	    le_menu += "F7 arit\n mod \nirem(\nifactor(\ngcd(\nisprime(\nnextprime(\npowmod(\niegcd(\nF8 lin\nmatrix(\ndet(\nmatpow(\nranm(\ncross(\ncurl(\negvl(\negv(\nF9 list\nmakelist(\nrange(\nseq(\nsize(\nappend(\nranv(\nsort(\napply(\nF: plot\nplot(\nplotseq(\nplotlist(\nplotparam(\nplotpolar(\nplotfield(\nhistogram(\nbarplot(\nF; real\nexact(\napprox(\nfloor(\nceil(\nround(\nsign(\nmax(\nmin(\nF< prog\n;\n:\n\\\n&\n?\n!\ndebug(\npython(\nF= cplx\nabs(\narg(\nre(\nim(\nconj(\ncsolve(\ncfactor(\ncpartfrac(\nF> misc\n<\n>\n_\n!\n % \nrand(\nbinomial(\nnormald(";
+	    le_menu += "F4 tortue\navance\nrecule\ntourne_gauche\ntourne_droite\nrond\ndisque\nefface\nF6 draw\nset_pixel(\ndraw_line\ndraw_rectangle\nfill_rect\ndraw_polygon\ndraw_circle\ndraw_arc\ndisplay=filled\nF9 arit\n mod \nirem(\nifactor(\ngcd(\nisprime(\nnextprime(\npowmod(\niegcd(\nF7 lin\nmatrix(\ndet(\nmatpow(\nranm(\ncross(\ncurl(\negvl(\negv(\nF8 list\nmakelist(\nrange(\nseq(\nsize(\nappend(\nranv(\nsort(\napply(\nF: plot\nplot(\nplotseq(\nplotlist(\nplotparam(\nplotpolar(\nplotfield(\nhistogram(\nbarplot(\nF; real\nexact(\napprox(\nfloor(\nceil(\nround(\nsign(\nmax(\nmin(\nF< prog\n;\n:\n\\\n&\n?\n!\ndebug(\npython(\nF= cplx\nabs(\narg(\nre(\nim(\nconj(\ncsolve(\ncfactor(\ncpartfrac(\nF> misc\n<\n>\n_\n!\n % \nrand(\nbinomial(\nnormald(";
 	    const char * ptr=console_menu(key,(char*)(le_menu.c_str()),2);
 	    if (!ptr){
 	      show_status(text,search,replace);
@@ -7309,7 +7314,7 @@ namespace xcas {
 	      python_compat(text->python,contextptr);
 	      warn_python(text->python,false);
 	      drawRectangle(0,205,LCD_WIDTH_PX,17,44444);
-	      PrintMiniMini(0,205,"shift-1 tests|2 loops|3 misc|4 cmds|5 +- |      ",4,44444,giac::_BLACK);
+	      PrintMiniMini(0,205,"shift-1 tests|2 loops|3 misc|4 tortue|5 +- |      ",4,44444,giac::_BLACK);
 	    }
 	  }
 	}
@@ -7412,7 +7417,7 @@ namespace xcas {
     smallmenuitems[2].text = (char*)"Radians";
     smallmenuitems[3].type = MENUITEM_CHECKBOX;
     smallmenuitems[3].text = (char*)"Sqrt";
-    smallmenuitems[4].text = (char *) (lang?"Raccourcis":"Shortcuts");
+    smallmenuitems[4].text = (char *) (lang?"Aide interface":"Shortcuts");
     smallmenuitems[5].text = (char*) (lang?"A propos":"About");
     smallmenuitems[6].text = (char*) "Quit";
     // smallmenuitems[2].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
@@ -8400,7 +8405,7 @@ namespace xcas {
     // cout << "0" << fname << endl; Console_Disp(); GetKey(&key);
     string filename(remove_path(remove_extension(fname)));
     if (!load_console_state_smem((filename+string(".xw")).c_str(),contextptr)){
-      int x=0,y=112;
+      int x=0,y=0;
       PrintMini(x,y,"KhiCAS 1.5 (c) 2019 B. Parisse",TEXT_MODE_NORMAL, COLOR_BLACK, COLOR_WHITE);
       y +=18;
       PrintMini(x,y,"et al, License GPL 2",TEXT_MODE_NORMAL,COLOR_BLACK, COLOR_WHITE);
@@ -8412,9 +8417,15 @@ namespace xcas {
       PrintMini(x,y,lang?"Si le calcul formel est interdit":"If CAS is forbidden!",TEXT_MODE_NORMAL, COLOR_RED, COLOR_WHITE);
       y += 18;
       PrintMini(x,y,lang?"quittez Khicas (HOME HOME HOME)":"Leave Khicas (OK HOME HOME)",TEXT_MODE_NORMAL, COLOR_RED, COLOR_WHITE);
-      if (confirm("Syntax?","OK: Xcas, Back: Python")==KEY_CTRL_F6)
+      if (confirm("Syntaxe?","OK: Xcas, Back: Python",false,130)==KEY_CTRL_F6)
 	python_compat(true,contextptr);
-      Bdisp_AllClr_VRAM();  
+      Bdisp_AllClr_VRAM();
+#ifdef GIAC_SHOWTIME
+      Console_Output("Reglage de l'heure, exemple");
+      Console_NewLine(LINE_TYPE_OUTPUT, 1);          
+      Console_Output("12,37=>,");
+      Console_NewLine(LINE_TYPE_OUTPUT, 1);
+#endif
       //menu_about();
       return 0;
     }
@@ -8579,13 +8590,13 @@ namespace xcas {
 	  }
 	}
       }
-      if (key == KEY_CTRL_F5 || key==KEY_CTRL_F6 || ( (key==KEY_CTRL_RIGHT || key==KEY_CTRL_LEFT) && Current_Line<Last_Line) ){
+      if (key == KEY_CTRL_F5 || key==KEY_CTRL_F4 || ( (key==KEY_CTRL_RIGHT || key==KEY_CTRL_LEFT) && Current_Line<Last_Line) ){
 	int l=Current_Line;
 	bool graph=strcmp((const char *)Line[l].str,"Graphic object")==0;
 	if (graph && l>0) --l;
 	char buf[giacmax(512,strlen((const char *)Line[l].str+1))];
 	strcpy(buf,(const char *)Line[l].str);
-	if ( (alph || key==KEY_CTRL_RIGHT || key==KEY_CTRL_F6) ?textedit(buf,512,false,contextptr):eqws(buf,graph,contextptr)){
+	if ( (alph || key==KEY_CTRL_RIGHT || key==KEY_CTRL_F4) ?textedit(buf,512,false,contextptr):eqws(buf,graph,contextptr)){
 	  if (Current_Line==Last_Line){
 	    Console_Clear_EditLine();
 	    return Console_Input((const char *)buf);
@@ -8612,7 +8623,7 @@ namespace xcas {
 	Console_Disp();
 	continue;
       }
-      if (key==KEY_CTRL_F4){
+      if (key==KEY_CTRL_F6){
 	char buf[512];
 	if (!showCatalog(buf,0,0))
 	  buf[0]=0;
@@ -8638,13 +8649,13 @@ namespace xcas {
 	smallmenuitems[6].text = (char*)(lang?"Ouvrir script":"Open script");
 	smallmenuitems[7].text = (char*)(lang?"Executer script":"Run script");
 	smallmenuitems[8].text = (char*)(lang?"Effacer historique":"Clear history");
-	smallmenuitems[9].text = (char*)(lang?"Effacer script":"Clear script");
-	smallmenuitems[10].text = (char*)(lang?"Editer matrice":"Matrix editor");
-	smallmenuitems[11].text = (char*)"Parameter";
-	smallmenuitems[12].text = (char*)"Config shift-SETUP";
-	smallmenuitems[13].text = (char *) (lang?"Raccourcis":"Shortcuts");
-	smallmenuitems[14].text = (char*) (lang?"A propos":"About");
-	smallmenuitems[15].text = (char*) (lang?"Quitter":"Quit");
+	smallmenuitems[9].text = (char*)(lang?"Effacer script (0)":"Clear script");
+	smallmenuitems[10].text = (char*)"Configuration (e^)";
+	smallmenuitems[11].text = (char *) (lang?"Aide interface (ln)":"Shortcuts");
+	smallmenuitems[12].text = (char*)(lang?"Editer matrice (log)":"Matrix editor");
+	smallmenuitems[13].text = (char*)"Creer parametre (i)";
+	smallmenuitems[14].text = (char*) (lang?"A propos (,)":"About");
+	smallmenuitems[15].text = (char*) (lang?"Quitter (HOME)":"Quit");
 	// smallmenuitems[2].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
 	while(1) {
 	  int sres = doMenu(&smallmenu);
@@ -8675,7 +8686,7 @@ namespace xcas {
 	    if (smallmenu.selection==3){
 	      char filename[MAX_FILENAME_SIZE+1];
 	      if (giac_filebrowser(filename, "xw", "Sessions")){
-		if (console_changed==0 || strcmp(session_filename,"session")==0 || confirm(lang?"Session courante perdue?":"Current session will be lost",lang?"F1: annul, F6: ok":"F1: cancel, F6: ok")==KEY_CTRL_F6){
+		if (console_changed==0 || strcmp(session_filename,"session")==0 || confirm(lang?"Session courante perdue?":"Current session will be lost",lang?"OK: annul, Back: ok":"OK: cancel, Back: ok")==KEY_CTRL_F6){
 		  giac::_restart(giac::gen(giac::vecteur(0),giac::_SEQ__VECT),contextptr);
 		  restore_session(filename,contextptr);
 		  clip_pasted=true;
@@ -8744,14 +8755,27 @@ namespace xcas {
 	      erase_script();
 	      break;
 	    }
-	    if (smallmenu.selection==11){
+	    if (smallmenu.selection == 11){
+	      menu_setup(contextptr);
+	      continue;
+	    }
+	    if(smallmenu.selection == 12 ||smallmenu.selection == 15 ) {
+	      textArea text;
+	      text.editable=false;
+	      text.clipline=-1;
+	      text.title = smallmenuitems[smallmenu.selection-1].text;
+	      add(&text,smallmenu.selection==12?shortcuts_string:apropos_string);
+	      doTextArea(&text,contextptr);
+	      continue;
+	    } 
+	    if (smallmenu.selection==13){
 	      drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX-8, COLOR_WHITE);
 	      if (ptr=input_matrix(false,contextptr)) {
 		return Console_Input((const char *)ptr);
 	      }
 	      break;
 	    }
-	    if (smallmenu.selection == 12){
+	    if (smallmenu.selection == 14){
 	      Menu paramenu;
 	      paramenu.numitems=6;
 	      MenuItem paramenuitems[paramenu.numitems];
@@ -8830,19 +8854,6 @@ namespace xcas {
 	      }
 	      continue;
 	    }
-	    if (smallmenu.selection == 13){
-	      menu_setup(contextptr);
-	      continue;
-	    }
-	    if(smallmenu.selection >= 14) {
-	      textArea text;
-	      text.editable=false;
-	      text.clipline=-1;
-	      text.title = smallmenuitems[smallmenu.selection-1].text;
-	      add(&text,smallmenu.selection==14?shortcuts_string:apropos_string);
-	      doTextArea(&text,contextptr);
-	      continue;
-	    } 
 	  }
 	  break;
 	} // end while(1)
@@ -9158,7 +9169,7 @@ namespace xcas {
     return CONSOLE_SUCCEEDED;
   }
 
-  const char conf_standard[] = "F1 algb\nsimplify(\nfactor(\npartfrac(\ntcollect(\ntexpand(\nsum(\noo\nproduct(\nF2 calc\n'\ndiff(\nintegrate(\nlimit(\nseries(\nsolve(\ndesolve(\nrsolve(\nF5  2d \nreserved\nF4 menu\nreserved\nF6 edt\nreserved\nF: poly\nproot(\npcoeff(\nquo(\nrem(\ngcd(\negcd(\nresultant(\nF7 arit\n mod \nirem(\nifactor(\ngcd(\nisprime(\nnextprime(\npowmod(\niegcd(\nF8 lin\nmatrix(\ndet(\nmatpow(\nranm(\ncross(\ncurl(\negvl(\negv(\nF9 list\nmakelist(\nrange(\nseq(\nsize(\nappend(\nranv(\nsort(\napply(\nF3 plot\nplot(\nplotseq(\nplotlist(\nplotparam(\nplotpolar(\nplotfield(\nhistogram(\nbarplot(\nF; real\nexact(\napprox(\nfloor(\nceil(\nround(\nsign(\nmax(\nmin(\nF< prog\n;\n:\n&\n#\n\\\nf(x):=\ndebug(\npython(\nF= cplx\nabs(\narg(\nre(\nim(\nconj(\ncsolve(\ncfactor(\ncpartfrac(\nF> misc\n<\n>\n_\n!\n % \nrand(\nbinomial(\nnormald(";
+  const char conf_standard[] = "F1 algb\nsimplify(\nfactor(\npartfrac(\ntcollect(\ntexpand(\nsum(\noo\nproduct(\nF2 calc\n'\ndiff(\nintegrate(\nlimit(\nseries(\nsolve(\ndesolve(\nrsolve(\nF5  2d \nreserved\nF4 menu\nreserved\nF6 edt\nreserved\nF: poly\nproot(\npcoeff(\nquo(\nrem(\ngcd(\negcd(\nresultant(\nF9 arit\n mod \nirem(\nifactor(\ngcd(\nisprime(\nnextprime(\npowmod(\niegcd(\nF7 lin\nmatrix(\ndet(\nmatpow(\nranm(\ncross(\ncurl(\negvl(\negv(\nF8 list\nmakelist(\nrange(\nseq(\nsize(\nappend(\nranv(\nsort(\napply(\nF3 plot\nplot(\nplotseq(\nplotlist(\nplotparam(\nplotpolar(\nplotfield(\nhistogram(\nbarplot(\nF; real\nexact(\napprox(\nfloor(\nceil(\nround(\nsign(\nmax(\nmin(\nF< prog\n;\n:\n&\n#\n\\\nf(x):=\ndebug(\npython(\nF= cplx\nabs(\narg(\nre(\nim(\nconj(\ncsolve(\ncfactor(\ncpartfrac(\nF> misc\n<\n>\n_\n!\n % \nrand(\nbinomial(\nnormald(";
 
   // Loads the FMenus' data into memory, from a cfg file
   void Console_FMenu_Init()
@@ -9387,13 +9398,13 @@ namespace xcas {
     } // end loop on all lines
 
 #if 1
-    string menu("shift-1 ");
+    string menu("shift1 ");
     menu += string(menu_f1);
-    menu += "|2 ";
+    menu += " | 2 ";
     menu += string(menu_f2);
-    menu += "|3 ";
+    menu += " | 3 ";
     menu += string(menu_f3);
-    menu += "|4 cmds|5 2d |6 edit";
+    menu += " | 4 edit | 5 2d  ";
     drawRectangle(0,205,LCD_WIDTH_PX,17,_BLACK);
     PrintMiniMini(0,205,menu.c_str(),4);
 #endif
