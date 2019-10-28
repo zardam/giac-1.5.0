@@ -73,6 +73,8 @@
 namespace giac {
 #endif // ndef NO_NAMESPACE_GIAC
 
+  int sprint_int(char * s,int r);
+  void sprint_double(char * s,double d);
 
 #ifdef USE_GMP_REPLACEMENTS
 #undef HAVE_GMPXX_H
@@ -1371,12 +1373,17 @@ namespace giac {
   struct eqwdata {
     gen g; 
     attributs eqw_attributs;
+#if defined NUMWORKS || defined FXCG
+    short int x,y,dx,dy;
+    short int baseline;
+#else
     int x,y,dx,dy;
+    int baseline;
+#endif
     bool selected;
     bool active;
     bool hasbaseline;
     bool modifiable;
-    int baseline;
     eqwdata(int dxx,int dyy,int xx, int yy,const attributs & a,const gen& gg):g(gg),eqw_attributs(a),x(xx),y(yy),dx(dxx),dy(dyy),selected(false),active(false),hasbaseline(false),modifiable(true),baseline(0) {};
     eqwdata(int dxx,int dyy,int xx, int yy,const attributs & a,const gen& gg,int mybaseline):g(gg),eqw_attributs(a),x(xx),y(yy),dx(dxx),dy(dyy),selected(false),active(false),hasbaseline(true),modifiable(true),baseline(mybaseline) {};
     const char * dbgprint(){ 

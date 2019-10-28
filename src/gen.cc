@@ -2,6 +2,11 @@
 #include "giacPCH.h"
 #ifdef NUMWORKS
 #include "kdisplay.h"
+#ifdef DEVICE
+const size_t stackptr=0x20038000;
+#else
+const size_t stackptr=0xffffffffffffffff;
+#endif
 #endif
 
 /*
@@ -798,6 +803,10 @@ namespace giac {
       * ((ulonglong * ) this) = ulonglong(ptr) << 16;
 #else
       __ZINTptr= new ref_mpz_t();
+#ifdef NUMWORKS
+      if ((size_t) _ZINTptr > stackptr)
+	ctrl_c=interrupted=true;
+#endif
       mpz_set(__ZINTptr->z,m.get_mpz_t());
 #endif
       type =_ZINT;
@@ -846,6 +855,10 @@ namespace giac {
 #else
     __VECTptr= new_ref_vecteur(v);
 #endif
+#ifdef NUMWORKS
+    if ((size_t) _VECTptr > stackptr)
+      ctrl_c=interrupted=true;
+#endif
     type=_VECT;
     subtype=(signed char)s;
   }
@@ -855,6 +868,10 @@ namespace giac {
     * ((ulonglong * ) this) = ulonglong(vptr) << 16;
 #else
     __VECTptr= vptr;
+#endif
+#ifdef NUMWORKS
+    if ((size_t) _VECTptr > stackptr)
+      ctrl_c=interrupted=true;
 #endif
     type=_VECT;
     subtype=(signed char)s;
@@ -884,6 +901,10 @@ namespace giac {
 #else
     __SYMBptr = new_ref_symbolic(s) ;
 #endif
+#ifdef NUMWORKS
+    if ((size_t) _SYMBptr > stackptr)
+      ctrl_c=interrupted=true;
+#endif
     type = _SYMB;
     subtype = 0;
   }
@@ -893,6 +914,10 @@ namespace giac {
     * ((ulonglong * ) this) = ulonglong(sptr) << 16;
 #else
     __SYMBptr = sptr;
+#endif
+#ifdef NUMWORKS
+    if ((size_t) _SYMBptr > stackptr)
+      ctrl_c=interrupted=true;
 #endif
     type = _SYMB;
     subtype = 0;
@@ -991,6 +1016,10 @@ namespace giac {
 #else
 	__POLYptr = new Tref_tensor<gen>(p) ;
 #endif
+#ifdef NUMWORKS
+	if ((size_t) _POLYptr > stackptr)
+	  ctrl_c=interrupted=true;
+#endif
 	type = _POLY;
       }
     }
@@ -1040,6 +1069,10 @@ namespace giac {
 #else
     __POLYptr = pptr ;
 #endif
+#ifdef NUMWORKS
+    if ((size_t) _POLYptr > stackptr)
+      ctrl_c=interrupted=true;
+#endif
     subtype=0;
     type = _POLY;
   }
@@ -1070,6 +1103,10 @@ namespace giac {
       * ((ulonglong * ) this) = ulonglong(mptr) << 16;
 #else
       __ZINTptr = mptr;
+#endif
+#ifdef NUMWORKS
+      if ((size_t) _ZINTptr > stackptr)
+	ctrl_c=interrupted=true;
 #endif
       type =_ZINT;
     }
@@ -1134,6 +1171,10 @@ namespace giac {
       * ((ulonglong * ) this) = ulonglong(new ref_mpz_t(z.ptr)) << 16;
 #else
       __ZINTptr = new ref_mpz_t(z.ptr);
+#endif
+#ifdef NUMWORKS
+      if ((size_t) _ZINTptr > stackptr)
+	ctrl_c=interrupted=true;
 #endif
       type =_ZINT;
     }
@@ -1391,6 +1432,10 @@ namespace giac {
 	* ((ulonglong * ) this) = ulonglong(new ref_sparse_poly1(p)) << 16;
 #else
 	__SPOL1ptr= new ref_sparse_poly1(p);
+#endif
+#ifdef NUMWORKS
+	if ((size_t) _SPOL1ptr > stackptr)
+	  ctrl_c=interrupted=true;
 #endif
 	subtype=0;
 	type=_SPOL1;
@@ -14728,6 +14773,10 @@ void sprint_double(char * s,double d){
 #else
     mpf_set(_REALptr->inf,g.inf);
 #endif
+#ifdef NUMWORKS
+    if ((size_t) _REALptr > stackptr)
+      ctrl_c=interrupted=true;
+#endif
   }
 
   gen::gen(const real_interval & g){
@@ -14735,6 +14784,10 @@ void sprint_double(char * s,double d){
       * ((ulonglong * ) this) = ulonglong(new ref_real_interval) << 16;
 #else
       __REALptr = (ref_real_object *) new ref_real_interval;
+#endif
+#ifdef NUMWORKS
+    if ((size_t) _REALptr > stackptr)
+      ctrl_c=interrupted=true;
 #endif
     type = _REAL;
     subtype=0;

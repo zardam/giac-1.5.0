@@ -1309,6 +1309,8 @@
 {"simult",13,9,0,0},
 {"sin",13,9,0,0},
 {"sin2costan",13,9,0,0},
+{"sin_regression",13,9,0,0},
+{"sin_regression_plot",13,9,0,0},
 {"sincos",13,9,0,0},
 {"single_inter",13,9,0,0},
 {"singular",13,9,0,0},

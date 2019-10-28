@@ -3152,7 +3152,7 @@ namespace giac {
 	  swapgen(x,xm); swapgen(y,ym); // x=xm;y=ym;
 	}
       }
-      B=_floor(B*1.001,contextptr)+1; // to be adjusted
+      B=_floor(1.001*B,contextptr)+1; // to be adjusted
     } // end maxiter loop
     return undef;
 #endif
@@ -3795,6 +3795,9 @@ namespace giac {
     if (b==-1 && !ctrl_c && !interrupted){ 
       do_pollard=false;
       if (msieve(a,b,contextptr)) return b; else return -1; }
+#else
+    if (b==-1)
+      *logptr(contextptr) << "Integer too large for factorization algorithm\n";
 #endif
     if (b==-1)
       b=a;

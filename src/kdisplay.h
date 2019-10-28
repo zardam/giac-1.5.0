@@ -10,10 +10,10 @@ extern  const int LCD_WIDTH_PX;
 extern   const int LCD_HEIGHT_PX;
 #define STATUS_AREA_PX 0 // 24
 #define GIAC_HISTORY_MAX_TAILLE 32
-#define GIAC_HISTORY_SIZE 8
+#define GIAC_HISTORY_SIZE 2
 
 // access to Numworks OS, defined in port.cpp (or modkandinsky.cpp)
-double millis();
+double millis(); extern int time_shift;
 bool file_exists(const char * filename);
 bool erase_file(const char * filename);
 const char * read_file(const char * filename);
@@ -179,38 +179,38 @@ namespace xcas {
   void save_console_state_smem(const char * filename,const giac::context *);
   bool load_console_state_smem(const char * filename,const giac::context *);
 
-struct DISPBOX {
-  int     left;
-  int     top;
-  int     right;
-  int     bottom;
-  unsigned char mode;
-} ;
+  struct DISPBOX {
+    int     left;
+    int     top;
+    int     right;
+    int     bottom;
+    unsigned char mode;
+  } ;
 
 
-enum CONSOLE_RETURN_VAL{
-  CONSOLE_NEW_LINE_SET = 1,
-  CONSOLE_SUCCEEDED = 0,
-  CONSOLE_MEM_ERR = -1,
-  CONSOLE_ARG_ERR = -2,
-  CONSOLE_NO_EVENT = -3
-};
+  enum CONSOLE_RETURN_VAL {
+			   CONSOLE_NEW_LINE_SET = 1,
+			   CONSOLE_SUCCEEDED = 0,
+			   CONSOLE_MEM_ERR = -1,
+			   CONSOLE_ARG_ERR = -2,
+			   CONSOLE_NO_EVENT = -3
+  };
 
-enum CONSOLE_CURSOR_DIRECTION{
-  CURSOR_UP,
-  CURSOR_DOWN,
-  CURSOR_LEFT,
-  CURSOR_RIGHT,
-  CURSOR_SHIFT_LEFT,
-  CURSOR_SHIFT_RIGHT,
-  CURSOR_ALPHA_UP,
-  CURSOR_ALPHA_DOWN,
-};
+  enum CONSOLE_CURSOR_DIRECTION{
+				CURSOR_UP,
+				CURSOR_DOWN,
+				CURSOR_LEFT,
+				CURSOR_RIGHT,
+				CURSOR_SHIFT_LEFT,
+				CURSOR_SHIFT_RIGHT,
+				CURSOR_ALPHA_UP,
+				CURSOR_ALPHA_DOWN,
+  };
 
-enum CONSOLE_LINE_TYPE{
-  LINE_TYPE_INPUT=0,
-  LINE_TYPE_OUTPUT=1
-};
+  enum CONSOLE_LINE_TYPE{
+			 LINE_TYPE_INPUT=0,
+			 LINE_TYPE_OUTPUT=1
+  };
 
   enum CONSOLE_CASE{
 		    LOWER_CASE,
@@ -220,28 +220,28 @@ enum CONSOLE_LINE_TYPE{
   enum CONSOLE_SCREEN_SPEC {
 			    _LINE_MAX = 48,
 			    LINE_DISP_MAX = 11,
-			    COL_DISP_MAX = 26,//32
+			    COL_DISP_MAX = 30,//32
 			    EDIT_LINE_MAX = 2048
   };
   
-struct console_line {
-  char *str;
-  short int readonly;
-  short int type;
-  int start_col;
-  int disp_len;
-};
+  struct console_line {
+    char *str;
+    short int readonly;
+    short int type;
+    int start_col;
+    int disp_len;
+  };
 
-struct FMenu{
-  char* name;
-  char** str;
-  unsigned char count;
-};
+  struct FMenu{
+    char* name;
+    char** str;
+    unsigned char count;
+  };
 
-struct location{
-  int x;
-  int y;
-};
+  struct location{
+    int x;
+    int y;
+  };
 
 #define MAX_FMENU_ITEMS 8
 #define FMENU_TITLE_LENGHT 4
@@ -249,40 +249,42 @@ struct location{
 #define is_wchar(c) ((c == 0x7F) || (c == 0xF7) || (c == 0xF9) || (c == 0xE5) || (c == 0xE6) || (c == 0xE7))
 #define printf(s) Console_Output((const char *)s);
 
-int Console_DelStr(char *str, int end_pos, int n);
-int Console_InsStr(char *dest, const char *src, int disp_pos);
-int Console_GetActualPos(const char *str, int disp_pos);
-int Console_GetDispLen(const char *str);
-int Console_MoveCursor(int direction);
-int Console_Input(const char *str);
-int Console_Output(const char *str);
-void Console_Clear_EditLine();
-int Console_NewLine(int pre_line_type, int pre_line_readonly);
-int Console_Backspace(void);
+  int Console_DelStr(char *str, int end_pos, int n);
+  int Console_InsStr(char *dest, const char *src, int disp_pos);
+  int Console_GetActualPos(const char *str, int disp_pos);
+  int Console_GetDispLen(const char *str);
+  int Console_MoveCursor(int direction);
+  int Console_Input(const char *str);
+  int Console_Output(const char *str);
+  void Console_Clear_EditLine();
+  int Console_NewLine(int pre_line_type, int pre_line_readonly);
+  int Console_Backspace(void);
   int Console_GetKey(const giac::context *);
-int Console_Init(void);
-int Console_Disp(void);
+  int Console_Init(void);
+  int Console_Disp(int redraw_mode=1);
   int Console_FMenu(int key,const giac::context *);
-extern char menu_f1[8],menu_f2[8],menu_f3[8],menu_f4[8],menu_f5[8],menu_f6[8];
-const char * console_menu(int key,char* cfg,int active_app);
-void Console_FMenu_Init(void);
-const char * Console_Draw_FMenu(int key, struct FMenu* menu,char * cfg_,int active_app);
-char *Console_Make_Entry(const char* str);
+  extern char menu_f1[8],menu_f2[8],menu_f3[8],menu_f4[8],menu_f5[8],menu_f6[8];
+  const char * console_menu(int key,char* cfg,int active_app);
+  void Console_FMenu_Init(void);
+  const char * Console_Draw_FMenu(int key, struct FMenu* menu,char * cfg_,int active_app);
+  char *Console_Make_Entry(const char* str);
   char *Console_GetLine(const giac::context *);
-char* Console_GetEditLine();
-void dConsolePut(const char *);
-void dConsolePutChar(const char );
-void dConsoleRedraw(void);
-extern int dconsole_mode;
-extern int console_changed; // 1 if something new in history
-extern char session_filename[MAX_FILENAME_SIZE+1];
+  char* Console_GetEditLine();
+  void dConsolePut(const char *);
+  void dConsolePutChar(const char );
+  void dConsoleRedraw(void);
+  extern int dconsole_mode;
+  extern int console_changed; // 1 if something new in history
+  extern char session_filename[MAX_FILENAME_SIZE+1];
   const char * input_matrix(bool list,const giac::context *);
-void warn_python(int python,bool autochange=false);
-// void draw_menu(int editor); // 0 console, 1 editor
-int get_set_session_setting(int value);
+  void warn_python(int python,bool autochange=false);
+  // void draw_menu(int editor); // 0 console, 1 editor
+  int get_set_session_setting(int value);
   void menu_setup(const giac::context *);
-int console_main(const giac::context *);
+  int console_main(const giac::context *);
 #endif
+  int periodic_table(const char * & name,const char * & symbol,char * protons,char * nucleons,char * mass,char * electroneg);
+
 
 #ifndef NO_NAMESPACE_XCAS
 } // namespace xcas
@@ -380,10 +382,9 @@ namespace giac {
   int inputline(const char * msg1,const char * msg2,std::string & s,bool numeric,int ypos=65,const giac::context *contextptr=0);
   bool inputdouble(const char * msg1,double & d,const giac::context *contextptr);
   bool do_confirm(const char * s);
-  int confirm(const char * msg1,const char * msg2,bool acexit=false);
+  int confirm(const char * msg1,const char * msg2,bool acexit=false,int y=40);
   bool confirm_overwrite();
   void invalid_varname();
-
 
 #ifndef NO_NAMESPACE_XCAS
 } // namespace giac
