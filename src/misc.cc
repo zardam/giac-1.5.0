@@ -1694,7 +1694,7 @@ namespace giac {
     if (g.type!=_VECT){
       gen g_(g);
       //if (!lop(g_,at_exp).empty())
-      g_=cossinexp2rootof(g_,contextptr);
+      g_=cossinexp2rootof(g_,contextptr,32767);
       vecteur v=alg_lvar(g_);
       if (v.size()==1 && v.front().type==_VECT && v.front()._VECTptr->empty()){
 	gen tmp=e2r(g_,v,contextptr);

@@ -597,18 +597,19 @@ namespace giac {
 #define CAT_CATEGORY_PROG 17
 #define CAT_CATEGORY_SOFUS 18
 #define CAT_CATEGORY_PHYS 19
-#define CAT_CATEGORY_LOGO 20 // should be the last one
+#define CAT_CATEGORY_UNIT 20
+#define CAT_CATEGORY_LOGO 21 // should be the last one
 
   void init_locale(){
     lang=1;
   }
 
   const catalogFunc completeCat[] = { // list of all functions (including some not in any category)
-				     // {"cosh(x)", 0, "Hyperbolic cosine of x.", 0, 0, CAT_CATEGORY_TRIG},
-				     // {"exp(x)", 0, "Renvoie e^x.", "1.2", 0, CAT_CATEGORY_REAL},
-				     // {"log(x)", 0, "Logarithme naturel de x.", 0, 0, CAT_CATEGORY_REAL},
-				     // {"sinh(x)", 0, "Hyperbolic sine of x.", 0, 0, CAT_CATEGORY_TRIG},
-				     // {"tanh(x)", 0, "Hyperbolic tangent of x.", 0, 0, CAT_CATEGORY_TRIG},
+    // {"cosh(x)", 0, "Hyperbolic cosine of x.", 0, 0, CAT_CATEGORY_TRIG},
+    // {"exp(x)", 0, "Renvoie e^x.", "1.2", 0, CAT_CATEGORY_REAL},
+    // {"log(x)", 0, "Logarithme naturel de x.", 0, 0, CAT_CATEGORY_REAL},
+    // {"sinh(x)", 0, "Hyperbolic sine of x.", 0, 0, CAT_CATEGORY_TRIG},
+    // {"tanh(x)", 0, "Hyperbolic tangent of x.", 0, 0, CAT_CATEGORY_TRIG},
     {" boucle for (pour)", "for ", "Boucle definie pour un indice variant entre 2 valeurs fixees", "#\nfor ", 0, CAT_CATEGORY_PROG},
     {" boucle liste", "for in", "Boucle sur tous les elements d'une liste.", "#\nfor in", 0, CAT_CATEGORY_PROG},
     {" boucle while (tantque)", "while ", "Boucle indefinie tantque.", "#\nwhile ", 0, CAT_CATEGORY_PROG},
@@ -620,47 +621,94 @@ namespace giac {
     {" return res;", "return ", "return ou retourne quitte la fonction et renvoie le resultat res", 0, 0, CAT_CATEGORY_PROG},
     {" edit list ", "list ", "Assistant creation de liste.", 0, 0, CAT_CATEGORY_LIST},
     {" edit matrix ", "matrix ", "Assistant creation de matrice.", 0, 0, CAT_CATEGORY_MATRIX},
-				     //{"fonction def Xcas", "fonction f(x) local y;   ffonction:;", "Definition de fonction.", "#fonction f(x) local y; y:=x^2; return y; ffonction:;", 0, CAT_CATEGORY_PROG},
+    {" mksa(x)", 0, "Conversion en unites MKSA", 0, 0, CAT_CATEGORY_PHYS | (CAT_CATEGORY_UNIT << 8)},
+    {" ufactor(a,b)", 0, "Factorise l'unite b dans a", "100_J,1_kW", 0, CAT_CATEGORY_PHYS | (CAT_CATEGORY_UNIT << 8)},
+    {" usimplify(a)", 0, "Simplifie l'unite dans a", "100_l/10_cm^2", 0, CAT_CATEGORY_PHYS | (CAT_CATEGORY_UNIT << 8)},
+    //{"fonction def Xcas", "fonction f(x) local y;   ffonction:;", "Definition de fonction.", "#fonction f(x) local y; y:=x^2; return y; ffonction:;", 0, CAT_CATEGORY_PROG},
     {"!", "!", "Non logique (prefixe) ou factorielle de n (suffixe).", "#7!", "#!b", CAT_CATEGORY_PROGCMD},
     {"#", "#", "Commentaire Python, en Xcas taper //. Raccourci ALPHA F2", 0, 0, CAT_CATEGORY_PROG},
     {"%", "%", "a % b signifie a modulo b", 0, 0, CAT_CATEGORY_ARIT | (CAT_CATEGORY_PROGCMD << 8)},
     {"&", "&", "Et logique ou +", "#1&2", 0, CAT_CATEGORY_PROGCMD},
     {":=", ":=", "Affectation vers la gauche (inverse de =>).", "#a:=3", 0, CAT_CATEGORY_PROGCMD|(CAT_CATEGORY_SOFUS<<8)},
     {"<", "<", "Inferieur strict. Raccourci SHIFT F2", 0, 0, CAT_CATEGORY_PROGCMD},
-    {"=>", "=>", "Affectation vers la droite ou conversion en (touche ->). Par exemple 5=>a ou x^4-1=>* ou (x+1)^2=>+ ou sin(x)^2=>cos.", "#5=>a", 0, CAT_CATEGORY_PROGCMD},
+    {"=>", "=>", "Affectation vers la droite ou conversion en (touche ->). Par exemple 5=>a ou x^4-1=>* ou (x+1)^2=>+ ou sin(x)^2=>cos.", "#5=>a", "#15_m=>_cm", CAT_CATEGORY_PROGCMD | (CAT_CATEGORY_PHYS <<8) | (CAT_CATEGORY_UNIT << 16)},
     {">", ">", "Superieur strict. Raccourci F2.", 0, 0, CAT_CATEGORY_PROGCMD},
     {"\\", "\\", "Caractere \\", 0, 0, CAT_CATEGORY_PROGCMD},
-    {"_", "_", "Caractere _. Raccourci (-).", 0, 0, CAT_CATEGORY_PROGCMD},
-    {"_cdf", "_cdf", "Suffixe pour obtenir une distribution cumulee. Taper F2 pour la distribution cumulee inverse.", "#_icdf", 0, CAT_CATEGORY_PROBA},
-    {"_plot", "_plot", "Suffixe pour obtenir le graphe d'une regression.", "#X,Y:=[1,2,3,4,5],[0,1,3,4,4];polynomial_regression_plot(X,Y,2);scatterplot(X,Y)", 0, CAT_CATEGORY_STATS},
-    {" mksa", 0, "Conversion en unites MKSA", 0, 0, CAT_CATEGORY_PHYS},
-    {" => ", 0, "Conversion vers une unite compatible","#15_m=>_cm", 0, CAT_CATEGORY_PHYS},
+    {"_", "_", "Caractere _. Prefixe d'unites.", 0, 0, CAT_CATEGORY_PROGCMD},
+    {"_(km/h)", "_(km/h)", "Vitesse en kilometre/heure", 0, 0, CAT_CATEGORY_UNIT},
+    {"_(m/s)", "_(m/s)", "Vitesse en metre/seconde", 0, 0, CAT_CATEGORY_UNIT},
+    {"_(m/s^2)", "_(m/s^2)", "Acceleration en metre par seconde au carre", 0, 0, CAT_CATEGORY_UNIT},
+    {"_(m^2/s)", "_(m^2/s)", "Viscosite", 0, 0, CAT_CATEGORY_UNIT},
+    {"_A", 0, "Intensite electrique en Ampere", 0, 0, CAT_CATEGORY_UNIT},
+    {"_Bq", 0, "Radioactivite: Becquerel", 0, 0, CAT_CATEGORY_UNIT},
+    {"_C", 0, "Charge electrique en Coulomb", 0, 0, CAT_CATEGORY_UNIT},
+    {"_Ci", 0, "Radioactivite: Curie", 0, 0, CAT_CATEGORY_UNIT},
+    {"_F", 0, "Farad", 0, 0, CAT_CATEGORY_UNIT},
+    {"_F_", 0, "constante de Faraday", 0, 0, CAT_CATEGORY_PHYS},
     {"_G_", 0, "Gravitation", 0, 0, CAT_CATEGORY_PHYS},
+    {"_H", 0, "Henry", 0, 0, CAT_CATEGORY_UNIT},
+    {"_Hz", 0, "Hertz", 0, 0, CAT_CATEGORY_UNIT},
+    {"_J", 0, "Energie en Joule=kg*m^2/s^2", 0, 0, CAT_CATEGORY_UNIT},
+    {"_K", 0, "Temperature en Kelvin", 0, 0, CAT_CATEGORY_UNIT},
+    {"_Kcal", 0, "Energie en kilo-calorier", 0, 0, CAT_CATEGORY_UNIT},
+    {"_MeV", 0, "Energie en mega-electron-Volt", 0, 0, CAT_CATEGORY_UNIT},
+    {"_N", 0, "Force en Newton=kg*m/s^2", 0, 0, CAT_CATEGORY_UNIT},
     {"_NA_", 0, "Avogadro", 0, 0, CAT_CATEGORY_PHYS},
+    {"_Ohm", 0, "Resistance electrique en Ohm", 0, 0, CAT_CATEGORY_UNIT},
+    {"_PSun_", 0, "puissance du Soleil", 0, 0, CAT_CATEGORY_PHYS},
+    {"_Pa", 0, "Pression en Pascal=kg/m/s^2", 0, 0, CAT_CATEGORY_UNIT},
+    {"_REarth_", 0, "Rayon de la Terre", 0, 0, CAT_CATEGORY_PHYS},
+    {"_RSun_", 0, "rayon du Soleil", 0, 0, CAT_CATEGORY_PHYS},
     {"_R_", 0, "Roentgen", 0, 0, CAT_CATEGORY_PHYS},
-    {"_Vm_", 0, "Volume molaire", 0, 0, CAT_CATEGORY_PHYS},
+    {"_S", 0, "", 0, 0, CAT_CATEGORY_UNIT},
     {"_StdP_", 0, "Pression standard", 0, 0, CAT_CATEGORY_PHYS},
     {"_StdT_", 0, "temperature standard", 0, 0, CAT_CATEGORY_PHYS},
+    {"_Sv", 0, "Radioactivite: Sievert", 0, 0, CAT_CATEGORY_UNIT},
+    {"_T", 0, "Tesla", 0, 0, CAT_CATEGORY_UNIT},
+    {"_V", 0, "Tension electrique en Volt", 0, 0, CAT_CATEGORY_UNIT},
+    {"_Vm_", 0, "Volume molaire", 0, 0, CAT_CATEGORY_PHYS},
+    {"_W", 0, "Puissance en Watt=kg*m^2/s^3", 0, 0, CAT_CATEGORY_UNIT},
+    {"_Wb", 0, "Weber", 0, 0, CAT_CATEGORY_UNIT},
     {"_alpha_", 0, "constante de structure fine", 0, 0, CAT_CATEGORY_PHYS},
     {"_c_", 0, "vitesse de la lumiere", 0, 0, CAT_CATEGORY_PHYS},
+    {"_cd", 0, "Luminosite en candela", 0, 0, CAT_CATEGORY_UNIT},
+    {"_cdf", "_cdf", "Suffixe pour obtenir une distribution cumulee. Taper F2 pour la distribution cumulee inverse.", "#_icdf", 0, CAT_CATEGORY_PROBA},
+    {"_d", 0, "Temps: jour", 0, 0, CAT_CATEGORY_UNIT},
+    {"_deg", 0, "Angle en degres", 0, 0, CAT_CATEGORY_UNIT},
+    {"_eV", 0, "Energie en electron-Volt", 0, 0, CAT_CATEGORY_UNIT},
     {"_epsilon0_", 0, "permittivite du vide", 0, 0, CAT_CATEGORY_PHYS},
-    {"_F_", 0, "constante de Faraday", 0, 0, CAT_CATEGORY_PHYS},
+    {"_ft", 0, "Longueur en pieds", 0, 0, CAT_CATEGORY_UNIT},
     {"_g_", 0, "gravite au sol", 0, 0, CAT_CATEGORY_PHYS},
+    {"_grad", 0, "Angle en grades", 0, 0, CAT_CATEGORY_UNIT},
+    {"_h", 0, "Heure", 0, 0, CAT_CATEGORY_UNIT},
     {"_h_", 0, "constante de Planck", 0, 0, CAT_CATEGORY_PHYS},
+    {"_ha", 0, "Aire en hectare", 0, 0, CAT_CATEGORY_UNIT},
     {"_hbar_", 0, "constante de Planck/(2*pi)", 0, 0, CAT_CATEGORY_PHYS},
+    {"_inch", 0, "Longueur en pouces", 0, 0, CAT_CATEGORY_UNIT},
+    {"_kWh", 0, "Energie en kWh", 0, 0, CAT_CATEGORY_UNIT},
     {"_k_", 0, "constante de Boltzmann", 0, 0, CAT_CATEGORY_PHYS},
+    {"_kg", 0, "Masse en kilogramme", 0, 0, CAT_CATEGORY_UNIT},
+    {"_l", 0, "Volume en litre", 0, 0, CAT_CATEGORY_UNIT},
+    {"_m", 0, "Longueur en metre", 0, 0, CAT_CATEGORY_UNIT},
+    {"_mEarth_", 0, "masse de la Terre", 0, 0, CAT_CATEGORY_PHYS},
+    {"_m^2", 0, "Aire en m^2", 0, 0, CAT_CATEGORY_UNIT},
+    {"_m^3", 0, "Volume en m^3", 0, 0, CAT_CATEGORY_UNIT},
     {"_me_", 0, "masse electron", 0, 0, CAT_CATEGORY_PHYS},
+    {"_miUS", 0, "Longueur en miles US", 0, 0, CAT_CATEGORY_UNIT},
+    {"_mn", 0, "Temps: minute", 0, 0, CAT_CATEGORY_UNIT},
     {"_mp_", 0, "masse proton", 0, 0, CAT_CATEGORY_PHYS},
     {"_mpme_", 0, "ratio de masse proton/electron", 0, 0, CAT_CATEGORY_PHYS},
     {"_phi_", 0, "quantum flux magnetique", 0, 0, CAT_CATEGORY_PHYS},
+    {"_plot", "_plot", "Suffixe pour obtenir le graphe d'une regression.", "#X,Y:=[1,2,3,4,5],[0,1,3,4,4];polynomial_regression_plot(X,Y,2);scatterplot(X,Y)", 0, CAT_CATEGORY_STATS},
     {"_qe_", 0, "charge de l'electron", 0, 0, CAT_CATEGORY_PHYS},
     {"_qme_", 0, "_q_/_me_", 0, 0, CAT_CATEGORY_PHYS},
-    {"_RSun_", 0, "rayon du Soleil", 0, 0, CAT_CATEGORY_PHYS},
-    {"_PSun_", 0, "puissance du Soleil", 0, 0, CAT_CATEGORY_PHYS},
-    {"_mEarth_", 0, "masse de la Terre", 0, 0, CAT_CATEGORY_PHYS},
-    {"_REarth_", 0, "Rayon de la Terre", 0, 0, CAT_CATEGORY_PHYS},
+    {"_rad", 0, "Angle en radians", 0, 0, CAT_CATEGORY_UNIT},
+    {"_rem", 0, "Radioactivite: rem", 0, 0, CAT_CATEGORY_UNIT},
+    {"_s", 0, "Temps: seconde", 0, 0, CAT_CATEGORY_UNIT},
     {"_sd_", 0, "Jour sideral", 0, 0, CAT_CATEGORY_PHYS},
     {"_syr_", 0, "Annee siderale", 0, 0, CAT_CATEGORY_PHYS},
+    {"_tr", 0, "Angle en tours", 0, 0, CAT_CATEGORY_UNIT},
+    {"_yd", 0, "Longueur en yards", 0, 0, CAT_CATEGORY_UNIT},
     {"a and b", " and ", "Et logique", 0, 0, CAT_CATEGORY_PROGCMD},
     {"a or b", " or ", "Ou logique", 0, 0, CAT_CATEGORY_PROGCMD},
     {"abcuv(a,b,c)", 0, "Cherche 2 polynomes u,v tels que a*u+b*v=c","x+1,x^2-2,x", 0, CAT_CATEGORY_POLYNOMIAL},
@@ -940,7 +988,8 @@ namespace giac {
     menuitems[CAT_CATEGORY_PROG].text = (char*)"Programmes (cos)";
     menuitems[CAT_CATEGORY_SOFUS].text = (char*)"Modifier variables (tan)";
     menuitems[CAT_CATEGORY_PHYS].text = (char*)"Constantes physique (pi)";
-    menuitems[CAT_CATEGORY_LOGO].text = (char*)"Tortue (sqrt)";
+    menuitems[CAT_CATEGORY_UNIT].text = (char*)"Unites physiques (sqrt)";
+    menuitems[CAT_CATEGORY_LOGO].text = (char*)"Tortue (x^2)";
   
     Menu menu;
     menu.items=menuitems;
@@ -9079,8 +9128,10 @@ namespace xcas {
 	  strcpy(buf,Edit_Line);
 	  buf[Cursor.x]=0;
 	  string s=help_insert(buf,contextptr);
-	  Console_InsStr(Edit_Line,s.c_str(),Current_Col);
-	  return CONSOLE_SUCCEEDED;
+	  Console_Input(s.c_str());
+	  Console_Disp();
+	  Console_MoveCursor(CURSOR_SHIFT_RIGHT);
+	  continue;
 	}
 	return Console_MoveCursor(alph?CURSOR_ALPHA_DOWN:CURSOR_DOWN);
       }
