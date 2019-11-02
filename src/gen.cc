@@ -12429,7 +12429,7 @@ void sprint_double(char * s,double d){
     else
       return res;
 #else // USE_GMP_REPLACEMENTS
-#if defined NSPIRE || defined FXCG
+#if defined NSPIRE || defined FXCG || defined NUMWORKS
     return "mpf_t not implemented";
 #else
     std::ostringstream out;
