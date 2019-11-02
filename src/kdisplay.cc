@@ -644,8 +644,8 @@ namespace giac {
     {"_C", 0, "Charge electrique en Coulomb", 0, 0, CAT_CATEGORY_UNIT},
     {"_Ci", 0, "Radioactivite: Curie", 0, 0, CAT_CATEGORY_UNIT},
     {"_F", 0, "Farad", 0, 0, CAT_CATEGORY_UNIT},
-    {"_F_", 0, "constante de Faraday", 0, 0, CAT_CATEGORY_PHYS},
-    {"_G_", 0, "Gravitation", 0, 0, CAT_CATEGORY_PHYS},
+    {"_F_", 0, "constante de Faraday (charge globale d'une mole de charges élémentaires).", 0, 0, CAT_CATEGORY_PHYS},
+    {"_G_", 0, "constante de gravitation universelle. Force=_G_*m1*m2/r^2", 0, 0, CAT_CATEGORY_PHYS},
     {"_H", 0, "Henry", 0, 0, CAT_CATEGORY_UNIT},
     {"_Hz", 0, "Hertz", 0, 0, CAT_CATEGORY_UNIT},
     {"_J", 0, "Energie en Joule=kg*m^2/s^2", 0, 0, CAT_CATEGORY_UNIT},
@@ -659,10 +659,10 @@ namespace giac {
     {"_Pa", 0, "Pression en Pascal=kg/m/s^2", 0, 0, CAT_CATEGORY_UNIT},
     {"_REarth_", 0, "Rayon de la Terre", 0, 0, CAT_CATEGORY_PHYS},
     {"_RSun_", 0, "rayon du Soleil", 0, 0, CAT_CATEGORY_PHYS},
-    {"_R_", 0, "Roentgen", 0, 0, CAT_CATEGORY_PHYS},
+    {"_R_", 0, "constante des gaz (de Boltzmann par mole)", 0, 0, CAT_CATEGORY_PHYS},
     {"_S", 0, "", 0, 0, CAT_CATEGORY_UNIT},
-    {"_StdP_", 0, "Pression standard", 0, 0, CAT_CATEGORY_PHYS},
-    {"_StdT_", 0, "temperature standard", 0, 0, CAT_CATEGORY_PHYS},
+    {"_StdP_", 0, "Pression standard (au niveau de la mer)", 0, 0, CAT_CATEGORY_PHYS},
+    {"_StdT_", 0, "temperature standard (0 degre Celsius exprimes en Kelvins)", 0, 0, CAT_CATEGORY_PHYS},
     {"_Sv", 0, "Radioactivite: Sievert", 0, 0, CAT_CATEGORY_UNIT},
     {"_T", 0, "Tesla", 0, 0, CAT_CATEGORY_UNIT},
     {"_V", 0, "Tension electrique en Volt", 0, 0, CAT_CATEGORY_UNIT},
@@ -698,6 +698,7 @@ namespace giac {
     {"_mn", 0, "Temps: minute", 0, 0, CAT_CATEGORY_UNIT},
     {"_mp_", 0, "masse proton", 0, 0, CAT_CATEGORY_PHYS},
     {"_mpme_", 0, "ratio de masse proton/electron", 0, 0, CAT_CATEGORY_PHYS},
+    {"_mu0_", 0, "permeabilite du vide", 0, 0, CAT_CATEGORY_PHYS},
     {"_phi_", 0, "quantum flux magnetique", 0, 0, CAT_CATEGORY_PHYS},
     {"_plot", "_plot", "Suffixe pour obtenir le graphe d'une regression.", "#X,Y:=[1,2,3,4,5],[0,1,3,4,4];polynomial_regression_plot(X,Y,2);scatterplot(X,Y)", 0, CAT_CATEGORY_STATS},
     {"_qe_", 0, "charge de l'electron", 0, 0, CAT_CATEGORY_PHYS},
@@ -916,7 +917,7 @@ namespace giac {
     {"subst(a,b=c)", 0, "Remplace b par c dans a. Raccourci a(b=c). Pour faire plusieurs remplacements, saisir subst(expr,[b1,b2...],[c1,c2...])", "x^2,x=3", "x+y^2,[x,y],[1,2]", CAT_CATEGORY_ALGEBRA},
     {"sum(f,k,m,M)", 0, "Somme de l'expression f dependant de k pour k variant de m a M. Exemple sum(k^2,k,1,n)=>*. Raccourci ALPHA F3", "k,k,1,n", "k^2,k", CAT_CATEGORY_CALCULUS},
     {"svd(A)", 0, "Singular Value Decomposition, renvoie U orthogonale, S vecteur des valeurs singulières, Q orthogonale tels que A=U*diag(S)*tran(Q).", "[[1,2],[3,4]]", 0, CAT_CATEGORY_MATRIX},
-    {"tabvar(f,[x=a..b])", 0, "Tableau de variations de l'expression f, avec arguments optionnels la variable x dans l'intervalle a..b.", "sqrt(x^2+x+1)", "[cos(t),sin(3t)],t", CAT_CATEGORY_CALCULUS},
+    {"tabvar(f,[x=a..b])", 0, "Tableau de variations de l'expression f, avec arguments optionnels la variable x dans l'intervalle a..b.", "sqrt(x^2+x+1)", "[cos(2t),sin(3t)],t", CAT_CATEGORY_CALCULUS},
     {"tantque (boucle Xcas)", "tantque  faire  ftantque;", "Boucle indefinie.", "#j:=13; tantque j!=1 faire j:=ifte(even(j),j/2,3j+1); print(j); ftantque;", 0, CAT_CATEGORY_PROG},
     {"taylor(f,x=a,n,[polynom])", 0, "Developpement de Taylor de l'expression f en x=a a l'ordre n, ajouter le parametre polynom pour enlever le terme de reste.","sin(x),x=0,5", "sin(x),x=0,5,polynom", CAT_CATEGORY_CALCULUS},
     {"tchebyshev1(n)", 0, "Polynome de Tchebyshev de 1ere espece: cos(n*x)=T_n(cos(x))", "10", 0, CAT_CATEGORY_POLYNOMIAL},
@@ -948,7 +949,7 @@ namespace giac {
 
   const char aide_khicas_string[]="Aide Khicas";
   const char shortcuts_string[]="Raccourcis clavier (shell et editeur)\nshift-/: %\nalpha shift \": '\nshift--: \\\nshift-*: factor\nshift-+: normal\nshift-1 a 6: selon bandeau en bas\nshift-7: matrices\nshift-8: listes\nshift-9:arithmetique\nshift-0: polynomes\nshift-.: reels\nshift-10^: programme\nvar: liste des variables (shell) ou dessin tortue (editeur)\n\nshift-x^y (sto) renvoie =>\n=>+: partfrac\n=>*: factor\n=>sin/cos/tan\n=>=>: solve\n\nShell:\nshift-5: Editeur 2d ou graphique ou texte selon objet\nshift-6: editeur texte\n+ ou - modifie un parametre en surbrillance\n\nEditeur d'expressions\nshift-cut: defaire/refaire (1 fois)\npave directionnel: deplace la selection dans l'arborescence de l'expression\nshift-droit/gauche echange selection avec argument a droite ou a gauche\nalpha-droit/gauche dans une somme ou un produit: augmente la selection avec argument droit ou gauche\nshift-4: Editer selection, shift-5: taille police + ou - grande\nEXE: evaluer la selection\nshift-6: valeur approchee\nBackspace: supprime l'operateur racine de la selection\n\nEditeur de scripts\nEXE: passage a la ligne\nshift-CUT: defaire/refaire (1 fois)\nshift-COPY: marque le debut de la selection, deplacer le curseur vers la fin puis Backspace pour effacer ou shift-COPY pour copier sans effacer. shift-PASTE pour coller.\nHome-6 recherche seule: entrer un mot puis EXE puis EXE. Taper EXE pour l'occurence suivante, Back pour annuler.\nHome-6 remplacer: entrer un mot puis EXE puis le remplacement et EXE. Taper EXE ou Back pour remplacer ou non et passer a l'occurence suivante, AC pour annuler\nOK: tester syntaxe\n\nRaccourcis Graphes:\n+ - zoom\n(-): zoomout selon y\n*: autoscale\n/: orthonormalisation\nOPTN: axes on/off";
-  const char apropos_string[]="Khicas 1.5.0, (c) 2019 B. Parisse et R. De Graeve, www-fourier.univ-grenoble-alpes.fr/~parisse.\nLicense GPL version 2.\nPortage Numworks avec l'aide de Damien Nicolet et Jean-Baptiste Boric et M4x1m3\nInterface adaptee d'Eigenmath pour Casio, G. Maia (http://gbl08ma.com), Mike Smith, Nemhardy, LePhenixNoir, ...\nTable periodique d'apres M4x1m3\nRemerciements au site tiplanet, en particulier Xavier Andreani, Adrien Bertrand, Lionel Debroux";
+  const char apropos_string[]="Khicas 1.5.0, (c) 2019 B. Parisse et R. De Graeve, www-fourier.univ-grenoble-alpes.fr/~parisse.\nLicense GPL version 2.\nPortage Numworks avec l'aide de Damien Nicolet et Jean-Baptiste Boric et Maxime Friess\nInterface adaptee d'Eigenmath pour Casio, G. Maia (http://gbl08ma.com), Mike Smith, Nemhardy, LePhenixNoir, ...\nTable periodique d'apres Maxime Friess\nRemerciements au site tiplanet, en particulier Xavier Andreani, Adrien Bertrand, Lionel Debroux";
 
   int CAT_COMPLETE_COUNT=sizeof(completeCat)/sizeof(catalogFunc);
 
@@ -1419,7 +1420,7 @@ namespace giac {
   }
 
   gen select_var(GIAC_CONTEXT){
-    giac::ctrl_c=giac::interrupted=false;
+    kbd_interrupted=giac::ctrl_c=giac::interrupted=false;
     gen g(_VARS(0,contextptr));
     if (g.type!=_VECT || g._VECTptr->empty()){
       confirm("Pas de variables. Exemples pour en creer","a=1 ou f(x):=sin(x^2)",true);
@@ -3023,7 +3024,7 @@ namespace xcas {
 	  else {
 	    Equation_vertical_adjust(vv.dy,vv.y,h,y);
 	    eqwdata v1=Equation_total_size(v[1]);
-	    x=max(a.fontsize,(int)v1.dx)+2*a.fontsize/3; // var name size
+	    x=max((int)a.fontsize,(int)v1.dx)+2*a.fontsize/3; // var name size
 	    Equation_translate(v[1],0,-v1.dy-v1.y);
 	    Equation_vertical_adjust(v1.dy,-v1.dy,h,y);
 	    Equation_translate(v[0],x,0);
@@ -5710,14 +5711,14 @@ namespace xcas {
 		clear_abort();
 		esc_flag=0;
 		giac::ctrl_c=false;
-		giac::interrupted=false;
+		kbd_interrupted=giac::interrupted=false;
 	      }
 	      else
 		tmp=symbolic(*op._FUNCptr,args);
 	      //cout << "sel " << value._EQWptr->g << " " << tmp << " " << goto_sel << endl;
 	      esc_flag=0;
 	      giac::ctrl_c=false;
-	      giac::interrupted=false;
+	      kbd_interrupted=giac::interrupted=false;
 	      if (!is_undef(tmp)){
 		xcas::replace_selection(eq,tmp,gsel,&goto_sel,contextptr);
 		if (addarg){
@@ -5764,14 +5765,26 @@ namespace xcas {
     clear_abort();
     // execution_in_progress = 0;
     if (esc_flag || ctrl_c){
-      while (confirm("Interrupted","F1/F6: ok",true)==-1)
+      while (confirm("Interrupted","OK",true)==-1)
 	; // insure ON has been removed from keyboard buffer
       ge=string2gen("Interrupted",false);
+      // memory full?
+      if (!kbd_interrupted){
+	// clear turtle, display msg
+	turtle_stack()=vector<logo_turtle>(1,logo_turtle());
+	while (confirm("Memoire remplie! Choisir","des variables a purger",true)==-1)
+	  ;
+	gen g=select_var(contextptr);
+	if (g.type==_IDNT)
+	  _purge(g,contextptr);
+	else 
+	  _restart(0,contextptr);
+      }
     }
     //Console_Output("Done"); return ;
     esc_flag=0;
     giac::ctrl_c=false;
-    giac::interrupted=false;
+    giac::kbd_interrupted=giac::interrupted=false;
   }
 
   bool islogo(const gen & g){
@@ -5953,7 +5966,7 @@ namespace xcas {
       g=protecteval(g,1,contextptr);
       clear_abort();
       giac::ctrl_c=false;
-      giac::interrupted=false;
+      kbd_interrupted=giac::interrupted=false;
       check_do_graph(g,7,contextptr); // define the function
       DefineStatusMessage((char *)(lang?"Syntaxe correcte":"Parse OK"),1,0,0);
     }
@@ -8546,7 +8559,7 @@ namespace xcas {
 
   void chk_clearscreen(){
     drawRectangle(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24, COLOR_WHITE);
-    if (confirm(lang?"Effacer l'historique?":"Clear history?",lang?"F1: annuler,   F6: effacer":"F1: cancel,   F6: erase",true)==KEY_CTRL_F6){
+    if (confirm(lang?"Conserver l'historique?":"Keep history?",lang?"OK: oui, Back: effacer":"OK: yes, Back: erase",false)==KEY_CTRL_F6){
       Console_Init();
       Console_Clear_EditLine();
     }    
@@ -8847,21 +8860,21 @@ namespace xcas {
 	smallmenu.scrollbar=1;
 	smallmenu.scrollout=1;
 	//smallmenu.title = "KhiCAS";
-	smallmenuitems[0].text = (char *) (lang?"Enregistrer session":"Save session ");
-	smallmenuitems[1].text = (char *) (lang?"Enregistrer sous":"Save session as");
-	smallmenuitems[2].text = (char*) (lang?"Charger session":"Load session");
-	smallmenuitems[3].text = (char*)(lang?"Nouvelle session":"New session");
-	smallmenuitems[4].text = (char*)(lang?"Executer session":"Run session");
-	smallmenuitems[5].text = (char*)(lang?"Editeur script":"Script editor");
-	smallmenuitems[6].text = (char*)(lang?"Ouvrir script":"Open script");
-	smallmenuitems[7].text = (char*)(lang?"Executer script":"Run script");
-	smallmenuitems[8].text = (char*)(lang?"Effacer historique":"Clear history");
-	smallmenuitems[9].text = (char*)(lang?"Effacer script (0)":"Clear script");
-	smallmenuitems[10].text = (char*)"Configuration (e^)";
-	smallmenuitems[11].text = (char *) (lang?"Aide interface (ln)":"Shortcuts");
-	smallmenuitems[12].text = (char*)(lang?"Editer matrice (log)":"Matrix editor");
-	smallmenuitems[13].text = (char*)"Creer parametre (i)";
-	smallmenuitems[14].text = (char*)"Table periodique (,)";
+	smallmenuitems[0].text = (char*)"Applications tierces (,)";
+	smallmenuitems[1].text = (char *) (lang?"Enregistrer session":"Save session ");
+	smallmenuitems[2].text = (char *) (lang?"Enregistrer sous":"Save session as");
+	smallmenuitems[3].text = (char*) (lang?"Charger session":"Load session");
+	smallmenuitems[4].text = (char*)(lang?"Nouvelle session":"New session");
+	smallmenuitems[5].text = (char*)(lang?"Executer session":"Run session");
+	smallmenuitems[6].text = (char*)(lang?"Editeur script":"Script editor");
+	smallmenuitems[7].text = (char*)(lang?"Ouvrir script":"Open script");
+	smallmenuitems[8].text = (char*)(lang?"Executer script":"Run script");
+	smallmenuitems[9].text = (char*)(lang?"Effacer historique (0)":"Clear history");
+	smallmenuitems[10].text = (char*)(lang?"Effacer script (e^)":"Clear script");
+	smallmenuitems[11].text = (char*)"Configuration (ln)";
+	smallmenuitems[12].text = (char *) (lang?"Aide interface (log)":"Shortcuts");
+	smallmenuitems[13].text = (char*)(lang?"Editer matrice (i)":"Matrix editor");
+	smallmenuitems[14].text = (char*)"Creer parametre (,)";
 	smallmenuitems[15].text = (char*) (lang?"A propos (x^y)":"About");
 	smallmenuitems[16].text = (char*) (lang?"Quitter (HOME)":"Quit");
 	// smallmenuitems[2].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
@@ -8873,6 +8886,10 @@ namespace xcas {
 	    }
 	    const char * ptr=0;
 	    if (smallmenu.selection==1){
+	      key=KEY_SHIFT_ANS;
+	      break;
+	    }
+	    if (smallmenu.selection==2){
 	      if (strcmp(session_filename,"session")==0)
 		smallmenu.selection=2;
 	      else {
@@ -8880,7 +8897,7 @@ namespace xcas {
 		break;
 	      }
 	    }
-	    if (smallmenu.selection==2){
+	    if (smallmenu.selection==3){
 	      char buf[270];
 	      if (get_filename(buf,".xw")){
 		save(buf,contextptr);
@@ -8891,7 +8908,7 @@ namespace xcas {
 	      }
 	      break;
 	    }
-	    if (smallmenu.selection==3){
+	    if (smallmenu.selection==4){
 	      char filename[MAX_FILENAME_SIZE+1];
 	      if (giac_filebrowser(filename, "xw", "Sessions")){
 		if (console_changed==0 || strcmp(session_filename,"session")==0 || confirm(lang?"Session courante perdue?":"Current session will be lost",lang?"OK: annul, Back: ok":"OK: cancel, Back: ok")==KEY_CTRL_F6){
@@ -8904,14 +8921,14 @@ namespace xcas {
 	      }
 	      break;
 	    }
-	    if (0 && smallmenu.selection==3) {
+	    if (0 && smallmenu.selection==5) {
 	      // FIXME: make a menu catalog?
 	      char buf[512];
 	      if (doCatalogMenu(buf,(char*)"CATALOG",0,contextptr))
 		return Console_Input((const char *)buf);
 	      break;
 	    }
-	    if (smallmenu.selection==4) {
+	    if (smallmenu.selection==5) {
 	      char filename[MAX_FILENAME_SIZE+1];
 	      drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX, COLOR_WHITE);
 	      if (get_filename(filename,".xw")){
@@ -8927,25 +8944,25 @@ namespace xcas {
 	      }  
 	      break;
 	    }
-	    if (smallmenu.selection==5) {
+	    if (smallmenu.selection==6) {
 	      run_session(0,contextptr);
 	      break;
 	    }
-	    if (smallmenu.selection==6) {
+	    if (smallmenu.selection==7) {
 	      if (!edptr || merge_area(edptr->elements).size()<2)
 		edit_script((char *)(giac::remove_extension(session_filename)+".py").c_str(),contextptr);
 	      else
 		doTextArea(edptr,contextptr);
 	      break;
 	    }
-	    if (smallmenu.selection==7) {
+	    if (smallmenu.selection==8) {
 	      char filename[MAX_FILENAME_SIZE+1];
 	      drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX-8, COLOR_WHITE);
 	      if (giac_filebrowser(filename, "py", "Scripts"))
 		edit_script(filename,contextptr);
 	      break;
 	    }
-	    if (smallmenu.selection==8) {
+	    if (smallmenu.selection==9) {
 	      char filename[MAX_FILENAME_SIZE+1];
 	      drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX-8, COLOR_WHITE);
 	      if (giac_filebrowser(filename, "py", "Scripts"))
@@ -8953,21 +8970,21 @@ namespace xcas {
 	      Console_Clear_EditLine();
 	      break;
 	    }
-	    if(smallmenu.selection == 9) {
+	    if(smallmenu.selection == 10) {
 	      chk_restart(contextptr);
 	      Console_Init();
 	      Console_Clear_EditLine();
 	      break;
 	    }
-	    if (smallmenu.selection==10){
+	    if (smallmenu.selection==11){
 	      erase_script();
 	      break;
 	    }
-	    if (smallmenu.selection == 11){
+	    if (smallmenu.selection == 12){
 	      menu_setup(contextptr);
 	      continue;
 	    }
-	    if(smallmenu.selection == 12 ||smallmenu.selection == 16 ) {
+	    if(smallmenu.selection == 13 ||smallmenu.selection == 16 ) {
 	      textArea text;
 	      text.editable=false;
 	      text.clipline=-1;
@@ -8976,51 +8993,14 @@ namespace xcas {
 	      doTextArea(&text,contextptr);
 	      continue;
 	    } 
-	    if (smallmenu.selection==13){
+	    if (smallmenu.selection==14){
 	      drawRectangle(0, 0, LCD_WIDTH_PX, LCD_HEIGHT_PX-8, COLOR_WHITE);
 	      if (ptr=input_matrix(false,contextptr)) {
 		return Console_Input((const char *)ptr);
 	      }
 	      break;
 	    }
-	    if (smallmenu.selection==15){
-	      const char * name,*symbol;
-	      char protons[32],nucleons[32],mass[32],electroneg[32];
-	      int res=periodic_table(name,symbol,protons,nucleons,mass,electroneg);
-	      if (!res)
-		continue;
-	      char console_buf[64]={0};
-	      char * ptr=console_buf;
-	      if (res & 1)
-		ptr=strcpy(ptr,name)+strlen(ptr);
-	      if (res & 2){
-		if (res & 1)
-		  ptr=strcpy(ptr,",")+strlen(ptr);
-		ptr=strcpy(ptr,symbol)+strlen(ptr);
-	      }
-	      if (res & 4){
-		if (res&3)
-		  ptr=strcpy(ptr,",")+strlen(ptr);
-		ptr=strcpy(ptr,protons)+strlen(ptr);
-	      }
-	      if (res & 8){
-		if (res&7)
-		  ptr=strcpy(ptr,",")+strlen(ptr);
-		ptr=strcpy(ptr,nucleons)+strlen(ptr);
-	      }
-	      if (res & 16){
-		if (res&15)
-		  ptr=strcpy(ptr,",")+strlen(ptr);
-		ptr=strcpy(ptr,mass+2)+strlen(ptr);
-	      }
-	      if (res & 32){
-		if (res&31)
-		  ptr=strcpy(ptr,",")+strlen(ptr);
-		ptr=strcpy(ptr,electroneg+4)+strlen(ptr);
-	      }
-	      return Console_Input(console_buf);
-	    }
-	    if (smallmenu.selection == 14){
+	    if (smallmenu.selection == 15){
 	      Menu paramenu;
 	      paramenu.numitems=6;
 	      MenuItem paramenuitems[paramenu.numitems];
@@ -9102,8 +9082,10 @@ namespace xcas {
 	  }
 	  break;
 	} // end while(1)
-	Console_Disp();
-	return CONSOLE_SUCCEEDED;
+	if (key!=KEY_SHIFT_ANS){
+	  Console_Disp();
+	  return CONSOLE_SUCCEEDED;
+	}
 #else
 	char filename[MAX_FILENAME_SIZE+1];
 	//drawRectangle(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24, COLOR_WHITE);
@@ -9112,6 +9094,105 @@ namespace xcas {
 	//edit_script(0);
 	return CONSOLE_SUCCEEDED;
 #endif
+      }
+      if (key==KEY_SHIFT_ANS){
+	Menu smallmenu;
+	smallmenu.numitems=4; // INCREMENT IF YOU ADD AN APPLICATION
+	// and uncomment first smallmenuitems[app_number].text="Reserved"
+	// replace by your application name
+	// and add if (smallmenu.selection==app_number-1){ call your code }
+	MenuItem smallmenuitems[smallmenu.numitems];      
+	smallmenu.items=smallmenuitems;
+	smallmenu.height=12;
+	smallmenu.scrollbar=1;
+	smallmenu.scrollout=1;
+	smallmenuitems[0].text = (char*)"Table periodique";
+	smallmenuitems[1].text = (char*)"Exemple simple: Syracuse";
+	// smallmenuitems[2].text = (char*)"Reserverd";
+	// smallmenuitems[3].text = (char*)"Reserverd";
+	// smallmenuitems[4].text = (char*)"Reserverd";
+	// smallmenuitems[5].text = (char*)"Reserverd";
+	// smallmenuitems[6].text = (char*)"Reserverd";
+	// smallmenuitems[7].text = (char*)"Reserverd";
+	// smallmenuitems[8].text = (char*)"Reserverd";
+	// smallmenuitems[9].text = (char*)"Reserverd";
+	// smallmenuitems[10].text = (char*)"Reserverd";
+	smallmenuitems[smallmenu.numitems-2].text = (char*)"Quitter le menu";
+	smallmenuitems[smallmenu.numitems-1].text = (char*)"Quitter Khicas";
+	while(1) {
+	  int sres = doMenu(&smallmenu);
+	  if(sres == MENU_RETURN_SELECTION || sres==KEY_CTRL_EXE) {
+	    if (smallmenu.selection==smallmenu.numitems){
+	      return KEY_CTRL_MENU;
+	    }
+	    if (smallmenu.selection==2){
+	      // Exemple simple d'application tierce: la suite de Syracuse
+	      // on entre la valeur de u0
+	      double d; int i;
+	      for (;;){
+		inputdouble(gettext("Suite de Syracuse. u0?"),d,contextptr);
+		i=(d);
+		if (i==d)
+		  break;
+		confirm(gettext("u0 doit etre entier!"),gettext("Recommencez"));
+	      }
+	      i=max(i,1);
+	      vecteur v(1,i); // initialise une liste avec u0
+	      while (i!=1){
+		if (i%2)
+		  i=3*i+1;
+		else
+		  i=i/2;
+		v.push_back(i);
+	      }
+	      // representation graphique de la liste
+	      displaygraph(_listplot(v,contextptr),contextptr);
+	      // on entre la liste en ligne de commande
+	      Console_Input(gen(v).print(contextptr).c_str());
+	    }
+	    if (smallmenu.selection==1){
+	      const char * name,*symbol;
+	      char protons[32],nucleons[32],mass[32],electroneg[32];
+	      int res=periodic_table(name,symbol,protons,nucleons,mass,electroneg);
+	      if (!res)
+		continue;
+	      char console_buf[64]={0};
+	      char * ptr=console_buf;
+	      if (res & 1)
+		ptr=strcpy(ptr,name)+strlen(ptr);
+	      if (res & 2){
+		if (res & 1)
+		  ptr=strcpy(ptr,",")+strlen(ptr);
+		ptr=strcpy(ptr,symbol)+strlen(ptr);
+	      }
+	      if (res & 4){
+		if (res&3)
+		  ptr=strcpy(ptr,",")+strlen(ptr);
+		ptr=strcpy(ptr,protons)+strlen(ptr);
+	      }
+	      if (res & 8){
+		if (res&7)
+		  ptr=strcpy(ptr,",")+strlen(ptr);
+		ptr=strcpy(ptr,nucleons)+strlen(ptr);
+	      }
+	      if (res & 16){
+		if (res&15)
+		  ptr=strcpy(ptr,",")+strlen(ptr);
+		ptr=strcpy(ptr,mass+2)+strlen(ptr);
+		ptr=strcpy(ptr,"_(g/mol)")+8;
+	      }
+	      if (res & 32){
+		if (res&31)
+		  ptr=strcpy(ptr,",")+strlen(ptr);
+		ptr=strcpy(ptr,electroneg+4)+strlen(ptr);
+	      }
+	      return Console_Input(console_buf);
+	    }
+	  } // end sres==menu_selection
+	  break;
+	} // end endless while
+	Console_Disp();
+	return CONSOLE_SUCCEEDED;
       }
       if ( (key >= KEY_CTRL_F1 && key <= KEY_CTRL_F6) ||
 	   (key >= KEY_CTRL_F7 && key <= KEY_CTRL_F14) 
@@ -9473,7 +9554,7 @@ namespace xcas {
     return CONSOLE_SUCCEEDED;
   }
 
-  const char conf_standard[] = "F1 algb\nsimplify(\nfactor(\npartfrac(\ntcollect(\ntexpand(\nsum(\noo\nproduct(\nF2 calc\n'\ndiff(\nintegrate(\nlimit(\nseries(\nsolve(\ndesolve(\nrsolve(\nF5  2d \nreserved\nF4 menu\nreserved\nF6 reg\nlinear_regression_plot(\nlogarithmic_regression_plot(\nexponential_regression_plot(\npower_regression_plot(\npolynomial_regression_plot(\nsin_regression_plot(\nscatterplot(\nmatrix(\nF: poly\nproot(\npcoeff(\nquo(\nrem(\ngcd(\negcd(\nresultant(\nF9 arit\n mod \nirem(\nifactor(\ngcd(\nisprime(\nnextprime(\npowmod(\niegcd(\nF7 lin\nmatrix(\ndet(\nmatpow(\nranm(\ncross(\ncurl(\negvl(\negv(\nF8 list\nmakelist(\nrange(\nseq(\nsize(\nappend(\nranv(\nsort(\napply(\nF3 plot\nplot(\nplotseq(\nplotlist(\nplotparam(\nplotpolar(\nplotfield(\nhistogram(\nbarplot(\nF; real\nexact(\napprox(\nfloor(\nceil(\nround(\nsign(\nmax(\nmin(\nF< prog\n:\n&\n#\n\\\nf(x):=\ndebug(\npython(\nperiodic_table\nF= cplx\nabs(\narg(\nre(\nim(\nconj(\ncsolve(\ncfactor(\ncpartfrac(\nF> misc\n<\n>\n_\n!\n % \nrand(\nbinomial(\nnormald(";
+  const char conf_standard[] = "F1 algb\nsimplify(\nfactor(\npartfrac(\ntcollect(\ntexpand(\nsum(\noo\nproduct(\nF2 calc\n'\ndiff(\nintegrate(\nlimit(\nseries(\nsolve(\ndesolve(\nrsolve(\nF5  2d \nreserved\nF4 menu\nreserved\nF6 reg\nlinear_regression_plot(\nlogarithmic_regression_plot(\nexponential_regression_plot(\npower_regression_plot(\npolynomial_regression_plot(\nsin_regression_plot(\nscatterplot(\nmatrix(\nF: poly\nproot(\npcoeff(\nquo(\nrem(\ngcd(\negcd(\nresultant(\nGF(\nF9 arit\n mod \nirem(\nifactor(\ngcd(\nisprime(\nnextprime(\npowmod(\niegcd(\nF7 lin\nmatrix(\ndet(\nmatpow(\nranm(\ncross(\ncurl(\negvl(\negv(\nF8 list\nmakelist(\nrange(\nseq(\nsize(\nappend(\nranv(\nsort(\napply(\nF3 plot\nplot(\nplotseq(\nplotlist(\nplotparam(\nplotpolar(\nplotfield(\nhistogram(\nbarplot(\nF; real\nexact(\napprox(\nfloor(\nceil(\nround(\nsign(\nmax(\nmin(\nF< prog\n:\n&\n#\n\\\nf(x):=\ndebug(\npython(\nperiodic_table\nF= cplx\nabs(\narg(\nre(\nim(\nconj(\ncsolve(\ncfactor(\ncpartfrac(\nF> misc\n<\n>\n_\n!\n % \nrand(\nbinomial(\nnormald(";
 
   // Loads the FMenus' data into memory, from a cfg file
   void Console_FMenu_Init()
@@ -9829,8 +9910,9 @@ namespace xcas {
     return (((r*32)/256)<<11) | (((g*64)/256)<<5) | (b*32/256);
   }
 
-  // table periodique, d'apres https://bitbucket.org/m4x1m3/nw-atom/src/master/
-  // par M4x1m3 https://tiplanet.org/forum/viewtopic.php?f=102&t=23054
+  // table periodique, code adapte de https://github.com/M4xi1m3/nw-atom
+  // avec l'aimable autorisation de diffusion sous licence GPL de Maxime Friess
+  // https://tiplanet.org/forum/viewtopic.php?f=97&t=23094&p=247471#p247471
 enum AtomType {
   ALKALI_METAL,
   ALKALI_EARTH_METAL,
@@ -9867,7 +9949,7 @@ const AtomDef atomsdefs[] = {
   {  5, 12,  1, METALLOID               , "Boron"        , "B"   ,   6, 10.806      , 2.04  },
   {  6, 13,  1, REACTIVE_NONMETAL       , "Carbon"       , "C"   ,   6, 12.0096     , 2.55  },
   {  7, 14,  1, REACTIVE_NONMETAL       , "Nitrogen"     , "N"   ,   7, 14.00643    , 3.04  },
-  {  8, 15,  1, REACTIVE_NONMETAL       , "Oxygen"       , "O"   ,   8, 16.99903    , 3.44  },
+  {  8, 15,  1, REACTIVE_NONMETAL       , "Oxygen"       , "O"   ,   8, 15.99903    , 3.44  },
   {  9, 16,  1, HALOGEN                 , "Fluorine"     , "F"   ,  10, 18.9984032  , 3.98  },
   { 10, 17,  1, NOBLE_GAS               , "Neon"         , "Ne"  ,  10, 20.1797     , -1    },
   
@@ -9963,9 +10045,9 @@ const AtomDef atomsdefs[] = {
   { 89,  3,  8, ACTINIDE                , "Actinium"     , "Ac"  , 138, 227         , 1.1   },
   { 90,  4,  8, ACTINIDE                , "Thorium"      , "Th"  , 142, 232.03806   , 1.3   },
   { 91,  5,  8, ACTINIDE                , "Protactinium" , "Pa"  , 140, 231.03588   , 1.5   },
-  { 92,  6,  8, ACTINIDE                , "Uranium"      , "U"   , 146, 238.02891   , 1.7   },
-  { 93,  7,  8, ACTINIDE                , "Neptunium"    , "Np"  , 144, 237         , 1.3   },
-  { 94,  8,  8, ACTINIDE                , "Plutonium"    , "Pu"  , 150, 244         , 1.3   },
+  { 92,  6,  8, ACTINIDE                , "Uranium"      , "U"   , 146, 238.02891   , 1.38   },
+  { 93,  7,  8, ACTINIDE                , "Neptunium"    , "Np"  , 144, 237         , 1.36   },
+  { 94,  8,  8, ACTINIDE                , "Plutonium"    , "Pu"  , 150, 244         , 1.28   },
   { 95,  9,  8, ACTINIDE                , "Americium"    , "Am"  , 148, 243         , 1.13  },
   { 96, 10,  8, ACTINIDE                , "Curium"       , "Cm"  , 151, 247         , 1.28  },
   { 97, 11,  8, ACTINIDE                , "Berkellum"    , "Bk"  , 150, 247         , 1.3   },
@@ -10056,7 +10138,7 @@ void drawAtom(uint8_t id) {
 	} else {
 	  drawRectangle(0,0,LCD_WIDTH_PX,LCD_HEIGHT_PX,_WHITE);
 	}
-	numworks_draw_string_small(0,200,"OK: tout, P:protons, N:nucleons, M:mass, E:khi");
+	numworks_draw_string_small(0,200,gettext("OK: tout, P:protons, N:nucleons, M:mass, E:khi"));
 	for(int i = 0; i < ATOM_NUMS; i++) {
 	  drawAtom(i);
 	}
@@ -10080,7 +10162,7 @@ void drawAtom(uint8_t id) {
 	symbol=atomsdefs[cursor_pos].symbol;
 	numworks_draw_string(73,23,symbol);
 	name=atomsdefs[cursor_pos].name;
-	numworks_draw_string_small(110,27,name);
+	numworks_draw_string_small(110,27,gettext(name));
 	numworks_draw_string_small(50,18,nucleons);
 	numworks_draw_string_small(50,31,protons);
 	strcpy(mass,"M:");
@@ -10178,6 +10260,44 @@ int select_item(const char ** ptr,const char * title){
     return -1;
   return smallmenu.selection-1;
 }
-  
+
+// string translations
+#include "aspen_translate.h"
+bool tri2(const char4 & a,const char4 & b){
+  int res= strcmp(a[0],b[0]);
+  return res<0;
+}
+
+int giac2aspen(int lang){
+  switch (lang){
+  case 0: case 2:
+    return 1;
+  case 1:
+    return 3;
+  case 3:
+    return 5;
+  case 6:
+    return 7;
+  case 8:
+    return 2;
+  case 5:
+    return 4;
+  }
+  return 0;
+}
+
+const char * gettext(const char * s) { 
+  // 0 and 2 english 1 french 3 sp 4 el 5 de 6 it 7 tr 8 zh 9 pt
+  int aspenlang=giac2aspen(lang);
+  char4 s4={s};
+  std::pair<char4 * const,char4 *const> pp=equal_range(aspen_giac_translations,aspen_giac_translations+aspen_giac_records,s4,tri2);
+  if (pp.first!=pp.second && 
+      pp.second!=aspen_giac_translations+aspen_giac_records &&
+      (*pp.first)[aspenlang]){
+    return (*pp.first)[aspenlang];
+  }
+  return s;
+}
+
 
 #endif // NUMWORKS

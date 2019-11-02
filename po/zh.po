@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:38+0100\n"
+"POT-Creation-Date: 2019-11-01 20:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -107,11 +107,11 @@ msgstr ""
 #: src/modpoly.cc:507 src/modpoly.cc:651 src/modpoly.cc:669 src/modpoly.cc:765
 #: src/modpoly.cc:781 src/modpoly.cc:803 src/modpoly.cc:819
 #: src/modpoly.cc:1606 src/solve.cc:4473 src/solve.cc:4555 src/intg.cc:3518
-#: src/intgab.cc:277 src/prog.cc:2676 src/gen.cc:2143 src/gen.cc:2350
-#: src/gen.cc:4441 src/gen.cc:4461 src/gen.cc:4746 src/gen.cc:5241
-#: src/gen.cc:5253 src/gen.cc:5420 src/gen.cc:6002 src/gen.cc:6532
-#: src/gen.cc:6908 src/gen.cc:7279 src/gen.cc:7414 src/gen.cc:7676
-#: src/gen.cc:7821
+#: src/intgab.cc:277 src/prog.cc:2676 src/gen.cc:2153 src/gen.cc:2360
+#: src/gen.cc:4451 src/gen.cc:4471 src/gen.cc:4756 src/gen.cc:5251
+#: src/gen.cc:5263 src/gen.cc:5430 src/gen.cc:6012 src/gen.cc:6542
+#: src/gen.cc:6918 src/gen.cc:7289 src/gen.cc:7424 src/gen.cc:7686
+#: src/gen.cc:7831
 msgid "Stopped by user interruption."
 msgstr "已被用户中断而停止。"
 
@@ -618,7 +618,7 @@ msgstr "不支持 MathMl"
 msgid "MathMl convert "
 msgstr "MathMl 转换 "
 
-#: src/misc.cc:700 src/rpn.cc:919 src/gen.cc:9439
+#: src/misc.cc:700 src/rpn.cc:919 src/gen.cc:9449
 msgid "Bad index"
 msgstr "错误的索引"
 
@@ -627,7 +627,7 @@ msgid "2nd arg"
 msgstr "第二个宗量"
 
 #: src/misc.cc:1795 src/misc.cc:1835 src/misc.cc:1841 src/vecteur.cc:11362
-#: src/cocoa.cc:3349 src/gen.cc:4349 src/gen.cc:10183
+#: src/cocoa.cc:3349 src/gen.cc:4359 src/gen.cc:10193
 msgid "Not invertible"
 msgstr "不可逆"
 
@@ -755,16 +755,16 @@ msgstr "奇函数 %gen，偶函数 %gen。反射 Oy"
 msgid "Odd functions. Center O"
 msgstr "奇函数。中心 O"
 
-#: src/misc.cc:7324 src/misc.cc:7876
+#: src/misc.cc:7324 src/misc.cc:7900
 #, c-format
 msgid "Domain %gen"
 msgstr "域 %gen"
 
-#: src/misc.cc:7327 src/misc.cc:7879
+#: src/misc.cc:7327 src/misc.cc:7903
 msgid "Unable to find singular points"
 msgstr "找不到奇点"
 
-#: src/misc.cc:7357 src/misc.cc:7906 src/misc.cc:7920
+#: src/misc.cc:7357 src/misc.cc:7930 src/misc.cc:7944
 msgid "Unable to find critical points"
 msgstr "找不到临界点"
 
@@ -772,11 +772,11 @@ msgstr "找不到临界点"
 msgid "Unable to find inflection points"
 msgstr "找不到拐点"
 
-#: src/misc.cc:7374 src/misc.cc:7926
+#: src/misc.cc:7374 src/misc.cc:7952
 msgid "Infinite number of critical points. Try with optional argument "
 msgstr "无穷个临界点。请尝试使用可选宗量 "
 
-#: src/misc.cc:7433
+#: src/misc.cc:7437
 #, c-format
 msgid ""
 "Singular point %gen, point %gen direction %gen kind (%gen,%gen)\n"
@@ -785,37 +785,37 @@ msgstr ""
 "奇点 %gen，点 %gen 方向 %gen 类型 (%gen,%gen)\n"
 "泰勒展开式 %gen"
 
-#: src/misc.cc:7506
+#: src/misc.cc:7512
 #, c-format
 msgid "Horizontal asymptote at %gen : %gen"
 msgstr "%gen 处的水平渐近线: %gen"
 
-#: src/misc.cc:7516 src/misc.cc:8019
+#: src/misc.cc:7522 src/misc.cc:8051
 #, c-format
 msgid "Vertical parabolic asymptote at %gen"
 msgstr "%gen 处的垂直渐近抛物线"
 
-#: src/misc.cc:7522 src/misc.cc:8026
+#: src/misc.cc:7528 src/misc.cc:8058
 #, c-format
 msgid "Horizontal parabolic asymptote at %gen"
 msgstr "%gen 处的水平渐近抛物线"
 
-#: src/misc.cc:7529
+#: src/misc.cc:7535
 #, c-format
 msgid "Parabolic asymptote direction at %gen: %gen"
 msgstr "%gen 处的渐近抛物线方向: %gen"
 
-#: src/misc.cc:7535
+#: src/misc.cc:7541
 #, c-format
 msgid "Asymptote at %gen: %gen"
 msgstr "%gen 处的渐近线: %gen"
 
-#: src/misc.cc:7547
+#: src/misc.cc:7553
 #, c-format
 msgid "Vertical asymptote at %gen: %gen"
 msgstr "%gen 处的垂直渐近线: %gen"
 
-#: src/misc.cc:7791
+#: src/misc.cc:7815
 #, c-format
 msgid ""
 "Variations (%gen,%gen)\n"
@@ -824,12 +824,12 @@ msgstr ""
 "变化 (%gen,%gen)\n"
 "%gen"
 
-#: src/misc.cc:7804
+#: src/misc.cc:7828
 msgid ""
 "Warning, using x or y as variable in parametric plot may lead to confusion!"
 msgstr "警告，使用 x 或 y 作为参数绘图中的变量可能会引起混淆!"
 
-#: src/misc.cc:7847
+#: src/misc.cc:7871
 #, c-format
 msgid ""
 "====================\n"
@@ -838,61 +838,61 @@ msgstr ""
 "====================\n"
 "函数绘图 %gen，变量 %gen"
 
-#: src/misc.cc:7849
+#: src/misc.cc:7873
 #, c-format
 msgid "Periodic function T=%gen"
 msgstr "周期函数 T=%gen"
 
-#: src/misc.cc:7858
+#: src/misc.cc:7882
 #, c-format
 msgid "Even function %gen. Reflection Oy"
 msgstr "偶函数 %gen。反射 Oy"
 
-#: src/misc.cc:7860
+#: src/misc.cc:7884
 #, c-format
 msgid "Odd function %gen. Center O"
 msgstr "奇函数 %gen。中心 O"
 
-#: src/misc.cc:7914
+#: src/misc.cc:7938
 msgid "Unable to find convexity"
 msgstr "找不到凸性"
 
-#: src/misc.cc:7982
+#: src/misc.cc:8014
 #, c-format
 msgid "Vertical asymptote %gen"
 msgstr "垂直渐近线 %gen"
 
-#: src/misc.cc:7987
+#: src/misc.cc:8019
 #, c-format
 msgid "Symmetric vertical asymptote %gen"
 msgstr "对称垂直渐近线 %gen"
 
-#: src/misc.cc:8000
+#: src/misc.cc:8032
 #, c-format
 msgid "Horizontal asymptote %gen"
 msgstr "水平渐近线 %gen"
 
-#: src/misc.cc:8007
+#: src/misc.cc:8039
 #, c-format
 msgid "Symmetric horizontal asymptote %gen"
 msgstr "对称水平渐近线 %gen"
 
-#: src/misc.cc:8035
+#: src/misc.cc:8067
 #, c-format
 msgid "Parabolic asymptote direction %gen at infinity"
 msgstr "无穷远处的渐近抛物线方向 %gen"
 
-#: src/misc.cc:8042
+#: src/misc.cc:8074
 #, c-format
 msgid "Asymptote %gen"
 msgstr "渐近线 %gen"
 
-#: src/misc.cc:8052
+#: src/misc.cc:8084
 #, c-format
 msgid "Symmetric asymptote %gen"
 msgstr "对称渐近线 %gen"
 
-#: src/misc.cc:8270
+#: src/misc.cc:8320
 #, fuzzy, c-format
 msgid ""
 "Sign %gen\n"
@@ -3187,7 +3187,7 @@ msgstr "警告: 局部变量影子函数宗量 "
 msgid "Too many recursions"
 msgstr "递归过多"
 
-#: src/prog.cc:1492 src/gen.cc:2170 src/gen.cc:2183 src/gen.cc:11772
+#: src/prog.cc:1492 src/gen.cc:2180 src/gen.cc:2193 src/gen.cc:11782
 msgid "Too many recursion levels"
 msgstr "递归级过多"
 
@@ -3478,17 +3478,17 @@ msgstr "无效的 giac gen -> CoCoA ZZ 转换"
 msgid "Unable to convert CoCoA data"
 msgstr "无法转换 CoCoA 数据"
 
-#: src/cocoa.cc:14598 src/cocoa.cc:14766
+#: src/cocoa.cc:14600 src/cocoa.cc:14768
 msgid ""
 "Running a probabilistic check for the reconstructed Groebner basis. If "
 "successfull, error probability is less than "
 msgstr "为重构的 Groebner 基运行概率检查。如果成功，错误概率将小于 "
 
-#: src/cocoa.cc:14598 src/cocoa.cc:14766
+#: src/cocoa.cc:14600 src/cocoa.cc:14768
 msgid " and is estimated to be less than 10^-"
 msgstr " 且估计小于 10^-"
 
-#: src/cocoa.cc:14598 src/cocoa.cc:14766
+#: src/cocoa.cc:14600 src/cocoa.cc:14768
 msgid ". Use proba_epsilon:=0 to certify (this takes more time)."
 msgstr "。使用 proba_epsilon:=0 进行认证 (此操作需要更长时间)。"
 
@@ -3627,7 +3627,7 @@ msgstr ""
 msgid "Iquo"
 msgstr "Iquo"
 
-#: src/usual.cc:6344 src/gen.cc:7594
+#: src/usual.cc:6344 src/gen.cc:7604
 msgid "Division by 0"
 msgstr "除以 0"
 
@@ -3815,339 +3815,339 @@ msgstr "错误: 最大阶 ("
 msgid "Error: calculation size limit exceeded"
 msgstr "错误: 超过计算大小限制"
 
-#: src/gen.cc:1334
+#: src/gen.cc:1344
 msgid "complex constructor"
 msgstr "复杂构造函数"
 
-#: src/gen.cc:1389
+#: src/gen.cc:1399
 msgid "makegen of type "
 msgstr "类型为 makegen "
 
-#: src/gen.cc:1401 src/gen.cc:1414
+#: src/gen.cc:1411 src/gen.cc:1424
 msgid "complex<double>"
 msgstr "complex<double>"
 
-#: src/gen.cc:1628
+#: src/gen.cc:1638
 msgid "Gen Destructor"
 msgstr "Gen 析构函数"
 
-#: src/gen.cc:1709
+#: src/gen.cc:1719
 msgid "Gen Operator ="
 msgstr "Gen 运算符 ="
 
-#: src/gen.cc:1753
+#: src/gen.cc:1763
 msgid "To_int"
 msgstr "To_int"
 
-#: src/gen.cc:1783
+#: src/gen.cc:1793
 msgid "gen.cc/_FRAC2_SYMB"
 msgstr "gen.cc/_FRAC2_SYMB"
 
-#: src/gen.cc:2186 src/gen.cc:2199
+#: src/gen.cc:2196 src/gen.cc:2209
 msgid "Running non recursive evaluator"
 msgstr "运行非递归求值程序"
 
-#: src/gen.cc:2196
+#: src/gen.cc:2206
 msgid "Too many recursions)"
 msgstr "递归次数太多)"
 
-#: src/gen.cc:2619 src/hist.cxx:4020
+#: src/gen.cc:2629 src/hist.cxx:4020
 msgid "Evalf"
 msgstr "Evalf"
 
-#: src/gen.cc:2789 src/gen.cc:2799
+#: src/gen.cc:2799 src/gen.cc:2809
 msgid "Undefined"
 msgstr "未定义"
 
-#: src/gen.cc:2791 src/gen.cc:2802
+#: src/gen.cc:2801 src/gen.cc:2812
 msgid "Infinity error"
 msgstr "无限大错误"
 
-#: src/gen.cc:3155
+#: src/gen.cc:3165
 msgid "Conj"
 msgstr "Conj"
 
-#: src/gen.cc:3612
+#: src/gen.cc:3622
 msgid "reim"
 msgstr "reim"
 
-#: src/gen.cc:3731
+#: src/gen.cc:3741
 msgid "Re"
 msgstr "Re"
 
-#: src/gen.cc:3846
+#: src/gen.cc:3856
 msgid "Im"
 msgstr "Im"
 
-#: src/gen.cc:4016
+#: src/gen.cc:4026
 msgid "Abs"
 msgstr "Abs"
 
-#: src/gen.cc:4045
+#: src/gen.cc:4055
 msgid "Linfnorm"
 msgstr "Linfnorm"
 
-#: src/gen.cc:4162
+#: src/gen.cc:4172
 msgid "Arg"
 msgstr "Arg"
 
-#: src/gen.cc:4203
+#: src/gen.cc:4213
 msgid "Bindigits"
 msgstr "Bindigits"
 
-#: src/gen.cc:4213 src/gen.cc:4215
+#: src/gen.cc:4223 src/gen.cc:4225
 msgid "addpoly"
 msgstr "addpoly"
 
-#: src/gen.cc:4285 src/gen.cc:4287
+#: src/gen.cc:4295 src/gen.cc:4297
 msgid "Bad mod:"
 msgstr "错误的 mod:"
 
-#: src/gen.cc:4313 src/gen.cc:4322 src/gen.cc:4330
+#: src/gen.cc:4323 src/gen.cc:4332 src/gen.cc:4340
 msgid "Mod are different"
 msgstr "Mod 不同"
 
-#: src/gen.cc:4495
+#: src/gen.cc:4505
 #, fuzzy
 msgid ""
 "Warning + is vector addition, run list1.extend(list2) for list concatenation"
 msgstr "警告，+ 是向量加法，请改为运行 list1.extend(list2)"
 
-#: src/gen.cc:5110 src/gen.cc:5112
+#: src/gen.cc:5120 src/gen.cc:5122
 msgid "subpoly"
 msgstr "subpoly"
 
-#: src/gen.cc:5686 src/gen.cc:5688
+#: src/gen.cc:5696 src/gen.cc:5698
 msgid "mulpoly"
 msgstr "mulpoly"
 
-#: src/gen.cc:6136
+#: src/gen.cc:6146
 msgid ""
 "Python compatibility, integer*list will do vector multiplication, run "
 "list*integer to duplicate list"
 msgstr ""
 
-#: src/gen.cc:6556
+#: src/gen.cc:6566
 msgid ""
 "Warning, ^ is ambiguous on non square matrices. Use .^ to apply ^ element by "
 "element."
 msgstr "警告，^ 对于非方阵而言会引起歧义。请使用 .^ 逐个元素应用 ^。"
 
-#: src/gen.cc:6787
+#: src/gen.cc:6797
 msgid "Use matpow to force computation of a power of matrix via jordanisation"
 msgstr "使用 matpow 通过 jordanisation 强制计算矩阵的幂"
 
-#: src/gen.cc:6828
+#: src/gen.cc:6838
 msgid "Negative to a fractional power"
 msgstr "分数幂的负值"
 
-#: src/gen.cc:7082
+#: src/gen.cc:7092
 msgid "Unable to multiply two graphic objects"
 msgstr "无法乘以两个图形对象"
 
-#: src/gen.cc:7351
+#: src/gen.cc:7361
 msgid "Inv of non-square matrix"
 msgstr "非方阵的求矩阵逆"
 
-#: src/gen.cc:7484
+#: src/gen.cc:7494
 msgid "Pow"
 msgstr "Pow"
 
-#: src/gen.cc:7611
+#: src/gen.cc:7621
 msgid "iquo"
 msgstr "iquo"
 
-#: src/gen.cc:7773
+#: src/gen.cc:7783
 msgid ""
 "Warning: A/B with B a square matrix is a misleading notation interpreted as "
 "inv(B)*A"
 msgstr "警告: B 为方阵的 A/B 是误导性的符号，会被解释为 inv(B)*A"
 
-#: src/gen.cc:7776
+#: src/gen.cc:7786
 msgid ""
 "Warning, pointwise division of a by b. For matrix division, please use inv(b)"
 "*a or a*inv(b)"
 msgstr "警告，a 逐点除以 b。对于矩阵除法，请使用 inv(b)*a 或 a*inv(b)"
 
-#: src/gen.cc:7986
+#: src/gen.cc:7996
 msgid "rdiv"
 msgstr "rdiv"
 
-#: src/gen.cc:8604
+#: src/gen.cc:8614
 msgid ""
 "Warning, sign might return 0 incorrectly because the value of eps is too "
 "large "
 msgstr "警告，符号可能会错误地返回 0，因为 eps 的值太大 "
 
-#: src/gen.cc:9050
+#: src/gen.cc:9060
 msgid "Gen [int]"
 msgstr "Gen [int]"
 
-#: src/gen.cc:9056
+#: src/gen.cc:9066
 msgid "Index outside range : "
 msgstr "索引超出范围: "
 
-#: src/gen.cc:9139 src/gen.cc:9219
+#: src/gen.cc:9149 src/gen.cc:9229
 msgid "Warning, using :0:-step, use :-1:-step for ::"
 msgstr ""
 
-#: src/gen.cc:9416
+#: src/gen.cc:9426
 msgid "Warning, evaluating ("
 msgstr "警告，求值 ("
 
-#: src/gen.cc:9441
+#: src/gen.cc:9451
 msgid "Index out of range"
 msgstr "索引超出范围"
 
-#: src/gen.cc:9545
+#: src/gen.cc:9555
 msgid "islesscomplexthan mod"
 msgstr "islesscomplexthan mod"
 
-#: src/gen.cc:9828
+#: src/gen.cc:9838
 msgid "power_basis_exp"
 msgstr "power_basis_exp"
 
-#: src/gen.cc:10425
+#: src/gen.cc:10435
 msgid "symgcd"
 msgstr "symgcd"
 
-#: src/gen.cc:10507
+#: src/gen.cc:10517
 msgid "simplify: Polynomials do not have the same dimension"
 msgstr "简化: 多项式没有相同的维数"
 
-#: src/gen.cc:10555
+#: src/gen.cc:10565
 msgid "gen.cc:simplify"
 msgstr "gen.cc:simplify"
 
-#: src/gen.cc:10559
+#: src/gen.cc:10569
 msgid "gen.cc:simplify/tmp.type!=_EXT"
 msgstr "gen.cc:simplify/tmp.type!=_EXT"
 
-#: src/gen.cc:10566 src/hist.cxx:4033 src/Equation.cc:4533
+#: src/gen.cc:10576 src/hist.cxx:4033 src/Equation.cc:4533
 msgid "simplify"
 msgstr "简化"
 
-#: src/gen.cc:10766 src/hist.cxx:4338
+#: src/gen.cc:10776 src/hist.cxx:4338
 msgid "%"
 msgstr "%"
 
-#: src/gen.cc:10833
+#: src/gen.cc:10843
 msgid "irem"
 msgstr "irem"
 
-#: src/gen.cc:11004
+#: src/gen.cc:11014
 msgid "Not invertible "
 msgstr "不可逆 "
 
-#: src/gen.cc:11034 src/gen.cc:11037
+#: src/gen.cc:11044 src/gen.cc:11047
 msgid "invmod"
 msgstr "invmod"
 
-#: src/gen.cc:11175
+#: src/gen.cc:11185
 msgid "Reconstructed denominator is not prime with modulo"
 msgstr "重构的分母不是具有模数的素数"
 
-#: src/gen.cc:11223 src/gen.cc:11240
+#: src/gen.cc:11233 src/gen.cc:11250
 msgid "powmod"
 msgstr "powmod"
 
-#: src/gen.cc:11261
+#: src/gen.cc:11271
 msgid "No Integer Solution"
 msgstr "无整数解"
 
-#: src/gen.cc:11268
+#: src/gen.cc:11278
 msgid "isqrt"
 msgstr "isqrt"
 
-#: src/gen.cc:11310
+#: src/gen.cc:11320
 msgid "is_probab_prime_p"
 msgstr "is_probab_prime_p"
 
-#: src/gen.cc:11344
+#: src/gen.cc:11354
 msgid "nextprime"
 msgstr "nextprime"
 
-#: src/gen.cc:11353 src/gen.cc:11374
+#: src/gen.cc:11363 src/gen.cc:11384
 msgid "Interrupted"
 msgstr "已中断"
 
-#: src/gen.cc:11361
+#: src/gen.cc:11371
 msgid "prevprime"
 msgstr "prevprime"
 
-#: src/gen.cc:11384
+#: src/gen.cc:11394
 msgid "jacobi"
 msgstr "jacobi 多项式"
 
-#: src/gen.cc:11420
+#: src/gen.cc:11430
 msgid "legendre"
 msgstr "legendre 多项式"
 
-#: src/gen.cc:11461
+#: src/gen.cc:11471
 msgid "has_denominator"
 msgstr "has_denominator"
 
-#: src/gen.cc:11802 src/gen.cc:11813 src/gen.cc:11821
+#: src/gen.cc:11812 src/gen.cc:11823 src/gen.cc:11831
 msgid ""
 "Warning, i is usually sqrt(-1), I'm using a symbolic variable instead but "
 "you should check your input"
 msgstr "警告，i 通常是 sqrt(-1)，而我使用的是符号变量，但您应该检查输入的内容"
 
-#: src/gen.cc:12314
+#: src/gen.cc:12324
 msgid "Empty array"
 msgstr "空数组"
 
-#: src/gen.cc:12319
+#: src/gen.cc:12329
 msgid "Bad array indexes"
 msgstr "错误的数组索引"
 
-#: src/gen.cc:13950 src/Editeur.cc:2492
+#: src/gen.cc:13960 src/Editeur.cc:2492
 msgid "print"
 msgstr "打印"
 
-#: src/gen.cc:14691 src/gen.cc:14750
+#: src/gen.cc:14701 src/gen.cc:14760
 msgid "Unable to convert to real "
 msgstr "无法转换为实数 "
 
-#: src/gen.cc:14844 src/gen.cc:14865 src/gen.cc:14971 src/gen.cc:14990
+#: src/gen.cc:14854 src/gen.cc:14875 src/gen.cc:14981 src/gen.cc:15000
 msgid "real_object + gen"
 msgstr "real_object + gen"
 
-#: src/gen.cc:15127
+#: src/gen.cc:15137
 msgid ""
 "Compile with MPFR or USE_GMP_REPLACEMENTS if you want transcendental long "
 "float support"
 msgstr ""
 "如果想体验卓越的长浮点支持，请使用 MPFR 或 USE_GMP_REPLACEMENTS 进行编译"
 
-#: src/gen.cc:15415
+#: src/gen.cc:15425
 msgid "real_interval inv"
 msgstr "real_interval inv"
 
-#: src/gen.cc:15431 src/gen.cc:15453 src/gen.cc:15464 src/gen.cc:15475
-#: src/gen.cc:15486 src/gen.cc:15497 src/gen.cc:15508 src/gen.cc:15519
-#: src/gen.cc:15530 src/gen.cc:15541 src/gen.cc:15552 src/gen.cc:15563
-#: src/gen.cc:15574 src/gen.cc:15585 src/gen.cc:15596
+#: src/gen.cc:15441 src/gen.cc:15463 src/gen.cc:15474 src/gen.cc:15485
+#: src/gen.cc:15496 src/gen.cc:15507 src/gen.cc:15518 src/gen.cc:15529
+#: src/gen.cc:15540 src/gen.cc:15551 src/gen.cc:15562 src/gen.cc:15573
+#: src/gen.cc:15584 src/gen.cc:15595 src/gen.cc:15606
 msgid "real_interval sqrt"
 msgstr "real_interval sqrt"
 
-#: src/gen.cc:15442
+#: src/gen.cc:15452
 msgid "real_interval abs"
 msgstr "real_interval abs"
 
-#: src/gen.cc:15672
+#: src/gen.cc:15682
 msgid "real_interval mul"
 msgstr "real_interval mul"
 
-#: src/gen.cc:15702
+#: src/gen.cc:15712
 msgid "real_interval mul 2"
 msgstr "real_interval mul 2"
 
-#: src/gen.cc:15804
+#: src/gen.cc:15814
 msgid "MPFR error reading binary "
 msgstr "读取二进制数时出现 MPFR 错误 "
 
-#: src/gen.cc:15806
+#: src/gen.cc:15816
 msgid "Error no MPFR reading "
 msgstr "无 MPFR 读取错误 "
 

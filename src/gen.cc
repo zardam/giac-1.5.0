@@ -3,7 +3,7 @@
 #ifdef NUMWORKS
 #include "kdisplay.h"
 #ifdef DEVICE
-const size_t stackptr=0x20038000;
+const size_t stackptr=0x20036000;
 #else
 const size_t stackptr=0xffffffffffffffff;
 #endif
@@ -26,7 +26,7 @@ const size_t stackptr=0xffffffffffffffff;
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 using namespace std;
-#if !defined NSPIRE && !defined FXCG
+#if !defined NSPIRE && !defined FXCG && !defined NUMWORKS
 #include <cstdlib>
 #include <iomanip>
 #endif
@@ -785,6 +785,10 @@ namespace giac {
 #else
     __ZINTptr= new ref_mpz_t(m);
 #endif
+#ifdef NUMWORKS
+      if ((size_t) _ZINTptr > stackptr)
+	ctrl_c=interrupted=true;
+#endif
     type =_ZINT;
     subtype=0;
   }
@@ -856,7 +860,10 @@ namespace giac {
     __VECTptr= new_ref_vecteur(v);
 #endif
 #ifdef NUMWORKS
-    if ((size_t) _VECTptr > stackptr)
+    if (v.size()>1 &&
+	( (size_t) _VECTptr > stackptr ||
+	  (size_t) _VECTptr->begin() > stackptr)
+	)
       ctrl_c=interrupted=true;
 #endif
     type=_VECT;
@@ -869,12 +876,15 @@ namespace giac {
 #else
     __VECTptr= vptr;
 #endif
-#ifdef NUMWORKS
-    if ((size_t) _VECTptr > stackptr)
-      ctrl_c=interrupted=true;
-#endif
     type=_VECT;
     subtype=(signed char)s;
+#ifdef NUMWORKS
+    if (_VECTptr->size()>1 &&
+	( (size_t) _VECTptr > stackptr ||
+	  (size_t) _VECTptr->begin() > stackptr)
+	)
+      ctrl_c=interrupted=true;
+#endif
   }
 
 #if defined(SMARTPTR64) || !defined(ALLOCSMALL)
@@ -901,12 +911,12 @@ namespace giac {
 #else
     __SYMBptr = new_ref_symbolic(s) ;
 #endif
-#ifdef NUMWORKS
-    if ((size_t) _SYMBptr > stackptr)
-      ctrl_c=interrupted=true;
-#endif
     type = _SYMB;
     subtype = 0;
+#ifdef NUMWORKS
+    if (_SYMBptr->sommet!=at_restart && _SYMBptr->sommet!=at_purge && (size_t) _SYMBptr > stackptr)
+      ctrl_c=interrupted=true;
+#endif
   }
 
   gen::gen(ref_symbolic * sptr){
@@ -915,12 +925,12 @@ namespace giac {
 #else
     __SYMBptr = sptr;
 #endif
-#ifdef NUMWORKS
-    if ((size_t) _SYMBptr > stackptr)
-      ctrl_c=interrupted=true;
-#endif
     type = _SYMB;
     subtype = 0;
+#ifdef NUMWORKS
+    if (_SYMBptr->sommet!=at_restart && _SYMBptr->sommet!=at_purge && (size_t) _SYMBptr > stackptr)
+      ctrl_c=interrupted=true;
+#endif
   }
 
   gen::gen(ref_identificateur * sptr){

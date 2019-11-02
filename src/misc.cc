@@ -7377,6 +7377,8 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
     }
     it=c.begin();itend=c.end();
     for (;it!=itend;++it){
+      if (ctrl_c || interrupted)
+	return 0;
       if (!lop(*it,at_rootof).empty())
 	*it=re(evalf(*it,1,contextptr),contextptr);
       *it=recursive_normal(*it,contextptr);
@@ -7398,6 +7400,8 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
 	  vecteur vx,vy;
 	  int ox=0,oy=0,o1=0,o2=0;
 	  while (ordre<=20 && o1==0){
+	    if (ctrl_c || interrupted)
+	      return 0;
 	    // series expansion
 	    if (!convert_polynom(series(f,xid,*it,ordre,contextptr),xid,*it,vx,ax,ox,contextptr))
 	      break;
@@ -7484,6 +7488,8 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
     gen xmin(plus_inf),xmax(minus_inf),ymin(plus_inf),ymax(minus_inf);
     it=sing.begin();itend=sing.end();
     for (;it!=itend;++it){
+      if (ctrl_c || interrupted)
+	return 0;
       if (!is_inf(*it)){
 	if (is_greater(tmin,*it,contextptr))
 	  tmin=*it;
@@ -7603,6 +7609,8 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
     vecteur tviconv=makevecteur(symbolic(at_derive,x__IDNT_e)*symbolic(at_derive,symbolic(at_derive,y__IDNT_e))-symbolic(at_derive,y__IDNT_e)*symbolic(at_derive,symbolic(at_derive,x__IDNT_e)),try_limit_undef(conv,xid,nextt,1,contextptr));
     int tvs=int(tvx.size());
     for (int i=1;i<tvs;++i){
+      if (ctrl_c || interrupted)
+	return 0;
       gen curt=nextt,dfx,dgx,convt;
       nextt=tvx[i];
       tvit.push_back(nothing);
@@ -7644,18 +7652,26 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
 	return 0;
       }
       if (is_strictly_positive(dfx,contextptr)){
-#if defined NSPIRE || defined NSPIRE_NEWLIB || defined HAVE_WINT_T
-	tvif.push_back(string2gen("↑",false));
+#if defined NSPIRE || defined NSPIRE_NEWLIB || defined HAVE_WINT_T 
+#ifdef NUMWORKS
+	  tvif.push_back(string2gen("inc",false));
 #else
-	tvif.push_back(string2gen("↗",false));
+	  tvif.push_back(string2gen("↑",false));
+#endif
+#else
+	  tvif.push_back(string2gen("↗",false));
 #endif
 	tvidf.push_back(string2gen("+",false));
       }
       else {
-#if defined NSPIRE || defined NSPIRE_NEWLIB || defined HAVE_WINT_T
-	tvif.push_back(string2gen("↓",false));
+#if defined NSPIRE || defined NSPIRE_NEWLIB || defined HAVE_WINT_T 
+#ifdef NUMWORKS
+	  tvif.push_back(string2gen("dec",false));
 #else
-	tvif.push_back(string2gen("↘",false));
+	  tvif.push_back(string2gen("↓",false));
+#endif
+#else
+	  tvif.push_back(string2gen("↘",false));
 #endif
 	tvidf.push_back(string2gen("-",false));
       }
@@ -7664,18 +7680,26 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
       else
 	tviconv.push_back(string2gen(abs_calc_mode(contextptr)==38?"∩":"concav",false));
       if (is_strictly_positive(dgx,contextptr)){
-#if defined NSPIRE || defined NSPIRE_NEWLIB || defined HAVE_WINT_T
-	tvig.push_back(string2gen("↑",false));
+#if defined NSPIRE || defined NSPIRE_NEWLIB || defined HAVE_WINT_T 
+#ifdef NUMWORKS
+	  tvig.push_back(string2gen("inc",false));
 #else
-	tvig.push_back(string2gen("↗",false));
+	  tvig.push_back(string2gen("↑",false));
+#endif
+#else
+	  tvig.push_back(string2gen("↗",false));
 #endif
 	tvidg.push_back(string2gen("+",false));
       }
       else {
-#if defined NSPIRE || defined NSPIRE_NEWLIB || defined HAVE_WINT_T
-	tvig.push_back(string2gen("↓",false));
+#if defined NSPIRE || defined NSPIRE_NEWLIB || defined HAVE_WINT_T 
+#ifdef NUMWORKS
+	  tvig.push_back(string2gen("dec",false));
 #else
-	tvig.push_back(string2gen("↘",false));
+	  tvig.push_back(string2gen("↓",false));
+#endif
+#else
+	  tvig.push_back(string2gen("↘",false));
 #endif
 	tvidg.push_back(string2gen("-",false));
       }
@@ -7922,6 +7946,8 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
       return 0;
     }
 #endif
+    if (ctrl_c || interrupted)
+      return 0;
     if (!lidnt(evalf(c,1,contextptr)).empty()){
       *logptr(contextptr) << gettext("Infinite number of critical points. Try with optional argument ") << x << "=xmin..xmax" << '\n';
       purgenoassume(x,contextptr);
@@ -7929,6 +7955,8 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
     }
     it=c._VECTptr->begin();itend=c._VECTptr->end();
     for (;it!=itend;++it){
+      if (ctrl_c || interrupted)
+	return 0;
       if (!lop(*it,at_rootof).empty())
 	*it=re(evalf(*it,1,contextptr),contextptr);
       if (in_domain(df,x,*it,contextptr) && is_greater(*it,xmin,contextptr) && is_greater(xmax,*it,contextptr)){
@@ -7959,6 +7987,8 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
     }
     it=crit.begin();itend=crit.end();
     for (;it!=itend;++it){
+      if (ctrl_c || interrupted)
+	return 0;
       if (!has_inf_or_undef(*it)){ 
 	if (is_greater(xmin,*it,contextptr))
 	  xmin=*it;
@@ -7968,6 +7998,8 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
     }
     it=sing.begin();itend=sing.end();
     for (;do_inflex_tabsign!=2 && it!=itend;++it){
+      if (ctrl_c || interrupted)
+	return 0;
       gen equ;
       if (!has_inf_or_undef(*it)){ // vertical
 	if (is_greater(xmin,*it,contextptr))
@@ -8114,6 +8146,8 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
       tvidf2=makevecteur(symbolic(at_derive,symbolic(at_derive,yof)),try_limit_undef(f2,xid,nextx,1,contextptr));
     int tvs=int(tvx.size());
     for (int i=1;i<tvs;++i){
+      if (ctrl_c || interrupted)
+	return 0;
       gen curx=nextx,dfx,df2;
       nextx=tvx[i];
       if (!lop(nextx,at_rootof).empty())
@@ -8161,16 +8195,24 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
       }
       else {
 	if (is_strictly_positive(dfx,contextptr)){
-#if defined NSPIRE || defined NSPIRE_NEWLIB || defined HAVE_WINT_T
+#if defined NSPIRE || defined NSPIRE_NEWLIB || defined HAVE_WINT_T 
+#ifdef NUMWORKS
+	  tvif.push_back(string2gen("inc",false));
+#else
 	  tvif.push_back(string2gen("↑",false));
+#endif
 #else
 	  tvif.push_back(string2gen("↗",false));
 #endif
 	  tvidf.push_back(string2gen("+",false));
 	}
 	else {
-#if defined NSPIRE || defined NSPIRE_NEWLIB || defined HAVE_WINT_T
+#if defined NSPIRE || defined NSPIRE_NEWLIB || defined HAVE_WINT_T 
+#ifdef NUMWORKS
+	  tvif.push_back(string2gen("dec",false));
+#else
 	  tvif.push_back(string2gen("↓",false));
+#endif
 #else
 	  tvif.push_back(string2gen("↘",false));
 #endif
@@ -8182,10 +8224,18 @@ static define_unary_function_eval (__os_version,&_os_version,_os_version_s);
 	  tvidf2.push_back(string2gen("X",false));
 	else {
 	  if (is_strictly_positive(df2,contextptr)){
+#ifdef NUMWORKS
+	    tvidf2.push_back(string2gen("+ (U)",false));
+#else
 	    tvidf2.push_back(string2gen(abs_calc_mode(contextptr)==38?"∪":"+ (∪)",false));
+#endif
 	  }
 	  else {
-	    tvidf2.push_back(string2gen(abs_calc_mode(contextptr)==38?"∩":"- (∩)",false)); 
+#ifdef NUMWORKS
+	    tvidf2.push_back(string2gen("- (^)",false));
+#else
+	    tvidf2.push_back(string2gen(abs_calc_mode(contextptr)==38?"∩":"- (∩)",false));
+#endif
 	  }
 	}
       }

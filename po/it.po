@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:38+0100\n"
+"POT-Creation-Date: 2019-11-01 20:39+0100\n"
 "PO-Revision-Date: 2010-05-03 15:29+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -104,11 +104,11 @@ msgstr ""
 #: src/modpoly.cc:507 src/modpoly.cc:651 src/modpoly.cc:669 src/modpoly.cc:765
 #: src/modpoly.cc:781 src/modpoly.cc:803 src/modpoly.cc:819
 #: src/modpoly.cc:1606 src/solve.cc:4473 src/solve.cc:4555 src/intg.cc:3518
-#: src/intgab.cc:277 src/prog.cc:2676 src/gen.cc:2143 src/gen.cc:2350
-#: src/gen.cc:4441 src/gen.cc:4461 src/gen.cc:4746 src/gen.cc:5241
-#: src/gen.cc:5253 src/gen.cc:5420 src/gen.cc:6002 src/gen.cc:6532
-#: src/gen.cc:6908 src/gen.cc:7279 src/gen.cc:7414 src/gen.cc:7676
-#: src/gen.cc:7821
+#: src/intgab.cc:277 src/prog.cc:2676 src/gen.cc:2153 src/gen.cc:2360
+#: src/gen.cc:4451 src/gen.cc:4471 src/gen.cc:4756 src/gen.cc:5251
+#: src/gen.cc:5263 src/gen.cc:5430 src/gen.cc:6012 src/gen.cc:6542
+#: src/gen.cc:6918 src/gen.cc:7289 src/gen.cc:7424 src/gen.cc:7686
+#: src/gen.cc:7831
 msgid "Stopped by user interruption."
 msgstr ""
 
@@ -610,7 +610,7 @@ msgstr ""
 msgid "MathMl convert "
 msgstr ""
 
-#: src/misc.cc:700 src/rpn.cc:919 src/gen.cc:9439
+#: src/misc.cc:700 src/rpn.cc:919 src/gen.cc:9449
 msgid "Bad index"
 msgstr ""
 
@@ -619,7 +619,7 @@ msgid "2nd arg"
 msgstr ""
 
 #: src/misc.cc:1795 src/misc.cc:1835 src/misc.cc:1841 src/vecteur.cc:11362
-#: src/cocoa.cc:3349 src/gen.cc:4349 src/gen.cc:10183
+#: src/cocoa.cc:3349 src/gen.cc:4359 src/gen.cc:10193
 msgid "Not invertible"
 msgstr ""
 
@@ -742,16 +742,16 @@ msgstr ""
 msgid "Odd functions. Center O"
 msgstr ""
 
-#: src/misc.cc:7324 src/misc.cc:7876
+#: src/misc.cc:7324 src/misc.cc:7900
 #, c-format
 msgid "Domain %gen"
 msgstr ""
 
-#: src/misc.cc:7327 src/misc.cc:7879
+#: src/misc.cc:7327 src/misc.cc:7903
 msgid "Unable to find singular points"
 msgstr ""
 
-#: src/misc.cc:7357 src/misc.cc:7906 src/misc.cc:7920
+#: src/misc.cc:7357 src/misc.cc:7930 src/misc.cc:7944
 msgid "Unable to find critical points"
 msgstr ""
 
@@ -759,121 +759,121 @@ msgstr ""
 msgid "Unable to find inflection points"
 msgstr ""
 
-#: src/misc.cc:7374 src/misc.cc:7926
+#: src/misc.cc:7374 src/misc.cc:7952
 msgid "Infinite number of critical points. Try with optional argument "
 msgstr ""
 
-#: src/misc.cc:7433
+#: src/misc.cc:7437
 #, c-format
 msgid ""
 "Singular point %gen, point %gen direction %gen kind (%gen,%gen)\n"
 "Taylor expansions %gen"
 msgstr ""
 
-#: src/misc.cc:7506
+#: src/misc.cc:7512
 #, c-format
 msgid "Horizontal asymptote at %gen : %gen"
 msgstr ""
 
-#: src/misc.cc:7516 src/misc.cc:8019
+#: src/misc.cc:7522 src/misc.cc:8051
 #, c-format
 msgid "Vertical parabolic asymptote at %gen"
 msgstr ""
 
-#: src/misc.cc:7522 src/misc.cc:8026
+#: src/misc.cc:7528 src/misc.cc:8058
 #, c-format
 msgid "Horizontal parabolic asymptote at %gen"
 msgstr ""
 
-#: src/misc.cc:7529
+#: src/misc.cc:7535
 #, c-format
 msgid "Parabolic asymptote direction at %gen: %gen"
 msgstr ""
 
-#: src/misc.cc:7535
+#: src/misc.cc:7541
 #, c-format
 msgid "Asymptote at %gen: %gen"
 msgstr ""
 
-#: src/misc.cc:7547
+#: src/misc.cc:7553
 #, c-format
 msgid "Vertical asymptote at %gen: %gen"
 msgstr ""
 
-#: src/misc.cc:7791
+#: src/misc.cc:7815
 #, c-format
 msgid ""
 "Variations (%gen,%gen)\n"
 "%gen"
 msgstr ""
 
-#: src/misc.cc:7804
+#: src/misc.cc:7828
 msgid ""
 "Warning, using x or y as variable in parametric plot may lead to confusion!"
 msgstr ""
 
-#: src/misc.cc:7847
+#: src/misc.cc:7871
 #, c-format
 msgid ""
 "====================\n"
 "Function plot %gen, variable %gen"
 msgstr ""
 
-#: src/misc.cc:7849
+#: src/misc.cc:7873
 #, c-format
 msgid "Periodic function T=%gen"
 msgstr ""
 
-#: src/misc.cc:7858
+#: src/misc.cc:7882
 #, c-format
 msgid "Even function %gen. Reflection Oy"
 msgstr ""
 
-#: src/misc.cc:7860
+#: src/misc.cc:7884
 #, c-format
 msgid "Odd function %gen. Center O"
 msgstr ""
 
-#: src/misc.cc:7914
+#: src/misc.cc:7938
 msgid "Unable to find convexity"
 msgstr ""
 
-#: src/misc.cc:7982
+#: src/misc.cc:8014
 #, c-format
 msgid "Vertical asymptote %gen"
 msgstr ""
 
-#: src/misc.cc:7987
+#: src/misc.cc:8019
 #, c-format
 msgid "Symmetric vertical asymptote %gen"
 msgstr ""
 
-#: src/misc.cc:8000
+#: src/misc.cc:8032
 #, c-format
 msgid "Horizontal asymptote %gen"
 msgstr ""
 
-#: src/misc.cc:8007
+#: src/misc.cc:8039
 #, c-format
 msgid "Symmetric horizontal asymptote %gen"
 msgstr ""
 
-#: src/misc.cc:8035
+#: src/misc.cc:8067
 #, c-format
 msgid "Parabolic asymptote direction %gen at infinity"
 msgstr ""
 
-#: src/misc.cc:8042
+#: src/misc.cc:8074
 #, c-format
 msgid "Asymptote %gen"
 msgstr ""
 
-#: src/misc.cc:8052
+#: src/misc.cc:8084
 #, c-format
 msgid "Symmetric asymptote %gen"
 msgstr ""
 
-#: src/misc.cc:8270
+#: src/misc.cc:8320
 #, c-format
 msgid ""
 "Sign %gen\n"
@@ -3122,7 +3122,7 @@ msgstr ""
 msgid "Too many recursions"
 msgstr ""
 
-#: src/prog.cc:1492 src/gen.cc:2170 src/gen.cc:2183 src/gen.cc:11772
+#: src/prog.cc:1492 src/gen.cc:2180 src/gen.cc:2193 src/gen.cc:11782
 msgid "Too many recursion levels"
 msgstr ""
 
@@ -3411,17 +3411,17 @@ msgstr ""
 msgid "Unable to convert CoCoA data"
 msgstr ""
 
-#: src/cocoa.cc:14598 src/cocoa.cc:14766
+#: src/cocoa.cc:14600 src/cocoa.cc:14768
 msgid ""
 "Running a probabilistic check for the reconstructed Groebner basis. If "
 "successfull, error probability is less than "
 msgstr ""
 
-#: src/cocoa.cc:14598 src/cocoa.cc:14766
+#: src/cocoa.cc:14600 src/cocoa.cc:14768
 msgid " and is estimated to be less than 10^-"
 msgstr ""
 
-#: src/cocoa.cc:14598 src/cocoa.cc:14766
+#: src/cocoa.cc:14600 src/cocoa.cc:14768
 msgid ". Use proba_epsilon:=0 to certify (this takes more time)."
 msgstr ""
 
@@ -3553,7 +3553,7 @@ msgstr ""
 msgid "Iquo"
 msgstr ""
 
-#: src/usual.cc:6344 src/gen.cc:7594
+#: src/usual.cc:6344 src/gen.cc:7604
 msgid "Division by 0"
 msgstr ""
 
@@ -3739,337 +3739,337 @@ msgstr ""
 msgid "Error: calculation size limit exceeded"
 msgstr ""
 
-#: src/gen.cc:1334
+#: src/gen.cc:1344
 msgid "complex constructor"
 msgstr ""
 
-#: src/gen.cc:1389
+#: src/gen.cc:1399
 msgid "makegen of type "
 msgstr ""
 
-#: src/gen.cc:1401 src/gen.cc:1414
+#: src/gen.cc:1411 src/gen.cc:1424
 msgid "complex<double>"
 msgstr ""
 
-#: src/gen.cc:1628
+#: src/gen.cc:1638
 msgid "Gen Destructor"
 msgstr ""
 
-#: src/gen.cc:1709
+#: src/gen.cc:1719
 msgid "Gen Operator ="
 msgstr ""
 
-#: src/gen.cc:1753
+#: src/gen.cc:1763
 msgid "To_int"
 msgstr ""
 
-#: src/gen.cc:1783
+#: src/gen.cc:1793
 msgid "gen.cc/_FRAC2_SYMB"
 msgstr ""
 
-#: src/gen.cc:2186 src/gen.cc:2199
+#: src/gen.cc:2196 src/gen.cc:2209
 msgid "Running non recursive evaluator"
 msgstr ""
 
-#: src/gen.cc:2196
+#: src/gen.cc:2206
 msgid "Too many recursions)"
 msgstr ""
 
-#: src/gen.cc:2619 src/hist.cxx:4020
+#: src/gen.cc:2629 src/hist.cxx:4020
 msgid "Evalf"
 msgstr ""
 
-#: src/gen.cc:2789 src/gen.cc:2799
+#: src/gen.cc:2799 src/gen.cc:2809
 msgid "Undefined"
 msgstr ""
 
-#: src/gen.cc:2791 src/gen.cc:2802
+#: src/gen.cc:2801 src/gen.cc:2812
 msgid "Infinity error"
 msgstr ""
 
-#: src/gen.cc:3155
+#: src/gen.cc:3165
 msgid "Conj"
 msgstr ""
 
-#: src/gen.cc:3612
+#: src/gen.cc:3622
 msgid "reim"
 msgstr ""
 
-#: src/gen.cc:3731
+#: src/gen.cc:3741
 msgid "Re"
 msgstr ""
 
-#: src/gen.cc:3846
+#: src/gen.cc:3856
 msgid "Im"
 msgstr ""
 
-#: src/gen.cc:4016
+#: src/gen.cc:4026
 msgid "Abs"
 msgstr ""
 
-#: src/gen.cc:4045
+#: src/gen.cc:4055
 msgid "Linfnorm"
 msgstr ""
 
-#: src/gen.cc:4162
+#: src/gen.cc:4172
 msgid "Arg"
 msgstr ""
 
-#: src/gen.cc:4203
+#: src/gen.cc:4213
 msgid "Bindigits"
 msgstr ""
 
-#: src/gen.cc:4213 src/gen.cc:4215
+#: src/gen.cc:4223 src/gen.cc:4225
 msgid "addpoly"
 msgstr ""
 
-#: src/gen.cc:4285 src/gen.cc:4287
+#: src/gen.cc:4295 src/gen.cc:4297
 msgid "Bad mod:"
 msgstr ""
 
-#: src/gen.cc:4313 src/gen.cc:4322 src/gen.cc:4330
+#: src/gen.cc:4323 src/gen.cc:4332 src/gen.cc:4340
 msgid "Mod are different"
 msgstr ""
 
-#: src/gen.cc:4495
+#: src/gen.cc:4505
 msgid ""
 "Warning + is vector addition, run list1.extend(list2) for list concatenation"
 msgstr ""
 
-#: src/gen.cc:5110 src/gen.cc:5112
+#: src/gen.cc:5120 src/gen.cc:5122
 msgid "subpoly"
 msgstr ""
 
-#: src/gen.cc:5686 src/gen.cc:5688
+#: src/gen.cc:5696 src/gen.cc:5698
 msgid "mulpoly"
 msgstr ""
 
-#: src/gen.cc:6136
+#: src/gen.cc:6146
 msgid ""
 "Python compatibility, integer*list will do vector multiplication, run "
 "list*integer to duplicate list"
 msgstr ""
 
-#: src/gen.cc:6556
+#: src/gen.cc:6566
 msgid ""
 "Warning, ^ is ambiguous on non square matrices. Use .^ to apply ^ element by "
 "element."
 msgstr ""
 
-#: src/gen.cc:6787
+#: src/gen.cc:6797
 msgid "Use matpow to force computation of a power of matrix via jordanisation"
 msgstr ""
 
-#: src/gen.cc:6828
+#: src/gen.cc:6838
 msgid "Negative to a fractional power"
 msgstr ""
 
-#: src/gen.cc:7082
+#: src/gen.cc:7092
 msgid "Unable to multiply two graphic objects"
 msgstr ""
 
-#: src/gen.cc:7351
+#: src/gen.cc:7361
 msgid "Inv of non-square matrix"
 msgstr ""
 
-#: src/gen.cc:7484
+#: src/gen.cc:7494
 msgid "Pow"
 msgstr ""
 
-#: src/gen.cc:7611
+#: src/gen.cc:7621
 msgid "iquo"
 msgstr ""
 
-#: src/gen.cc:7773
+#: src/gen.cc:7783
 msgid ""
 "Warning: A/B with B a square matrix is a misleading notation interpreted as "
 "inv(B)*A"
 msgstr ""
 
-#: src/gen.cc:7776
+#: src/gen.cc:7786
 msgid ""
 "Warning, pointwise division of a by b. For matrix division, please use inv(b)"
 "*a or a*inv(b)"
 msgstr ""
 
-#: src/gen.cc:7986
+#: src/gen.cc:7996
 msgid "rdiv"
 msgstr ""
 
-#: src/gen.cc:8604
+#: src/gen.cc:8614
 msgid ""
 "Warning, sign might return 0 incorrectly because the value of eps is too "
 "large "
 msgstr ""
 
-#: src/gen.cc:9050
+#: src/gen.cc:9060
 msgid "Gen [int]"
 msgstr ""
 
-#: src/gen.cc:9056
+#: src/gen.cc:9066
 msgid "Index outside range : "
 msgstr ""
 
-#: src/gen.cc:9139 src/gen.cc:9219
+#: src/gen.cc:9149 src/gen.cc:9229
 msgid "Warning, using :0:-step, use :-1:-step for ::"
 msgstr ""
 
-#: src/gen.cc:9416
+#: src/gen.cc:9426
 msgid "Warning, evaluating ("
 msgstr ""
 
-#: src/gen.cc:9441
+#: src/gen.cc:9451
 msgid "Index out of range"
 msgstr ""
 
-#: src/gen.cc:9545
+#: src/gen.cc:9555
 msgid "islesscomplexthan mod"
 msgstr ""
 
-#: src/gen.cc:9828
+#: src/gen.cc:9838
 msgid "power_basis_exp"
 msgstr ""
 
-#: src/gen.cc:10425
+#: src/gen.cc:10435
 msgid "symgcd"
 msgstr ""
 
-#: src/gen.cc:10507
+#: src/gen.cc:10517
 msgid "simplify: Polynomials do not have the same dimension"
 msgstr ""
 
-#: src/gen.cc:10555
+#: src/gen.cc:10565
 msgid "gen.cc:simplify"
 msgstr ""
 
-#: src/gen.cc:10559
+#: src/gen.cc:10569
 msgid "gen.cc:simplify/tmp.type!=_EXT"
 msgstr ""
 
-#: src/gen.cc:10566 src/hist.cxx:4033 src/Equation.cc:4533
+#: src/gen.cc:10576 src/hist.cxx:4033 src/Equation.cc:4533
 msgid "simplify"
 msgstr ""
 
-#: src/gen.cc:10766 src/hist.cxx:4338
+#: src/gen.cc:10776 src/hist.cxx:4338
 msgid "%"
 msgstr ""
 
-#: src/gen.cc:10833
+#: src/gen.cc:10843
 msgid "irem"
 msgstr ""
 
-#: src/gen.cc:11004
+#: src/gen.cc:11014
 msgid "Not invertible "
 msgstr ""
 
-#: src/gen.cc:11034 src/gen.cc:11037
+#: src/gen.cc:11044 src/gen.cc:11047
 msgid "invmod"
 msgstr ""
 
-#: src/gen.cc:11175
+#: src/gen.cc:11185
 msgid "Reconstructed denominator is not prime with modulo"
 msgstr ""
 
-#: src/gen.cc:11223 src/gen.cc:11240
+#: src/gen.cc:11233 src/gen.cc:11250
 msgid "powmod"
 msgstr ""
 
-#: src/gen.cc:11261
+#: src/gen.cc:11271
 msgid "No Integer Solution"
 msgstr ""
 
-#: src/gen.cc:11268
+#: src/gen.cc:11278
 msgid "isqrt"
 msgstr ""
 
-#: src/gen.cc:11310
+#: src/gen.cc:11320
 msgid "is_probab_prime_p"
 msgstr ""
 
-#: src/gen.cc:11344
+#: src/gen.cc:11354
 msgid "nextprime"
 msgstr ""
 
-#: src/gen.cc:11353 src/gen.cc:11374
+#: src/gen.cc:11363 src/gen.cc:11384
 msgid "Interrupted"
 msgstr ""
 
-#: src/gen.cc:11361
+#: src/gen.cc:11371
 msgid "prevprime"
 msgstr ""
 
-#: src/gen.cc:11384
+#: src/gen.cc:11394
 msgid "jacobi"
 msgstr ""
 
-#: src/gen.cc:11420
+#: src/gen.cc:11430
 msgid "legendre"
 msgstr ""
 
-#: src/gen.cc:11461
+#: src/gen.cc:11471
 msgid "has_denominator"
 msgstr ""
 
-#: src/gen.cc:11802 src/gen.cc:11813 src/gen.cc:11821
+#: src/gen.cc:11812 src/gen.cc:11823 src/gen.cc:11831
 msgid ""
 "Warning, i is usually sqrt(-1), I'm using a symbolic variable instead but "
 "you should check your input"
 msgstr ""
 
-#: src/gen.cc:12314
+#: src/gen.cc:12324
 msgid "Empty array"
 msgstr ""
 
-#: src/gen.cc:12319
+#: src/gen.cc:12329
 msgid "Bad array indexes"
 msgstr ""
 
-#: src/gen.cc:13950 src/Editeur.cc:2492
+#: src/gen.cc:13960 src/Editeur.cc:2492
 msgid "print"
 msgstr ""
 
-#: src/gen.cc:14691 src/gen.cc:14750
+#: src/gen.cc:14701 src/gen.cc:14760
 msgid "Unable to convert to real "
 msgstr ""
 
-#: src/gen.cc:14844 src/gen.cc:14865 src/gen.cc:14971 src/gen.cc:14990
+#: src/gen.cc:14854 src/gen.cc:14875 src/gen.cc:14981 src/gen.cc:15000
 msgid "real_object + gen"
 msgstr ""
 
-#: src/gen.cc:15127
+#: src/gen.cc:15137
 msgid ""
 "Compile with MPFR or USE_GMP_REPLACEMENTS if you want transcendental long "
 "float support"
 msgstr ""
 
-#: src/gen.cc:15415
+#: src/gen.cc:15425
 msgid "real_interval inv"
 msgstr ""
 
-#: src/gen.cc:15431 src/gen.cc:15453 src/gen.cc:15464 src/gen.cc:15475
-#: src/gen.cc:15486 src/gen.cc:15497 src/gen.cc:15508 src/gen.cc:15519
-#: src/gen.cc:15530 src/gen.cc:15541 src/gen.cc:15552 src/gen.cc:15563
-#: src/gen.cc:15574 src/gen.cc:15585 src/gen.cc:15596
+#: src/gen.cc:15441 src/gen.cc:15463 src/gen.cc:15474 src/gen.cc:15485
+#: src/gen.cc:15496 src/gen.cc:15507 src/gen.cc:15518 src/gen.cc:15529
+#: src/gen.cc:15540 src/gen.cc:15551 src/gen.cc:15562 src/gen.cc:15573
+#: src/gen.cc:15584 src/gen.cc:15595 src/gen.cc:15606
 msgid "real_interval sqrt"
 msgstr ""
 
-#: src/gen.cc:15442
+#: src/gen.cc:15452
 msgid "real_interval abs"
 msgstr ""
 
-#: src/gen.cc:15672
+#: src/gen.cc:15682
 msgid "real_interval mul"
 msgstr ""
 
-#: src/gen.cc:15702
+#: src/gen.cc:15712
 msgid "real_interval mul 2"
 msgstr ""
 
-#: src/gen.cc:15804
+#: src/gen.cc:15814
 msgid "MPFR error reading binary "
 msgstr ""
 
-#: src/gen.cc:15806
+#: src/gen.cc:15816
 msgid "Error no MPFR reading "
 msgstr ""
 
