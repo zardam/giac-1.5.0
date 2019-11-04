@@ -3285,6 +3285,17 @@ namespace giac {
 	return;
       }
     }
+    if (u==at_derive && f.type==_VECT && !f._VECTptr->empty()){
+      vecteur v=*f._VECTptr;
+      reim(v.front(),r,i,contextptr);
+      v.front()=r;
+      r=symbolic(at_derive,gen(v,f.subtype));
+      if (is_zero(i))
+	return;
+      v.front()=i;
+      i=symbolic(at_derive,gen(v,f.subtype));
+      return;
+    }
     if (u==at_pow){
       gen e=f._VECTptr->front(),expo=f._VECTptr->back();
       if (expo.type==_INT_){
@@ -9379,7 +9390,7 @@ namespace giac {
 	}
 	return res;
       }
-      if (_SYMBptr->sommet==at_function_diff || _SYMBptr->sommet==at_of || _SYMBptr->sommet==at_at)
+      if (_SYMBptr->sommet==at_derive || _SYMBptr->sommet==at_function_diff || _SYMBptr->sommet==at_of || _SYMBptr->sommet==at_at)
 	return new_ref_symbolic(symbolic(at_of,makesequence(*this,i)));
       gen & f=_SYMBptr->feuille;
       // distributions laws: add arguments and reeval

@@ -51,7 +51,12 @@ int select_item(const char ** ptr,const char * title);
 #ifndef NO_NAMESPACE_XCAS
 namespace xcas {
 #endif // ndef NO_NAMESPACE_XCAS
-
+  void draw_rectangle(int x,int y,int w,int h,int c);
+  void draw_line(int x0,int y0,int x1,int y1,int c);
+  void draw_circle(int xc,int yc,int r,int color,bool q1=true,bool q2=true,bool q3=true,bool q4=true);
+  void draw_filled_circle(int xc,int yc,int r,int color,bool left=true,bool right=true);
+  void draw_filled_polygon(std::vector< vector<int> > &L,int xmin,int xmax,int ymin,int ymax,int color);
+			   
   bool textedit(char * s,int bufsize,const giac::context * contextptr);
   // maximum "size" of symbolics displayed in an Equation (pretty print)
   extern unsigned max_prettyprint_equation;

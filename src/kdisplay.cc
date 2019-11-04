@@ -36,6 +36,7 @@ using namespace giac;
 const int LCD_WIDTH_PX=320;
 const int LCD_HEIGHT_PX=222;
 static char* original_cfg=0;
+int khicas_addins_menu(GIAC_CONTEXT); // in kadd.cc
 
 // Numworks Logo commands
 #ifndef NO_NAMESPACE_GIAC
@@ -2455,10 +2456,10 @@ namespace xcas {
   void draw_line(int x0,int y0,int x1,int y1,int c){
     draw_line(x0,y0,x1,y1,c,context0);
   }
-  void draw_circle(int xc,int yc,int r,int color,bool q1=true,bool q2=true,bool q3=true,bool q4=true){
+  void draw_circle(int xc,int yc,int r,int color,bool q1,bool q2,bool q3,bool q4){
     draw_circle(xc,yc,r,color,q1,q2,q3,q4,context0);
   }
-  void draw_filled_circle(int xc,int yc,int r,int color,bool left=true,bool right=true){
+  void draw_filled_circle(int xc,int yc,int r,int color,bool left,bool right){
     draw_filled_circle(xc,yc,r,color,left,right,context0);
   }
   void draw_filled_polygon(std::vector< vector<int> > &L,int xmin,int xmax,int ymin,int ymax,int color){
@@ -8860,7 +8861,7 @@ namespace xcas {
 	smallmenu.scrollbar=1;
 	smallmenu.scrollout=1;
 	//smallmenu.title = "KhiCAS";
-	smallmenuitems[0].text = (char*)"Applications tierces (,)";
+	smallmenuitems[0].text = (char*)"Applications (shift ANS)";
 	smallmenuitems[1].text = (char *) (lang?"Enregistrer session":"Save session ");
 	smallmenuitems[2].text = (char *) (lang?"Enregistrer sous":"Save session as");
 	smallmenuitems[3].text = (char*) (lang?"Charger session":"Load session");
@@ -9095,102 +9096,10 @@ namespace xcas {
 	return CONSOLE_SUCCEEDED;
 #endif
       }
-      if (key==KEY_SHIFT_ANS){
-	Menu smallmenu;
-	smallmenu.numitems=4; // INCREMENT IF YOU ADD AN APPLICATION
-	// and uncomment first smallmenuitems[app_number].text="Reserved"
-	// replace by your application name
-	// and add if (smallmenu.selection==app_number-1){ call your code }
-	MenuItem smallmenuitems[smallmenu.numitems];      
-	smallmenu.items=smallmenuitems;
-	smallmenu.height=12;
-	smallmenu.scrollbar=1;
-	smallmenu.scrollout=1;
-	smallmenuitems[0].text = (char*)"Table periodique";
-	smallmenuitems[1].text = (char*)"Exemple simple: Syracuse";
-	// smallmenuitems[2].text = (char*)"Reserverd";
-	// smallmenuitems[3].text = (char*)"Reserverd";
-	// smallmenuitems[4].text = (char*)"Reserverd";
-	// smallmenuitems[5].text = (char*)"Reserverd";
-	// smallmenuitems[6].text = (char*)"Reserverd";
-	// smallmenuitems[7].text = (char*)"Reserverd";
-	// smallmenuitems[8].text = (char*)"Reserverd";
-	// smallmenuitems[9].text = (char*)"Reserverd";
-	// smallmenuitems[10].text = (char*)"Reserverd";
-	smallmenuitems[smallmenu.numitems-2].text = (char*)"Quitter le menu";
-	smallmenuitems[smallmenu.numitems-1].text = (char*)"Quitter Khicas";
-	while(1) {
-	  int sres = doMenu(&smallmenu);
-	  if(sres == MENU_RETURN_SELECTION || sres==KEY_CTRL_EXE) {
-	    if (smallmenu.selection==smallmenu.numitems){
-	      return KEY_CTRL_MENU;
-	    }
-	    if (smallmenu.selection==2){
-	      // Exemple simple d'application tierce: la suite de Syracuse
-	      // on entre la valeur de u0
-	      double d; int i;
-	      for (;;){
-		inputdouble(gettext("Suite de Syracuse. u0?"),d,contextptr);
-		i=(d);
-		if (i==d)
-		  break;
-		confirm(gettext("u0 doit etre entier!"),gettext("Recommencez"));
-	      }
-	      i=max(i,1);
-	      vecteur v(1,i); // initialise une liste avec u0
-	      while (i!=1){
-		if (i%2)
-		  i=3*i+1;
-		else
-		  i=i/2;
-		v.push_back(i);
-	      }
-	      // representation graphique de la liste
-	      displaygraph(_listplot(v,contextptr),contextptr);
-	      // on entre la liste en ligne de commande
-	      Console_Input(gen(v).print(contextptr).c_str());
-	    }
-	    if (smallmenu.selection==1){
-	      const char * name,*symbol;
-	      char protons[32],nucleons[32],mass[32],electroneg[32];
-	      int res=periodic_table(name,symbol,protons,nucleons,mass,electroneg);
-	      if (!res)
-		continue;
-	      char console_buf[64]={0};
-	      char * ptr=console_buf;
-	      if (res & 1)
-		ptr=strcpy(ptr,name)+strlen(ptr);
-	      if (res & 2){
-		if (res & 1)
-		  ptr=strcpy(ptr,",")+strlen(ptr);
-		ptr=strcpy(ptr,symbol)+strlen(ptr);
-	      }
-	      if (res & 4){
-		if (res&3)
-		  ptr=strcpy(ptr,",")+strlen(ptr);
-		ptr=strcpy(ptr,protons)+strlen(ptr);
-	      }
-	      if (res & 8){
-		if (res&7)
-		  ptr=strcpy(ptr,",")+strlen(ptr);
-		ptr=strcpy(ptr,nucleons)+strlen(ptr);
-	      }
-	      if (res & 16){
-		if (res&15)
-		  ptr=strcpy(ptr,",")+strlen(ptr);
-		ptr=strcpy(ptr,mass+2)+strlen(ptr);
-		ptr=strcpy(ptr,"_(g/mol)")+8;
-	      }
-	      if (res & 32){
-		if (res&31)
-		  ptr=strcpy(ptr,",")+strlen(ptr);
-		ptr=strcpy(ptr,electroneg+4)+strlen(ptr);
-	      }
-	      return Console_Input(console_buf);
-	    }
-	  } // end sres==menu_selection
-	  break;
-	} // end endless while
+      if (key==KEY_SHIFT_ANS){ // 3rd party app
+	int res=khicas_addins_menu(contextptr);
+	if (res==KEY_CTRL_MENU)
+	  return res;
 	Console_Disp();
 	return CONSOLE_SUCCEEDED;
       }
@@ -9199,8 +9108,6 @@ namespace xcas {
 	   ){
 	return Console_FMenu(key,contextptr);
       }
-
-
       if (key == KEY_CTRL_UP)
 	return Console_MoveCursor(alph?CURSOR_ALPHA_UP:CURSOR_UP);
       if (key == KEY_CTRL_DOWN){
