@@ -1,1 +1,1 @@
-config.h.numworks.tommath
+config.h.numworks.gmp
